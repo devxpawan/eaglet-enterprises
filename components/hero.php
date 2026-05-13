@@ -4,7 +4,7 @@
     <div class="container position-relative z-1 pt-5">
         <div class="row align-items-center min-vh-100 pb-5">
             <div class="col-lg-6 hero-content pe-lg-5 pt-5 pt-lg-0">
-                <div class="badge-premium mb-4 animate-fade-up">
+                <div class="badge-main mb-4 animate-fade-up">
                     <span class="badge-dot"></span>
                     <span class="badge-text fw-medium tracking-wider text-uppercase small">10+ Years of Excellence</span>
                 </div>
@@ -20,11 +20,11 @@
                     Turning your vision into lasting structures with quality craftsmanship and trusted construction expertise.
                 </p>
                 <div class="d-flex flex-wrap gap-4 animate-fade-up" style="animation-delay: 0.3s;">
-                    <a href="#projects" class="btn btn-premium">
+                    <a href="#projects" class="btn btn-main">
                         <span>Explore Projects</span>
                         <i class="fas fa-arrow-right ms-2"></i>
                     </a>
-                    <a href="#contact" class="btn btn-premium-outline d-flex align-items-center">
+                    <a href="#contact" class="btn btn-main-outline d-flex align-items-center">
                         <i class="fas fa-phone-alt me-2"></i> Get In Touch
                     </a>
                 </div>

@@ -4,7 +4,7 @@
         <div class="row g-4">
             <div class="col-lg-4 col-md-6">
                 <a class="footer-brand" href="#">Eaglet<span>Enterprises</span></a>
-                <p class="footer-about">Premium construction services for over two decades. Commercial, residential, and renovation expertise you can trust.</p>
+                <p class="footer-about">Building excellence with trusted expertise in commercial construction, residential projects, and renovations.</p>
                 <div class="social-links mt-4">
                     <a href="#"><i class="fab fa-facebook-f"></i></a>
                     <a href="#"><i class="fab fa-twitter"></i></a>

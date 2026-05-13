@@ -15,7 +15,7 @@
                             </div>
                             <div class="feature-text">
                                 <h5 class="mb-1">Quality Assurance</h5>
-                                <p class="mb-0">Premium materials with strict quality standards.</p>
+                                <p class="mb-0">Quality materials with strict quality standards.</p>
                             </div>
                         </div>
                     </div>
