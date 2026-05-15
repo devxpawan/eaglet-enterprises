@@ -36,14 +36,25 @@
             </div>
             
             <div class="col-lg-4 col-md-6">
-                <h5>Newsletter</h5>
-                <p>Subscribe for project updates and construction insights.</p>
-                <form action="#" class="mt-3">
-                    <div class="input-group mb-3">
-                        <input type="email" class="form-control" placeholder="Your Email Address" aria-label="Email">
-                        <button class="btn btn-primary" type="submit"><i class="fas fa-paper-plane"></i></button>
-                    </div>
-                </form>
+                <h5>Contact Info</h5>
+                <ul class="footer-contact">
+                    <li>
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>No.110/1, Aluthgama Road, Mathugama</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-phone-alt"></i>
+                        <span>+94 77 304 8438</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-envelope"></i>
+                        <span>contact@eagletenterprises.lk</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-clock"></i>
+                        <span>Mon - Sat: 8:00 AM - 6:00 PM</span>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
@@ -60,7 +71,7 @@
 
 <!-- WhatsApp Floating Button -->
 <a href="https://wa.me/94773048438" target="_blank" class="whatsapp-float" aria-label="Chat with us on WhatsApp">
-    <i class="fab fa-whatsapp"></i>
+    <i class="fab fa-whatsapp fa-2x"></i>
 </a>
 
 <!-- Bootstrap 5 JS Bundle -->

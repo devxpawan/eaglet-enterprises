@@ -19,14 +19,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const sections = document.querySelectorAll('section');
     
     window.addEventListener('scroll', () => {
-        // Sticky Navbar
         if (window.scrollY > 50) {
             navbar.classList.add('sticky');
         } else {
             navbar.classList.remove('sticky');
         }
         
-        // Active State
         let current = '';
         sections.forEach(section => {
             const sectionTop = section.offsetTop;
@@ -43,7 +41,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
         
-        // Back to top button
         const backToTop = document.querySelector('.back-to-top');
         if(backToTop) {
             if (window.scrollY > 300) {
@@ -68,7 +65,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     behavior: 'smooth'
                 });
                 
-                // Close mobile menu if open
                 const navbarToggler = document.querySelector('.navbar-toggler');
                 const navbarCollapse = document.querySelector('.navbar-collapse');
                 if (navbarCollapse.classList.contains('show')) {
@@ -77,6 +73,39 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+    
+    // 3a. Mobile Menu Slide-in from Left
+    const navbarCollapseEl = document.getElementById('navbarNav');
+    if (navbarCollapseEl) {
+        navbarCollapseEl.addEventListener('show.bs.collapse', () => {
+            document.body.classList.add('menu-open');
+        });
+        navbarCollapseEl.addEventListener('hide.bs.collapse', () => {
+            document.body.classList.remove('menu-open');
+        });
+        
+        // Close menu when clicking outside or on backdrop
+        document.addEventListener('click', (e) => {
+            if (document.body.classList.contains('menu-open')) {
+                const menu = document.getElementById('navbarNav');
+                const toggler = document.querySelector('.navbar-toggler');
+                if (menu && !menu.contains(e.target) && !toggler.contains(e.target)) {
+                    e.preventDefault();
+                    const bsCollapse = bootstrap.Collapse.getInstance(navbarCollapseEl);
+                    if (bsCollapse) bsCollapse.hide();
+                }
+            }
+        });
+        
+        // Close button inside menu
+        const menuCloseBtn = document.querySelector('.menu-close-btn');
+        if (menuCloseBtn) {
+            menuCloseBtn.addEventListener('click', () => {
+                const bsCollapse = bootstrap.Collapse.getInstance(navbarCollapseEl);
+                if (bsCollapse) bsCollapse.hide();
+            });
+        }
+    }
     
     // 4. Scroll Animations (Intersection Observer)
     const fadeElements = document.querySelectorAll('.animate-fade-up');

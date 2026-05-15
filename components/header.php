@@ -37,6 +37,9 @@
                 <i class="fas fa-bars text-navy"></i>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
+                <button class="menu-close-btn d-lg-none" type="button" aria-label="Close menu">
+                    <i class="fas fa-times"></i>
+                </button>
                 <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item">
                         <a class="nav-link active" href="#home">Home</a>
@@ -53,10 +56,8 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#contact">Contact</a>
                     </li>
-                    <li class="nav-item ms-lg-3">
-                        <a href="#contact" class="btn btn-navy px-4">Get Quote</a>
-                    </li>
                 </ul>
             </div>
         </div>
     </nav>
+</html>

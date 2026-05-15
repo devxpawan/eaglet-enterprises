@@ -38,6 +38,20 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- FAQ 5 -->
+                    <div class="accordion-item mb-3 border-0 shadow-sm rounded">
+                        <h2 class="accordion-header" id="headingFive">
+                            <button class="accordion-button collapsed fw-bold font-outfit text-navy rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                                What is your payment schedule for construction projects?
+                            </button>
+                        </h2>
+                        <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#faqAccordionLeft">
+                            <div class="accordion-body text-medium">
+                                We typically follow a milestone-based payment schedule that aligns with project progress. This usually includes an initial deposit, followed by payments at key completion stages, with a final balance due upon project completion and your satisfaction.
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             
@@ -68,6 +82,20 @@
                         <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#faqAccordionRight">
                             <div class="accordion-body text-medium">
                                 Quality and safety are our top priorities. We adhere to strict industry standards, conduct regular site inspections, and ensure all our staff and subcontractors are fully trained in modern safety protocols and quality control measures.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- FAQ 6 -->
+                    <div class="accordion-item mb-3 border-0 shadow-sm rounded">
+                        <h2 class="accordion-header" id="headingSix">
+                            <button class="accordion-button collapsed fw-bold font-outfit text-navy rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
+                                Can you work with my existing architect or designer?
+                            </button>
+                        </h2>
+                        <div id="collapseSix" class="accordion-collapse collapse" aria-labelledby="headingSix" data-bs-parent="#faqAccordionRight">
+                            <div class="accordion-body text-medium">
+                                Absolutely. We regularly collaborate with clients' existing architects and designers. Our team is experienced in working within established design frameworks and will ensure seamless coordination between all parties to bring your project to life.
                             </div>
                         </div>
                     </div>

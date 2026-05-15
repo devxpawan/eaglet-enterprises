@@ -9,38 +9,8 @@
         
         <div class="row g-4">
             <div class="col-lg-4 animate-fade-up">
-                <div class="contact-info-card">
-                    <h4>Contact Information</h4>
-                    
-                    <div class="contact-detail">
-                        <div class="contact-detail-icon">
-                            <img src="img/location.png" alt="Location" class="img-fluid">
-                        </div>
-                        <div class="contact-detail-text">
-                            <h6>Our Location</h6>
-                            <p>No.110/1, Aluthgama Road, Mathugama</p>
-                        </div>
-                    </div>
-                    
-                    <div class="contact-detail">
-                        <div class="contact-detail-icon">
-                            <img src="img/phone-call.png" alt="Phone" class="img-fluid">
-                        </div>
-                        <div class="contact-detail-text">
-                            <h6>Phone Number</h6>
-                            <p>+94 77 304 8438</p>
-                        </div>
-                    </div>
-                    
-                    <div class="contact-detail">
-                        <div class="contact-detail-icon">
-                            <img src="img/mail.png" alt="Email" class="img-fluid">
-                        </div>
-                        <div class="contact-detail-text">
-                            <h6>Email Address</h6>
-                            <p>contact@eagletenterprises.lk</p>
-                        </div>
-                    </div>
+                <div class="map-container" style="height: 100%; min-height: 400px; border-radius: 8px; overflow: hidden;">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m13!1m8!1m3!1d7928.019055511339!2d80.112424!3d6.520476!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zNsKwMzEnMTMuNyJOIDgwwrAwNic1NC4wIkU!5e0!3m2!1sen!2slk!4v1778649308283!5m2!1sen!2slk" width="100%" height="100%" style="border:0; min-height: 400px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                 </div>
             </div>
             
@@ -56,15 +26,10 @@
                                 <input type="email" class="form-control" placeholder="Your Email" required>
                             </div>
                             <div class="col-md-6">
-                                <input type="tel" class="form-control" placeholder="Phone Number">
+                                <input type="tel" class="form-control" placeholder="Phone Number" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                             </div>
                             <div class="col-md-6">
-                                <select class="form-control">
-                                    <option value="">Select Service</option>
-                                    <option value="residential">Residential Construction</option>
-                                    <option value="commercial">Commercial Building</option>
-                                    <option value="renovation">Renovation</option>
-                                </select>
+                                <input type="text" class="form-control" placeholder="Subject" required>
                             </div>
                             <div class="col-12">
                                 <textarea class="form-control" rows="5" placeholder="Your Message" required></textarea>
@@ -78,12 +43,14 @@
             </div>
         </div>
         
-        <div class="row mt-5 animate-fade-up">
-            <div class="col-12">
-                <div class="map-container">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m13!1m8!1m3!1d7928.019055511339!2d80.112424!3d6.520476!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zNsKwMzEnMTMuNyJOIDgwwrAwNic1NC4wIkU!5e0!3m2!1sen!2slk!4v1778649308283!5m2!1sen!2slk" width="100%" height="300px" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-                </div>
-            </div>
-        </div>
+    </div>
+</section>
+
+<!-- CTA Banner -->
+<section class="section-sm" style="background: linear-gradient(rgba(10, 25, 47, 0.9), rgba(10, 25, 47, 0.9)), url('https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&q=80&w=1920'); background-size: cover; background-position: center; background-attachment: fixed; color: #fff;">
+    <div class="container text-center">
+        <h3 style="font-weight: 700; margin-bottom: 15px;">Ready to Build Your Dream Project?</h3>
+        <p style="color: rgba(255,255,255,0.7); margin-bottom: 25px; font-size: 1.1rem;">Get in touch with us today and let's turn your vision into reality.</p>
+        <a href="tel:+94773048438" class="btn btn-primary btn-lg" style="background: var(--accent-gold); border: none; padding: 14px 40px; font-weight: 600;"><i class="fas fa-phone-alt me-2"></i>Call Us Today</a>
     </div>
 </section>

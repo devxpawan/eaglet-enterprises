@@ -1,61 +1,50 @@
 <!-- Why Choose Us Section -->
 <section class="section why-us-section">
     <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-6 mb-5 mb-lg-0 animate-fade-up">
-                <h5 class="text-gold mb-2">Why Choose Us</h5>
-                <h2 class="section-title text-start mb-4">Built On Trust & Expertise</h2>
-                <p class="mb-5">We combine technical expertise with a commitment to excellence, delivering projects that exceed expectations and stand the test of time.</p>
-                
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="feature-item">
-                            <div class="feature-icon">
-                                <img src="img/quality.png" alt="Quality Assurance" class="img-fluid">
-                            </div>
-                            <div class="feature-text">
-                                <h5 class="mb-1">Quality Assurance</h5>
-                                <p class="mb-0">Quality materials with strict quality standards.</p>
-                            </div>
-                        </div>
+        <div class="row justify-content-center text-center mb-5 animate-fade-up">
+            <div class="col-lg-6">
+                <h5 class="text-gold fw-semibold mb-2 tracking-wider text-uppercase small">Why Choose Us</h5>
+                <h2 class="fw-bold text-white mb-3">Built On Trust & Expertise</h2>
+                <p class="text-white-50 mb-0">We combine technical expertise with a commitment to excellence, delivering projects that exceed expectations.</p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3 animate-fade-up">
+                <div class="why-us-card">
+                    <div class="why-us-icon-box">
+                        <img src="img/quality.png" alt="Quality">
                     </div>
-                    <div class="col-md-6">
-                        <div class="feature-item">
-                            <div class="feature-icon">
-                                <img src="img/leadership.png" alt="Expert Team" class="img-fluid">
-                            </div>
-                            <div class="feature-text">
-                                <h5 class="mb-1">Expert Team</h5>
-                                <p class="mb-0">Experienced professionals for reliable construction.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="feature-item">
-                            <div class="feature-icon">
-                                <img src="img/on-time.png" alt="On-Time Delivery" class="img-fluid">
-                            </div>
-                            <div class="feature-text">
-                                <h5 class="mb-1">On-Time Delivery</h5>
-                                <p class="mb-0">Projects completed on schedule with quality assured.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="feature-item">
-                            <div class="feature-icon">
-                                <img src="img/badge.png" alt="Competitive Pricing" class="img-fluid">
-                            </div>
-                            <div class="feature-text">
-                                <h5 class="mb-1">Competitive Pricing</h5>
-                                <p class="mb-0">Affordable pricing with complete transparency.</p>
-                            </div>
-                        </div>
-                    </div>
+                    <h5 class="text-white fw-bold mb-2">Quality Assurance</h5>
+                    <p class="text-white-50 small mb-0">Premium materials with strict quality standards for lasting durability.</p>
                 </div>
             </div>
-            <div class="col-lg-6 animate-fade-up">
-                <img src="img\whychooseus.jfif" alt="Why Choose Us" class="img-fluid rounded shadow">
+            <div class="col-md-6 col-lg-3 animate-fade-up" style="animation-delay: 0.1s;">
+                <div class="why-us-card">
+                    <div class="why-us-icon-box">
+                        <img src="img/leadership.png" alt="Expert Team">
+                    </div>
+                    <h5 class="text-white fw-bold mb-2">Expert Team</h5>
+                    <p class="text-white-50 small mb-0">Experienced professionals dedicated to reliable construction excellence.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3 animate-fade-up" style="animation-delay: 0.2s;">
+                <div class="why-us-card">
+                    <div class="why-us-icon-box">
+                        <img src="img/on-time.png" alt="On-Time Delivery">
+                    </div>
+                    <h5 class="text-white fw-bold mb-2">On-Time Delivery</h5>
+                    <p class="text-white-50 small mb-0">Projects completed on schedule with uncompromising quality assured.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3 animate-fade-up" style="animation-delay: 0.3s;">
+                <div class="why-us-card">
+                    <div class="why-us-icon-box">
+                        <img src="img/badge.png" alt="Competitive Pricing">
+                    </div>
+                    <h5 class="text-white fw-bold mb-2">Competitive Pricing</h5>
+                    <p class="text-white-50 small mb-0">Affordable pricing with complete transparency and no hidden costs.</p>
+                </div>
             </div>
         </div>
     </div>
