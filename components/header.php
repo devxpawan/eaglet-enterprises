@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Eaglet Enterprises - 10+ Years of Excellence in Commercial & Residential Construction">
     <title>Eaglet Enterprises | Quality & Excellence</title>
+    <link rel="icon" type="image/png" href="img/logo.png">
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -32,7 +33,7 @@
     <!-- Header / Navigation Bar -->
     <nav id="navbar" class="navbar navbar-expand-lg fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="#">Eaglet<span>Enterprises</span></a>
+            <a class="navbar-brand" href="#"><img src="img/logo.png" alt="Eaglet Enterprises" class="navbar-logo">Eaglet<span>Enterprises</span></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <i class="fas fa-bars text-navy"></i>
             </button>
