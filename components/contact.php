@@ -17,22 +17,23 @@
             <div class="col-lg-8 animate-fade-up">
                 <div class="contact-form-card">
                     <h4 class="mb-4">Send Us A Message</h4>
-                    <form action="#" method="POST">
+                    <form action="https://api.web3forms.com/submit" method="POST">
+                        <input type="hidden" name="access_key" value="b4deb44a-14a0-421e-b220-b1f7512d9866">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <input type="text" class="form-control" placeholder="Your Name" required>
+                                <input type="text" name="name" class="form-control" placeholder="Your Name" required>
                             </div>
                             <div class="col-md-6">
-                                <input type="email" class="form-control" placeholder="Your Email" required>
+                                <input type="email" name="email" class="form-control" placeholder="Your Email" required>
                             </div>
                             <div class="col-md-6">
-                                <input type="tel" class="form-control" placeholder="Phone Number" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                <input type="tel" name="phone" class="form-control" placeholder="Phone Number" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                             </div>
                             <div class="col-md-6">
-                                <input type="text" class="form-control" placeholder="Subject" required>
+                                <input type="text" name="subject" class="form-control" placeholder="Subject" required>
                             </div>
                             <div class="col-12">
-                                <textarea class="form-control" rows="5" placeholder="Your Message" required></textarea>
+                                <textarea name="message" class="form-control" rows="5" placeholder="Your Message" required></textarea>
                             </div>
                             <div class="col-12">
                                 <button type="submit" class="btn btn-primary w-100 py-3">Send Message</button>
