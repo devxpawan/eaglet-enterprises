@@ -4,7 +4,7 @@
         <div class="text-center mb-5 animate-fade-up">
             <h5 class="text-gold mb-2">What We Do</h5>
             <h2 class="section-title">Our Services</h2>
-            <p class="section-subtitle">Comprehensive construction solutions tailored to your needs</p>
+            <p class="section-subtitle">From planning to handover — we've got your project covered</p>
         </div>
         
         <div class="row g-4">

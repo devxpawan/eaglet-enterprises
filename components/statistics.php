@@ -17,13 +17,13 @@
             <div class="col-md-3 col-6 animate-fade-up">
                 <div class="stat-item">
                     <div class="stat-number">98%</div>
-                    <div class="stat-label">Project Management & Employee Handling</div>
+                    <div class="stat-label">Smooth Project Management</div>
                 </div>
             </div>
             <div class="col-md-3 col-6 animate-fade-up">
                 <div class="stat-item">
                     <div class="stat-number">100%</div>
-                    <div class="stat-label">Supervision by Qualified & Experienced Staff</div>
+                    <div class="stat-label">Supervised by Skilled Experts</div>
                 </div>
             </div>
         </div>

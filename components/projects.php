@@ -4,7 +4,7 @@
         <div class="text-center mb-5 animate-fade-up">
             <h5 class="text-gold mb-2">Our Work</h5>
             <h2 class="section-title">Featured Projects</h2>
-            <p class="section-subtitle">Showcasing our latest construction and renovation projects</p>
+            <p class="section-subtitle">A look at some of the work we're proud of</p>
         </div>
         
         <div class="row g-4">

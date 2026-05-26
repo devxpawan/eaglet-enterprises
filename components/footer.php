@@ -4,7 +4,7 @@
         <div class="row g-4">
             <div class="col-lg-4 col-md-6">
                 <a class="footer-brand" href="#"><img src="img/logo.png" alt="Eaglet Enterprises" class="footer-logo">Eaglet<span>Enterprises</span></a>
-                <p class="footer-about">Building excellence with trusted expertise in commercial construction, residential projects, and renovations.</p>
+                <p class="footer-about">Building things right — from commercial projects and homes to renovations — with quality and care at every step.</p>
                 <div class="social-links mt-4">
                     <a href="#"><i class="fab fa-facebook-f"></i></a>
                     <a href="#"><i class="fab fa-twitter"></i></a>

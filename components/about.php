@@ -14,7 +14,7 @@
             <div class="col-lg-6 about-content animate-fade-up">
                 <h5 class="text-gold mb-2">About Our Company</h5>
                 <h2 class="section-title text-start mb-4">Building Your Vision With Precision and Excellence</h2>
-                <p class="mb-4">On the earth's plane, EAGLET ENTERPRISES PRIVATE LIMITED has been delivering exceptional construction services with a commitment to quality, integrity, and client satisfaction. Our team of experienced professionals brings expertise, innovation, and attention to detail to every project, whether it's a custom home, commercial development, or specialized Facility.</p>
+                <p class="mb-4">At Eaglet Enterprises, we've been bringing construction projects to life with a focus on quality, honesty, and making sure our clients are happy. Our skilled team brings real expertise and a keen eye for detail to every job — whether it's a custom home, a commercial build, or a specialized facility.</p>
                 
                 <!-- <div class="about-features">
                     <div class="about-feature">
