@@ -564,6 +564,19 @@ $quotation_ref = !empty($invoice['quotation_ref_no']) ? $invoice['quotation_ref_
                 background: white;
                 padding: 0 0.3in;
             }
+
+            .payment-badge {
+                background-color: #e0e0e0 !important;
+                color: #000 !important;
+                border: 1px solid #000 !important;
+            }
+
+            .payment-badge.bg-success,
+            .payment-badge.bg-warning,
+            .payment-badge.bg-danger {
+                background-color: #e0e0e0 !important;
+                color: #000 !important;
+            }
         }
 
         .footer-group-container {

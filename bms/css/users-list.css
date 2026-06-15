@@ -305,6 +305,20 @@
     margin-bottom: 5px;
 }
 
+.btn-manage-positions {
+    white-space: nowrap;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-weight: 600;
+}
+
+.btn-manage-positions:hover {
+    background: #2563EB;
+    border-color: #2563EB;
+    box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
+    transform: translateY(-1px);
+}
+
 /* ---------- User-specific tweaks ---------- */
 .user-name {
     font-weight: 600;
@@ -409,4 +423,71 @@
     color: #101828;
     font-weight: 600;
     margin: 0;
+}
+
+.position-modal-table thead th {
+    background: #f9fafb;
+    color: #344054;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid #eaecf0;
+}
+
+.position-modal-table tbody td {
+    vertical-align: middle;
+}
+
+.position-actions .btn {
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.15s ease;
+    border: 1px solid #d0d5dd;
+    background: #fff;
+}
+
+.position-actions .btn-edit {
+    color: #f59e0b;
+}
+
+.position-actions .btn-edit:hover {
+    background: #fffbeb;
+    border-color: #f59e0b;
+    color: #d97706;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(245, 158, 11, 0.2);
+}
+
+.position-actions .btn-deactivate {
+    color: #f04438;
+}
+
+.position-actions .btn-deactivate:hover {
+    background: #fffbfa;
+    border-color: #f04438;
+    color: #d92d20;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(240, 68, 56, 0.2);
+}
+
+.position-actions .btn-activate {
+    color: #079455;
+}
+
+.position-actions .btn-activate:hover {
+    background: #f6fef9;
+    border-color: #079455;
+    color: #067647;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(7, 148, 85, 0.2);
+}
+
+.position-form-status {
+    min-height: 18px;
 }

@@ -137,6 +137,7 @@ try {
     $discounts = $_POST['invoice_product_discount'] ?? [];
     $discount_types = $_POST['invoice_product_discount_type'] ?? [];
     $product_descriptions = $_POST['invoice_product_description'] ?? [];
+    $item_ids = $_POST['invoice_item_id'] ?? [];
 
     $subtotal = 0;
     $total_discount = 0;
@@ -151,6 +152,7 @@ try {
         $discount_val = floatval($discounts[$key] ?? 0);
         $discount_type = $discount_types[$key] ?? 'flat';
         $description = $product_descriptions[$key] ?? '';
+        $item_id = intval($item_ids[$key] ?? 0);
 
         $row_total = $price * $qty;
 
@@ -169,6 +171,7 @@ try {
         $product_name = is_numeric($product_val) ? null : $product_val;
 
         $invoice_items[] = [
+            'item_id' => $item_id,
             'product_id' => $product_id,
             'product_name' => $product_name,
             'price' => $price,
@@ -213,36 +216,77 @@ try {
     );
     $stmt->execute();
 
-    $deleteItemsSql = "DELETE FROM invoice_items WHERE invoice_id = ?";
-    $stmt = $conn->prepare($deleteItemsSql);
-    $stmt->bind_param("i", $invoice_id);
-    $stmt->execute();
-
+    // Get existing item IDs for this invoice
+    $existingStmt = $conn->prepare("SELECT item_id FROM invoice_items WHERE invoice_id = ?");
+    $existingStmt->bind_param("i", $invoice_id);
+    $existingStmt->execute();
+    $existingResult = $existingStmt->get_result();
+    $existingIds = [];
+    while ($row = $existingResult->fetch_assoc()) {
+        $existingIds[] = $row['item_id'];
+    }
+    $existingStmt->close();
+    
+    // Collect submitted item IDs (only non-zero = existing items to keep)
+    $submittedIds = [];
+    foreach ($invoice_items as $item) {
+        if ($item['item_id'] > 0) {
+            $submittedIds[] = $item['item_id'];
+        }
+    }
+    
+    // Delete items that were removed from the form (in DB but not in submitted IDs)
+    if (!empty($existingIds)) {
+        $idsToDelete = array_diff($existingIds, $submittedIds);
+        if (!empty($idsToDelete)) {
+            $placeholders = implode(',', array_fill(0, count($idsToDelete), '?'));
+            $deleteStmt = $conn->prepare("DELETE FROM invoice_items WHERE item_id IN ($placeholders)");
+            $deleteStmt->bind_param(str_repeat('i', count($idsToDelete)), ...$idsToDelete);
+            $deleteStmt->execute();
+            $deleteStmt->close();
+        }
+    }
+    
+    // Update existing items and insert new ones
+    $updateItemSql = "UPDATE invoice_items SET product_id = ?, product_name = ?, quantity = ?, discount = ?, discount_type = ?, total_amount = ?, description = ? WHERE item_id = ?";
     $insertItemSql = "INSERT INTO invoice_items (
         invoice_id, product_id, product_name, quantity, discount, discount_type,
         total_amount, pay_status, status, description
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    $stmt = $conn->prepare($insertItemSql);
-
+    
+    $updateStmt = $conn->prepare($updateItemSql);
+    $insertStmt = $conn->prepare($insertItemSql);
+    
     foreach ($invoice_items as $item) {
         $item_total = ($item['price'] * $item['qty']) - $item['discount'];
-        $pay_status = 'unpaid';
-        $status = 'pending';
-        $stmt->bind_param(
-            "iisidsdsss",
-            $invoice_id,
-            $item['product_id'],
-            $item['product_name'],
-            $item['qty'],
-            $item['discount'],
-            $item['discount_type'],
-            $item_total,
-            $pay_status,
-            $status,
-            $item['description']
-        );
-        $stmt->execute();
+        
+        if ($item['item_id'] > 0) {
+            // Update existing item
+            $updateStmt->bind_param("isidsdssi", $item['product_id'], $item['product_name'], $item['qty'], $item['discount'], $item['discount_type'], $item_total, $item['description'], $item['item_id']);
+            $updateStmt->execute();
+        } else {
+            // Insert new item
+            $pay_status = 'unpaid';
+            $status = 'pending';
+            $insertStmt->bind_param(
+                "iisidsdsss",
+                $invoice_id,
+                $item['product_id'],
+                $item['product_name'],
+                $item['qty'],
+                $item['discount'],
+                $item['discount_type'],
+                $item_total,
+                $pay_status,
+                $status,
+                $item['description']
+            );
+            $insertStmt->execute();
+        }
     }
+    
+    $updateStmt->close();
+    $insertStmt->close();
 
     $action_type = "edit_invoice";
     $details = "Invoice ID #$invoice_id was updated by user ID #$user_id. New total: $total_amount $currency.";

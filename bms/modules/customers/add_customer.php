@@ -204,50 +204,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <?php require_once BASE_PATH . 'includes/header.php'; ?>
     <title>Add Customer</title>
     <link href="<?= BASE_URL ?>css/forms.css" rel="stylesheet" />
-    <style>
-        body {
-            background-color: #f8fafc;
-        }
-        
-        .form-floating .form-control {
-            height: calc(3.5rem + 2px);
-        }
-        
-        .is-valid {
-            border-color: #198754;
-            padding-right: calc(1.5em + 0.75rem);
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23198754' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right calc(0.375em + 0.1875rem) center;
-            background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
-        }
-        
-        .select2-container--bootstrap-5 .select2-selection {
-            border: 1.5px solid var(--premium-input-border);
-            border-radius: 8px;
-            min-height: 45px;
-            padding-top: 5px;
-            background-color: #fbfcfd;
-        }
-        .select2-container--bootstrap-5.select2-container--focus .select2-selection {
-            border-color: var(--premium-primary-light);
-            box-shadow: 0 0 0 4px var(--premium-input-focus);
-            background-color: #fff;
-        }
-        
-
-
-        /* Select2 Bootstrap 5 Theme Adjustments */
-        .select2-container--bootstrap-5 .select2-selection {
-            border: 1px solid #ced4da;
-            border-radius: 0.375rem;
-            min-height: calc(2.25rem + 2px);
-        }
-        .select2-container--bootstrap-5.select2-container--focus .select2-selection {
-            border-color: #86b7fe;
-            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-        }
-    </style>
+    <style></style>
     <!-- Select2 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
@@ -286,7 +243,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="premium-section-header">
-                                        <i class="fas fa-id-card me-2"></i> Customer Details
+                                        <i class="fas fa-id-card"></i> Customer Details
                                     </div>
 
                                         <!-- Business Name Field -->
@@ -316,7 +273,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                                 <div class="col-md-6">
                                     <div class="premium-section-header">
-                                        <i class="fas fa-address-book me-2"></i> Contact Details
+                                        <i class="fas fa-address-book"></i> Contact Details
                                     </div>
 
                                         <!-- Phone Field -->
@@ -338,12 +295,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 </div>
                                 
                                 <div class="row mt-4 pt-3 border-top">
-                                    <div class="col-12 d-flex justify-content-end gap-3">
+                                    <div class="col-12 d-flex justify-content-end gap-2">
                                         <a href="<?= BASE_URL ?>modules/customers/customer_list.php" class="back-btn text-decoration-none d-flex align-items-center">
-                                            <i class="fas fa-arrow-left me-2"></i> Cancel
+                                            <i class="fas fa-arrow-left me-1"></i> Cancel
                                         </a>
                                         <button type="submit" class="save-btn" id="submitBtn">
-                                            <i class="fas fa-save me-2"></i> Add Customer
+                                            <i class="fas fa-save me-1"></i> Add Customer
                                         </button>
                                     </div>
                                 </div>

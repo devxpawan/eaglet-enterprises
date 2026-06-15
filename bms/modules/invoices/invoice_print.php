@@ -203,12 +203,6 @@ if ($invoice_id > 0) {
         }
 
         @media print {
-    * {
-        -webkit-print-color-adjust: exact !important; /* Chrome, Safari */
-        print-color-adjust: exact !important; /* Modern browsers */
-        color-adjust: exact !important; /* Legacy support */
-    }
-
     @page {
         size: A4;
         margin: 0.4in;
@@ -230,14 +224,13 @@ if ($invoice_id > 0) {
     }
 
     .table thead tr {
-        background: linear-gradient(to right, #4CAF50, #17a2b8) !important;
+        background: #4a4a4a !important;
         color: white !important;
     }
 
     .btn {
-        background-color: inherit !important; /* Ensures buttons are visible */
-        color: black !important;
         border: 1px solid #000 !important;
+        color: black !important;
     }
 
     .d-md-flex {

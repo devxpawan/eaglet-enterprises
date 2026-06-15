@@ -103,15 +103,7 @@ if (!isset($_SESSION['csrf_token'])) {
     <!-- Select2 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
-    <style>
-        body {
-            background-color: #f8fafc;
-        }
-
-        .form-floating .form-control {
-            height: calc(3.5rem + 2px);
-        }
-    </style>
+    <style></style>
 </head>
 
 <body class="sb-nav-fixed">
@@ -152,7 +144,7 @@ if (!isset($_SESSION['csrf_token'])) {
                                 <!-- User Details Section -->
                                 <div class="col-md-6">
                                     <div class="premium-section-header">
-                                        <i class="fas fa-user-circle me-2"></i> User Details
+                                        <i class="fas fa-user-circle"></i> User Details
                                     </div>
 
                                         <!-- Name Field -->
@@ -208,7 +200,7 @@ if (!isset($_SESSION['csrf_token'])) {
                                     <!-- Additional Details Section -->
                                     <div class="col-md-6">
                                         <div class="premium-section-header">
-                                            <i class="fas fa-user-shield me-2"></i> Configuration Details
+                                            <i class="fas fa-user-shield"></i> Configuration Details
                                         </div>
                                         
                                         <!-- NIC Field -->
@@ -260,12 +252,12 @@ if (!isset($_SESSION['csrf_token'])) {
 
                                 <!-- Submit Buttons -->
                                 <div class="row mt-4 pt-3 border-top">
-                                    <div class="col-12 d-flex justify-content-end gap-3">
+                                    <div class="col-12 d-flex justify-content-end gap-2">
                                         <a href="<?= BASE_URL ?>modules/users/users.php" class="back-btn text-decoration-none d-flex align-items-center">
-                                            <i class="fas fa-arrow-left me-2"></i> Cancel
+                                            <i class="fas fa-arrow-left me-1"></i> Cancel
                                         </a>
                                         <button type="submit" class="save-btn" id="submitBtn" disabled>
-                                            <i class="fas fa-save me-2"></i> Save Changes
+                                            <i class="fas fa-save me-1"></i> Save Changes
                                         </button>
                                     </div>
                                 </div>

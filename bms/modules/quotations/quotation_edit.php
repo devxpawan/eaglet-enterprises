@@ -554,7 +554,7 @@ $result = $conn->query($sql);
                                         </thead>
                                         <tbody>
                                             <?php if (!empty($quotation_items)): ?>
-                                                <?php 
+                                                 <?php 
                                                 $itemIndex = 0;
                                                 foreach ($quotation_items as $item): 
                                                     $itemIndex++;
@@ -566,9 +566,11 @@ $result = $conn->query($sql);
                                                     $discount = $item['discount'] ?? 0;
                                                     $discount_type_item = $item['discount_type'] ?? 'flat';
                                                     $subtotal = $item['total_amount'] ?? 0;
+                                                    $quotation_item_id = $item['id'] ?? 0;
                                                 ?>
                                                 <tr>
                                                     <td class="text-center text-muted" style="font-size: 13px; font-weight: 500;"><?php echo $itemIndex; ?></td>
+                                                    <input type="hidden" name="quotation_item_id[]" value="<?php echo $quotation_item_id; ?>">
                                                     <td>
                                                         <select name="quotation_product[]" class="form-select product-select">
                                                             <option value="">-- Select Product --</option>
@@ -640,6 +642,7 @@ $result = $conn->query($sql);
                                             <?php else: ?>
                                                 <tr>
                                                     <td class="text-center text-muted" style="font-size: 13px; font-weight: 500;">1</td>
+                                                    <input type="hidden" name="quotation_item_id[]" value="0">
                                                     <td>
                                                         <select name="quotation_product[]" class="form-select product-select">
                                                             <option value="">-- Select Product --</option>
@@ -976,6 +979,24 @@ $result = $conn->query($sql);
                 const expDate = new Date(qDate);
                 expDate.setDate(expDate.getDate() + 14);
                 $('input[name="expiry_date"]').val(expDate.toISOString().split('T')[0]);
+            }
+        });
+
+        // Form submission validation - prevent submitting with empty products
+        $('#quotationForm').on('submit', function(e) {
+            let hasEmptyProduct = false;
+            $('#quotation_table tbody tr').each(function() {
+                const productVal = $(this).find('.product-select').val();
+                if (!productVal || productVal === '') {
+                    hasEmptyProduct = true;
+                    return false;
+                }
+            });
+
+            if (hasEmptyProduct) {
+                showToast('warning', 'Please select a product for all rows or remove empty rows.');
+                e.preventDefault();
+                return false;
             }
         });
     });

@@ -23,6 +23,154 @@ if (!isset($_SESSION['role_id']) || $_SESSION['role_id'] != 1) {
 require_once BASE_PATH . 'includes/db_connection.php';
 require_once BASE_PATH . 'includes/functions.php';
 
+function sendJsonResponse($data) {
+    header('Content-Type: application/json');
+    echo json_encode($data);
+    exit();
+}
+
+$requestAction = isset($_POST['action']) ? $_POST['action'] : (isset($_GET['action']) ? $_GET['action'] : '');
+
+if ($requestAction === 'list_positions') {
+    if (!isset($_SESSION['role_id']) || $_SESSION['role_id'] != 1) {
+        sendJsonResponse(['success' => false, 'message' => 'Access denied. Admin privileges required.']);
+    }
+
+    $positionsResult = $conn->query("SELECT id, name, description, status, created_at FROM positions ORDER BY status ASC, name ASC");
+    $positions = [];
+
+    if ($positionsResult) {
+        while ($position = $positionsResult->fetch_assoc()) {
+            $positions[] = $position;
+        }
+    }
+
+    sendJsonResponse(['success' => true, 'positions' => $positions]);
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($requestAction, ['add_position', 'update_position', 'toggle_position'], true)) {
+    if (!isset($_SESSION['role_id']) || $_SESSION['role_id'] != 1) {
+        sendJsonResponse(['success' => false, 'message' => 'Access denied. Admin privileges required.']);
+    }
+
+    try {
+        if ($requestAction === 'add_position') {
+            $name = trim($_POST['position_name'] ?? '');
+            $description = trim($_POST['position_description'] ?? '');
+
+            if ($name === '') {
+                sendJsonResponse(['success' => false, 'message' => 'Position name is required.']);
+            }
+
+            if (strlen($name) > 100) {
+                sendJsonResponse(['success' => false, 'message' => 'Position name must be 100 characters or less.']);
+            }
+
+            $duplicateStmt = $conn->prepare("SELECT id FROM positions WHERE name = ?");
+            $duplicateStmt->bind_param("s", $name);
+            $duplicateStmt->execute();
+            if ($duplicateStmt->get_result()->num_rows > 0) {
+                $duplicateStmt->close();
+                sendJsonResponse(['success' => false, 'message' => 'Position already exists.']);
+            }
+            $duplicateStmt->close();
+
+            $stmt = $conn->prepare("INSERT INTO positions (name, description, status) VALUES (?, ?, 'active')");
+            $stmt->bind_param("ss", $name, $description);
+            $stmt->execute();
+            $positionId = $conn->insert_id;
+            $stmt->close();
+
+            sendJsonResponse([
+                'success' => true,
+                'message' => 'Position added successfully.',
+                'position' => [
+                    'id' => $positionId,
+                    'name' => $name,
+                    'description' => $description,
+                    'status' => 'active'
+                ]
+            ]);
+        }
+
+        if ($requestAction === 'update_position') {
+            $positionId = intval($_POST['position_id'] ?? 0);
+            $name = trim($_POST['position_name'] ?? '');
+            $description = trim($_POST['position_description'] ?? '');
+
+            if ($positionId <= 0) {
+                sendJsonResponse(['success' => false, 'message' => 'Invalid position.']);
+            }
+
+            if ($name === '') {
+                sendJsonResponse(['success' => false, 'message' => 'Position name is required.']);
+            }
+
+            if (strlen($name) > 100) {
+                sendJsonResponse(['success' => false, 'message' => 'Position name must be 100 characters or less.']);
+            }
+
+            $checkStmt = $conn->prepare("SELECT id FROM positions WHERE id = ?");
+            $checkStmt->bind_param("i", $positionId);
+            $checkStmt->execute();
+            if ($checkStmt->get_result()->num_rows === 0) {
+                $checkStmt->close();
+                sendJsonResponse(['success' => false, 'message' => 'Position not found.']);
+            }
+            $checkStmt->close();
+
+            $duplicateStmt = $conn->prepare("SELECT id FROM positions WHERE name = ? AND id != ?");
+            $duplicateStmt->bind_param("si", $name, $positionId);
+            $duplicateStmt->execute();
+            if ($duplicateStmt->get_result()->num_rows > 0) {
+                $duplicateStmt->close();
+                sendJsonResponse(['success' => false, 'message' => 'Position already exists.']);
+            }
+            $duplicateStmt->close();
+
+            $stmt = $conn->prepare("UPDATE positions SET name = ?, description = ? WHERE id = ?");
+            $stmt->bind_param("ssi", $name, $description, $positionId);
+            $stmt->execute();
+            $stmt->close();
+
+            sendJsonResponse([
+                'success' => true,
+                'message' => 'Position updated successfully.',
+                'position' => [
+                    'id' => $positionId,
+                    'name' => $name,
+                    'description' => $description
+                ]
+            ]);
+        }
+
+        if ($requestAction === 'toggle_position') {
+            $positionId = intval($_POST['position_id'] ?? 0);
+            $newStatus = $_POST['new_status'] ?? '';
+
+            if ($positionId <= 0 || !in_array($newStatus, ['active', 'inactive'], true)) {
+                sendJsonResponse(['success' => false, 'message' => 'Invalid position status.']);
+            }
+
+            $stmt = $conn->prepare("UPDATE positions SET status = ? WHERE id = ?");
+            $stmt->bind_param("si", $newStatus, $positionId);
+            $stmt->execute();
+            $stmt->close();
+
+            sendJsonResponse([
+                'success' => true,
+                'message' => 'Position status updated successfully.',
+                'position' => [
+                    'id' => $positionId,
+                    'status' => $newStatus
+                ]
+            ]);
+        }
+    } catch (Exception $e) {
+        sendJsonResponse(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
+    }
+}
+
         // Handle user status update via AJAX if it's a POST request
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'update_status') {
             $response = ['success' => false, 'message' => 'Unknown error'];
@@ -236,6 +384,9 @@ $result = $conn->query($sql);
                         <h5>Users List</h5>
                         <p class="text-muted">Manage and review all system users</p>
                     </div>
+                    <button type="button" class="btn btn-primary btn-manage-positions" id="openPositionManagementModal">
+                        <i class="fas fa-briefcase me-1"></i> Manage Positions
+                    </button>
                 </div>
 
                     <div class="card invoice-card mb-4">
@@ -428,6 +579,67 @@ $result = $conn->query($sql);
         </div>
     </div>
 
+    <!-- Position Management Modal -->
+    <div class="modal fade" id="positionManagementModal" tabindex="-1" aria-labelledby="positionManagementModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div>
+                        <h5 class="modal-title" id="positionManagementModalLabel"><i class="fas fa-briefcase me-2"></i>Position Management</h5>
+                        <p class="text-muted small mb-0">Add, edit, activate, or deactivate user positions.</p>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="positionForm" class="mb-4">
+                        <input type="hidden" id="positionId" name="position_id" value="">
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-5">
+                                <label for="positionName" class="form-label">Position Name</label>
+                                <input type="text" id="positionName" name="position_name" class="form-control" maxlength="100" placeholder="e.g. Manager" required>
+                            </div>
+                            <div class="col-md-5">
+                                <label for="positionDescription" class="form-label">Description</label>
+                                <input type="text" id="positionDescription" name="position_description" class="form-control" placeholder="Optional description">
+                            </div>
+                            <div class="col-md-2 d-flex gap-2">
+                                <button type="submit" class="btn btn-primary flex-fill" id="savePositionBtn">
+                                    <i class="fas fa-plus me-1"></i> Add
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary" id="cancelPositionFormBtn">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-text position-form-status" id="positionFormStatus">Add a new position.</div>
+                    </form>
+
+                    <div class="table-responsive">
+                        <table class="table table-users position-modal-table">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Position</th>
+                                    <th>Description</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="positionsTableBody">
+                                <tr>
+                                    <td colspan="4" class="text-center py-4">
+                                        <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 
     <script src="<?= BASE_URL ?>js/scripts.js"></script>
@@ -501,6 +713,254 @@ $result = $conn->query($sql);
             });
         });
 
+        const positionModal = new bootstrap.Modal(document.getElementById('positionManagementModal'));
+        const positionForm = document.getElementById('positionForm');
+        const positionsTableBody = document.getElementById('positionsTableBody');
+        const positionName = document.getElementById('positionName');
+        const positionDescription = document.getElementById('positionDescription');
+        const positionId = document.getElementById('positionId');
+        const savePositionBtn = document.getElementById('savePositionBtn');
+        const positionFormStatus = document.getElementById('positionFormStatus');
+
+        function resetPositionForm() {
+            positionForm.reset();
+            positionId.value = '';
+            savePositionBtn.innerHTML = '<i class="fas fa-plus me-1"></i> Add';
+            positionFormStatus.textContent = 'Add a new position.';
+        }
+
+        function showPositionLoading() {
+            positionsTableBody.innerHTML = `
+                <tr>
+                    <td colspan="4" class="text-center py-4">
+                        <div class="spinner-border spinner-border-sm text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
+
+        function showPositionMessage(message, isError = false) {
+            positionsTableBody.innerHTML = '';
+
+            const row = document.createElement('tr');
+            const cell = document.createElement('td');
+            cell.colSpan = 4;
+            cell.className = `text-center py-4 ${isError ? 'text-danger' : 'text-muted'}`;
+            cell.textContent = message;
+            row.appendChild(cell);
+            positionsTableBody.appendChild(row);
+        }
+
+        function updatePositionFilterOptions(positions) {
+            const filterSelect = document.querySelector('select[name="filter_position"]');
+            if (!filterSelect) return;
+
+            const currentValue = filterSelect.value;
+            filterSelect.innerHTML = '';
+
+            const allOption = document.createElement('option');
+            allOption.value = '0';
+            allOption.textContent = 'All';
+            filterSelect.appendChild(allOption);
+
+            positions.forEach(position => {
+                const option = document.createElement('option');
+                option.value = position.id;
+                option.textContent = position.name;
+                filterSelect.appendChild(option);
+            });
+
+            if (Array.from(filterSelect.options).some(option => option.value === currentValue)) {
+                filterSelect.value = currentValue;
+            }
+        }
+
+        async function fetchPositions() {
+            showPositionLoading();
+
+            try {
+                const response = await fetch('<?= BASE_URL ?>modules/users/users.php?action=list_positions', {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                const data = await response.json();
+
+                if (!data.success) {
+                    throw new Error(data.message || 'Failed to load positions.');
+                }
+
+                renderPositions(data.positions || []);
+                updatePositionFilterOptions(data.positions || []);
+            } catch (error) {
+                showPositionMessage(error.message || 'Failed to load positions.', true);
+                showToast('error', error.message || 'Failed to load positions.');
+            }
+        }
+
+        function renderPositions(positions) {
+            positionsTableBody.innerHTML = '';
+
+            if (!positions.length) {
+                showPositionMessage('No positions found.');
+                return;
+            }
+
+            positions.forEach(position => {
+                const row = document.createElement('tr');
+
+                const nameCell = document.createElement('td');
+                const nameText = document.createElement('strong');
+                nameText.textContent = position.name;
+                nameCell.appendChild(nameText);
+
+                const descriptionCell = document.createElement('td');
+                descriptionCell.textContent = position.description || '—';
+
+                const statusCell = document.createElement('td');
+                const statusBadge = document.createElement('span');
+                statusBadge.className = `badge-soft ${position.status === 'active' ? 'badge-soft-success' : 'badge-soft-danger'}`;
+                statusBadge.textContent = position.status === 'active' ? 'Active' : 'Inactive';
+                statusCell.appendChild(statusBadge);
+
+                const actionCell = document.createElement('td');
+                actionCell.className = 'position-actions';
+
+                const editButton = document.createElement('button');
+                editButton.type = 'button';
+                editButton.className = 'btn btn-edit btn-sm';
+                editButton.title = 'Edit Position';
+                editButton.innerHTML = '<i class="fas fa-pen"></i>';
+                editButton.addEventListener('click', () => {
+                    positionId.value = position.id;
+                    positionName.value = position.name;
+                    positionDescription.value = position.description || '';
+                    savePositionBtn.innerHTML = '<i class="fas fa-save me-1"></i> Update';
+                    positionFormStatus.textContent = 'Editing position.';
+                    positionName.focus();
+                });
+
+                const toggleButton = document.createElement('button');
+                const nextStatus = position.status === 'active' ? 'inactive' : 'active';
+                toggleButton.type = 'button';
+                toggleButton.className = `btn ${nextStatus === 'active' ? 'btn-activate' : 'btn-deactivate'} btn-sm`;
+                toggleButton.title = nextStatus === 'active' ? 'Activate Position' : 'Deactivate Position';
+                toggleButton.innerHTML = `<i class="fas ${nextStatus === 'active' ? 'fa-check' : 'fa-ban'}"></i>`;
+                toggleButton.addEventListener('click', () => {
+                    const actionText = nextStatus === 'active' ? 'activate' : 'deactivate';
+                    Swal.fire({
+                        title: `${nextStatus === 'active' ? 'Activate' : 'Deactivate'} position?`,
+                        html: `You are about to <strong>${actionText}</strong> <strong>${position.name}</strong>.`,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: nextStatus === 'active' ? '#079455' : '#d33',
+                        cancelButtonColor: '#6c757d',
+                        confirmButtonText: `Yes, ${actionText} position`,
+                        cancelButtonText: 'Cancel'
+                    }).then(async (result) => {
+                        if (!result.isConfirmed) return;
+
+                        Swal.fire({
+                            title: 'Processing...',
+                            allowOutsideClick: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
+
+                        try {
+                            const data = await submitPositionForm('toggle_position', {
+                                position_id: position.id,
+                                new_status: nextStatus
+                            });
+                            // Close the processing Swal before showing the toast
+                            Swal.close();
+                            await fetchPositions();
+                            showToast('success', data.message);
+                        } catch (error) {
+                            showToast('error', error.message || 'Failed to update position status.');
+                        }
+                    });
+                });
+
+                actionCell.append(editButton, toggleButton);
+                row.append(nameCell, descriptionCell, statusCell, actionCell);
+                positionsTableBody.appendChild(row);
+            });
+        }
+
+        async function submitPositionForm(action, payload) {
+            const formData = new FormData();
+            formData.append('action', action);
+
+            Object.keys(payload).forEach(key => {
+                formData.append(key, payload[key]);
+            });
+
+            const response = await fetch('<?= BASE_URL ?>modules/users/users.php', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await response.json();
+
+            if (!data.success) {
+                throw new Error(data.message || 'Failed to save position.');
+            }
+
+            return data;
+        }
+
+        document.getElementById('openPositionManagementModal').addEventListener('click', () => {
+            resetPositionForm();
+            positionModal.show();
+            fetchPositions();
+        });
+
+        document.getElementById('positionManagementModal').addEventListener('hidden.bs.modal', resetPositionForm);
+
+        document.getElementById('cancelPositionFormBtn').addEventListener('click', resetPositionForm);
+
+        positionForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            if (!positionName.value.trim()) {
+                showToast('warning', 'Position name is required.');
+                positionName.focus();
+                return;
+            }
+
+            const action = positionId.value ? 'update_position' : 'add_position';
+            const payload = {
+                position_name: positionName.value.trim(),
+                position_description: positionDescription.value.trim()
+            };
+
+            if (positionId.value) {
+                payload.position_id = positionId.value;
+            }
+
+            Swal.fire({
+                title: 'Processing...',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            try {
+                const data = await submitPositionForm(action, payload);
+                // Close the processing Swal before showing the toast
+                Swal.close();
+                resetPositionForm();
+                await fetchPositions();
+                showToast('success', data.message);
+            } catch (error) {
+                showToast('error', error.message || 'Failed to save position.');
+            }
+        });
+
         // Status Toggle Handling
         const toggleStatusButtons = document.querySelectorAll('.toggle-status-btn');
         const currentUserId = <?php echo $_SESSION['user_id']; ?>;
@@ -555,6 +1015,9 @@ $result = $conn->query($sql);
                         })
                         .then(response => response.json())
                         .then(data => {
+                            // Close the processing Swal first
+                            Swal.close();
+
                             if (data.success) {
                                 // Update button and badge
                                 const userRow = document.getElementById(`user-row-${userId}`);
@@ -588,6 +1051,8 @@ $result = $conn->query($sql);
                             }
                         })
                         .catch(error => {
+                            // Close the processing Swal first
+                            Swal.close();
                             console.error('Error:', error);
                             showToast('error', 'An error occurred while updating user status');
                         });

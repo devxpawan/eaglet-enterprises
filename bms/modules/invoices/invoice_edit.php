@@ -659,9 +659,10 @@ $invoice_vat_pct = ($invoice_net > 0) ? ($invoice_vat / $invoice_net * 100) : 0;
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <?php foreach ($invoice_items as $index => $item): ?>
+                                             <?php foreach ($invoice_items as $index => $item): ?>
                                                 <tr>
                                                     <td class="text-center text-muted" style="font-size: 13px; font-weight: 500;"><?= $index + 1 ?></td>
+                                                    <input type="hidden" name="invoice_item_id[]" value="<?= $item['item_id'] ?? 0 ?>">
                                                     <td>
                                                         <select name="invoice_product[]" class="form-select product-select">
                                                             <option value="">-- Select Product --</option>

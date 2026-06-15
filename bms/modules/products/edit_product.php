@@ -127,11 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <?php require_once BASE_PATH . 'includes/header.php'; ?>
     <title>Edit Product</title>
     <link href="<?= BASE_URL ?>css/forms.css" rel="stylesheet" />
-    <style>
-        body {
-            background-color: #f8fafc;
-        }
-    </style>
+    <style></style>
 </head>
 
 <body class="sb-nav-fixed">
@@ -235,9 +231,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                                     <!-- Submit Button -->
                                     <div class="row mt-4 pt-3 border-top">
-                                        <div class="col-12 d-flex justify-content-end gap-3">
+                                        <div class="col-12 d-flex justify-content-end gap-2">
                                             <a href="<?= BASE_URL ?>modules/products/product_list.php" class="back-btn text-decoration-none d-flex align-items-center">
-                                                <i class="fas fa-arrow-left me-2"></i> Cancel
+                                                <i class="fas fa-arrow-left me-1"></i> Cancel
                                             </a>
                                             <button type="submit" class="save-btn" id="submitBtn" disabled>
                                                 <i class="fas fa-save"></i> Update Product

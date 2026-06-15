@@ -433,14 +433,6 @@ $business_name = isset($_POST['business_name']) ? htmlspecialchars($_POST['busin
     <title>Edit Customer</title>
     <link href="<?= BASE_URL ?>css/forms.css" rel="stylesheet" />
     <style>
-        body {
-            background-color: #f8fafc;
-        }
-
-        .form-floating .form-control {
-            height: calc(3.5rem + 2px);
-        }
-        
         .alert {
             border-radius: 5px;
             border-left-width: 5px;
@@ -452,22 +444,6 @@ $business_name = isset($_POST['business_name']) ? htmlspecialchars($_POST['busin
         
         .alert-danger {
             border-left-color: #dc3545;
-        }
-        
-        .form-floating label {
-            opacity: 0.65;
-        }
-        .select2-container--bootstrap-5 .select2-selection {
-            border: 1.5px solid var(--premium-input-border);
-            border-radius: 8px;
-            min-height: 45px;
-            padding-top: 5px;
-            background-color: #fbfcfd;
-        }
-        .select2-container--bootstrap-5.select2-container--focus .select2-selection {
-            border-color: var(--premium-primary-light);
-            box-shadow: 0 0 0 4px var(--premium-input-focus);
-            background-color: #fff;
         }
         
         /* Edit history styles */
@@ -520,17 +496,6 @@ $business_name = isset($_POST['business_name']) ? htmlspecialchars($_POST['busin
             color: #6c757d;
             margin-top: 8px;
         }
-
-        /* Select2 Bootstrap 5 Theme Adjustments */
-        .select2-container--bootstrap-5 .select2-selection {
-            border: 1px solid #ced4da;
-            border-radius: 0.375rem;
-            min-height: calc(2.25rem + 2px);
-        }
-        .select2-container--bootstrap-5.select2-container--focus .select2-selection {
-            border-color: #86b7fe;
-            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-        }
     </style>
     <!-- Select2 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
@@ -581,7 +546,7 @@ $business_name = isset($_POST['business_name']) ? htmlspecialchars($_POST['busin
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="premium-section-header">
-                                            <i class="fas fa-id-card me-2"></i> Customer Details
+                                            <i class="fas fa-id-card"></i> Customer Details
                                         </div>
 
                                         <!-- Business Name Field -->
@@ -611,7 +576,7 @@ $business_name = isset($_POST['business_name']) ? htmlspecialchars($_POST['busin
 
                                     <div class="col-md-6">
                                         <div class="premium-section-header">
-                                            <i class="fas fa-address-book me-2"></i> Contact Details
+                                            <i class="fas fa-address-book"></i> Contact Details
                                         </div>
 
                                         <!-- Phone Field -->
@@ -634,12 +599,12 @@ $business_name = isset($_POST['business_name']) ? htmlspecialchars($_POST['busin
                                 
                                 <!-- Submit Button -->
                                 <div class="row mt-4 pt-3 border-top">
-                                    <div class="col-12 d-flex justify-content-end gap-3">
+                                    <div class="col-12 d-flex justify-content-end gap-2">
                                         <a href="<?= BASE_URL ?>modules/customers/customer_list.php" class="back-btn text-decoration-none d-flex align-items-center">
-                                            <i class="fas fa-arrow-left me-2"></i> Cancel
+                                            <i class="fas fa-arrow-left me-1"></i> Cancel
                                         </a>
                                         <button type="submit" class="save-btn" id="submitBtn" disabled>
-                                            <i class="fas fa-save me-2"></i> Update Customer
+                                            <i class="fas fa-save me-1"></i> Update Customer
                                         </button>
                                     </div>
                                 </div>

@@ -90,6 +90,17 @@ $result = $conn->query($sql);
                     </div>
                 </div>
                     
+                <div class="alert-container">
+                    <?php if (isset($_SESSION['quotation_error'])): ?>
+                        <script>document.addEventListener('DOMContentLoaded', function() { showToast('error', '<?php echo addslashes($_SESSION["quotation_error"]); ?>'); });</script>
+                        <?php unset($_SESSION['quotation_error']); ?>
+                    <?php endif; ?>
+                    <?php if (isset($_SESSION['quotation_success'])): ?>
+                        <script>document.addEventListener('DOMContentLoaded', function() { showToast('success', '<?php echo addslashes($_SESSION["quotation_success"]); ?>'); });</script>
+                        <?php unset($_SESSION['quotation_success']); ?>
+                    <?php endif; ?>
+                </div>
+
                     <div class="card quotation-card">
                         <div class="card-body">
                             <div class="quotation-filter-bar">

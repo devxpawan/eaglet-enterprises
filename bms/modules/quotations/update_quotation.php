@@ -16,7 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             throw new Exception("Quotation ID is required.");
         }
         if (empty($_POST['customer_name'])) { throw new Exception("Customer name is required."); }
-        if (empty($_POST['quotation_product'])) { throw new Exception("At least one product must be added."); }
+        if (empty($_POST['quotation_product']) || count(array_filter($_POST['quotation_product'], function($v) { return trim($v) !== ''; })) === 0) { throw new Exception("At least one product must be added."); }
 
         $quotation_id = (int)$_POST['quotation_id'];
         
@@ -74,10 +74,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $discounts = $_POST['quotation_product_discount'] ?? [];
         $discount_types = $_POST['quotation_product_discount_type'] ?? [];
         $descriptions = $_POST['quotation_product_description'] ?? [];
+        $item_ids = $_POST['quotation_item_id'] ?? [];
         
         $subtotal = 0;
         $total_discount = 0;
-        $items_to_insert = [];
+        $items_to_process = [];
         
         foreach ($products as $key => $product_val) {
             $price = floatval($prices[$key] ?? 0);
@@ -85,6 +86,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $discount_val = floatval($discounts[$key] ?? 0);
             $discount_type = $discount_types[$key] ?? 'flat';
             $desc = $descriptions[$key] ?? '';
+            $item_id = intval($item_ids[$key] ?? 0);
             
             $row_total = $price * $qty;
             
@@ -100,7 +102,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $product_id = is_numeric($product_val) ? intval($product_val) : null;
             $product_name = is_numeric($product_val) ? null : $product_val;
             
-            $items_to_insert[] = [
+            $items_to_process[] = [
+                'item_id' => $item_id,
                 'product_id' => $product_id,
                 'product_name' => $product_name,
                 'price' => $price,
@@ -132,20 +135,58 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->bind_param("issddddddsi", $customer_id, $q_date, $e_date, $subject, $subtotal, $total_discount, $vat_amount, $total_amount, $notes, $currency, $quotation_id);
         $stmt->execute();
         
-        // Delete existing items and re-insert
-        $deleteItemsSql = "DELETE FROM quotation_items WHERE quotation_id = ?";
-        $stmt = $conn->prepare($deleteItemsSql);
-        $stmt->bind_param("i", $quotation_id);
-        $stmt->execute();
-        
-        // Insert updated items
-        $insertItemSql = "INSERT INTO quotation_items (quotation_id, product_id, product_name, quantity, description, price, discount, discount_type, total_amount) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        $stmt = $conn->prepare($insertItemSql);
-        
-        foreach ($items_to_insert as $item) {
-            $stmt->bind_param("iisisddsd", $quotation_id, $item['product_id'], $item['product_name'], $item['qty'], $item['description'], $item['price'], $item['discount'], $item['discount_type'], $item['total']);
-            $stmt->execute();
+        // Get existing item IDs for this quotation
+        $existingStmt = $conn->prepare("SELECT id FROM quotation_items WHERE quotation_id = ?");
+        $existingStmt->bind_param("i", $quotation_id);
+        $existingStmt->execute();
+        $existingResult = $existingStmt->get_result();
+        $existingIds = [];
+        while ($row = $existingResult->fetch_assoc()) {
+            $existingIds[] = $row['id'];
         }
+        $existingStmt->close();
+        
+        // Collect submitted item IDs (only non-zero = existing items to keep)
+        $submittedIds = [];
+        foreach ($items_to_process as $item) {
+            if ($item['item_id'] > 0) {
+                $submittedIds[] = $item['item_id'];
+            }
+        }
+        
+        // Delete items that were removed from the form (in DB but not in submitted IDs)
+        if (!empty($existingIds)) {
+            $idsToDelete = array_diff($existingIds, $submittedIds);
+            if (!empty($idsToDelete)) {
+                $placeholders = implode(',', array_fill(0, count($idsToDelete), '?'));
+                $deleteStmt = $conn->prepare("DELETE FROM quotation_items WHERE id IN ($placeholders)");
+                $deleteStmt->bind_param(str_repeat('i', count($idsToDelete)), ...$idsToDelete);
+                $deleteStmt->execute();
+                $deleteStmt->close();
+            }
+        }
+        
+        // Update existing items and insert new ones
+        $updateItemSql = "UPDATE quotation_items SET product_id = ?, product_name = ?, quantity = ?, description = ?, price = ?, discount = ?, discount_type = ?, total_amount = ? WHERE id = ?";
+        $insertItemSql = "INSERT INTO quotation_items (quotation_id, product_id, product_name, quantity, description, price, discount, discount_type, total_amount) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        
+        $updateStmt = $conn->prepare($updateItemSql);
+        $insertStmt = $conn->prepare($insertItemSql);
+        
+        foreach ($items_to_process as $item) {
+            if ($item['item_id'] > 0) {
+                // Update existing item
+                $updateStmt->bind_param("isisddsdi", $item['product_id'], $item['product_name'], $item['qty'], $item['description'], $item['price'], $item['discount'], $item['discount_type'], $item['total'], $item['item_id']);
+                $updateStmt->execute();
+            } else {
+                // Insert new item
+                $insertStmt->bind_param("iisisddsd", $quotation_id, $item['product_id'], $item['product_name'], $item['qty'], $item['description'], $item['price'], $item['discount'], $item['discount_type'], $item['total']);
+                $insertStmt->execute();
+            }
+        }
+        
+        $updateStmt->close();
+        $insertStmt->close();
         
         $conn->commit();
         
