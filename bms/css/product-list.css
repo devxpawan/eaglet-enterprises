@@ -1,0 +1,479 @@
+/* ============================================
+   Product & Package List Styles
+   (Invoice-UI inspired redesign)
+   ============================================ */
+
+/* ---------- Page Header ---------- */
+.page-header {
+    background: linear-gradient(135deg, #f9fafb 0%, #f3f4ff 100%);
+    border-bottom: 1px solid #eaecf0;
+    padding: 20px 32px;
+    margin: 0 0 24px 0;
+}
+.page-header h5 { font-size: 22px; font-weight: 700; color: #101828; letter-spacing: -0.02em; margin-bottom: 2px; }
+.page-header .text-muted { font-size: 14px; color: #667085; margin: 0; }
+
+.page-header .btn-add-product {
+    border-radius: 8px;
+    padding: 8px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    background: #3B82F6;
+    border-color: #3B82F6;
+    color: #fff;
+    transition: all 0.15s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.page-header .btn-add-product:hover {
+    background: #2563EB;
+    border-color: #2563EB;
+    box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
+    transform: translateY(-1px);
+    color: #fff;
+}
+
+/* ---------- Filter Bar ---------- */
+.invoice-filter-bar {
+    background: #f9fafb;
+    border: 1px solid #eaecf0;
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+}
+
+.invoice-filter-bar .form-control {
+    border-radius: 8px;
+    border-color: #d0d5dd;
+    font-size: 14px;
+    color: #101828;
+    padding: 8px 12px;
+    height: 40px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.invoice-filter-bar .form-control:focus {
+    border-color: #3B82F6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+}
+
+.invoice-filter-bar .form-control:hover { border-color: #98a2b3; }
+
+.invoice-filter-bar .btn-filter {
+    border-radius: 8px;
+    padding: 8px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    background: #3B82F6;
+    border-color: #3B82F6;
+    color: #fff;
+    transition: all 0.15s;
+}
+
+.invoice-filter-bar .btn-filter:hover {
+    background: #2563EB;
+    border-color: #2563EB;
+    box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
+    transform: translateY(-1px);
+    color: #fff;
+}
+
+.invoice-filter-bar .btn-clear {
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #344054;
+    border-color: #d0d5dd;
+    background: #fff;
+    transition: all 0.15s;
+}
+
+.invoice-filter-bar .btn-clear:hover {
+    background: #f9fafb;
+    border-color: #98a2b3;
+    color: #101828;
+}
+
+.invoice-filter-bar .form-select {
+    border-radius: 8px;
+    border-color: #d0d5dd;
+    padding: 8px 12px;
+    font-size: 14px;
+    height: 40px;
+    cursor: pointer;
+    background-color: #fff;
+}
+
+.invoice-filter-bar .form-select:focus {
+    border-color: #3B82F6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+}
+
+.invoice-filter-bar .entries-label {
+    font-size: 14px;
+    color: #667085;
+    white-space: nowrap;
+    font-weight: 500;
+}
+
+/* ---------- Card Container ---------- */
+.product-card {
+    border: 1px solid #eaecf0;
+    border-radius: 12px;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+    overflow: hidden;
+    background: #fff;
+}
+
+.product-card .card-body {
+    padding: 20px 24px;
+}
+
+.product-card .section-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #101828;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #eaecf0;
+    letter-spacing: -0.01em;
+}
+
+/* ---------- Enhanced Table ---------- */
+.table-product {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.table-product thead th {
+    background: #0b3354;
+    color: #FFFFFF;
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 10px 16px;
+    white-space: nowrap;
+}
+
+.table-product tbody tr { transition: background 0.1s; }
+
+.table-product tbody td {
+    padding: 12px 16px;
+    font-size: 14px;
+    color: #344054;
+    border-bottom: 1px solid #f2f4f7;
+    vertical-align: middle;
+}
+
+.table-product tbody tr:last-child td { border-bottom: none; }
+
+.table-product tbody tr:hover { background: #f9fafb; }
+
+/* ---------- Soft Badges ---------- */
+.badge-soft {
+    display: inline-block;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 20px;
+    letter-spacing: 0.01em;
+}
+
+.badge-soft-success {
+    background: #ecfdf3;
+    color: #067647;
+    border: 1px solid #abf0d5;
+}
+
+.badge-soft-danger {
+    background: #fef3f2;
+    color: #b42318;
+    border: 1px solid #fecdca;
+}
+
+.badge-soft-warning {
+    background: #fffaeb;
+    color: #b54708;
+    border: 1px solid #fedf89;
+}
+
+.badge-soft-info {
+    background: #eef4ff;
+    color: #3538cd;
+    border: 1px solid #c7d7fe;
+}
+
+.badge-soft-secondary {
+    background: #f2f4f7;
+    color: #344054;
+    border: 1px solid #eaecf0;
+}
+
+.badge-soft-draft {
+    background: #f2f4f7;
+    color: #344054;
+    border: 1px solid #eaecf0;
+}
+
+/* ---------- Action Buttons ---------- */
+.action-btn-group .btn {
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.15s ease;
+    border: 1px solid #d0d5dd;
+    background: #fff;
+}
+
+.action-btn-group .btn-view { color: #3B82F6; }
+
+.action-btn-group .btn-view:hover {
+    background: #f5f5ff;
+    border-color: #3B82F6;
+    color: #2563EB;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(59, 130, 246, 0.2);
+}
+
+.action-btn-group .btn-edit { color: #f59e0b; }
+
+.action-btn-group .btn-edit:hover {
+    background: #fffbeb;
+    border-color: #f59e0b;
+    color: #d97706;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(245, 158, 11, 0.2);
+}
+
+.action-btn-group .btn-deactivate { color: #f04438; }
+
+.action-btn-group .btn-deactivate:hover {
+    background: #fffbfa;
+    border-color: #f04438;
+    color: #d92d20;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(240, 68, 56, 0.2);
+}
+
+.action-btn-group .btn-activate { color: #079455; }
+
+.action-btn-group .btn-activate:hover {
+    background: #f6fef9;
+    border-color: #079455;
+    color: #067647;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(7, 148, 85, 0.2);
+}
+
+.action-btn-group .btn[title] { position: relative; }
+
+/* ---------- Pagination ---------- */
+.pagination { gap: 4px; }
+
+.pagination .page-link {
+    border: 1px solid #d0d5dd;
+    border-radius: 8px;
+    padding: 8px 14px;
+    color: #344054;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.15s ease;
+    background: #fff;
+}
+
+.pagination .page-link:hover {
+    background: #f9fafb;
+    border-color: #98a2b3;
+    color: #101828;
+}
+
+.pagination .page-item.active .page-link {
+    background: #3B82F6;
+    border-color: #3B82F6;
+    color: #fff;
+}
+
+.pagination .page-item.active .page-link:hover {
+    background: #2563EB;
+    border-color: #2563EB;
+}
+
+.pagination .page-item.disabled .page-link {
+    background: #f9fafb;
+    color: #d0d5dd;
+    border-color: #eaecf0;
+}
+
+/* ---------- Entries Info ---------- */
+.entries-info {
+    font-size: 14px;
+    color: #667085;
+    font-weight: 500;
+}
+
+.search-count {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #0B5394;
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 8px;
+    white-space: nowrap;
+    margin-bottom: 5px;
+}
+
+/* ---------- Product-specific tweaks ---------- */
+.product-name {
+    font-weight: 600;
+    color: #101828;
+}
+
+.product-id {
+    color: #98a2b3;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.product-desc {
+    color: #667085;
+    font-size: 13px;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+}
+
+.product-price {
+    font-weight: 700;
+    color: #101828;
+    font-size: 14px;
+}
+
+.product-currency {
+    color: #667085;
+    font-size: 12px;
+    font-weight: 600;
+    margin-left: 2px;
+}
+
+/* ---------- Empty State ---------- */
+.empty-state {
+    padding: 48px 24px;
+    text-align: center;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    color: #d0d5dd;
+    margin-bottom: 12px;
+    display: block;
+}
+
+.empty-state p {
+    color: #98a2b3;
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0;
+}
+
+/* ---------- SweetAlert Overrides ---------- */
+.swal2-popup {
+    font-size: 0.9rem !important;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 768px) {
+    .page-header { padding: 16px 20px; }
+    .invoice-filter-bar { padding: 12px 16px; }
+    .product-card .card-body { padding: 16px; }
+    .table-product thead th,
+    .table-product tbody td { padding: 10px 12px; font-size: 13px; }
+    .action-btn-group .btn { width: 30px; height: 30px; font-size: 12px; }
+}
+
+/* ---------- Modal Styling ---------- */
+.modal-header.bg-light {
+    background: #f9fafb !important;
+    border-bottom: 1px solid #eaecf0;
+    padding: 16px 20px;
+}
+
+.modal-header .modal-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #101828;
+}
+
+.modal-content {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(16, 24, 40, 0.08);
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.modal-footer {
+    border-top: 1px solid #eaecf0;
+    padding: 14px 20px;
+}
+
+/* ---------- View Modal Details ---------- */
+.view-detail-box {
+    background: #f9fafb;
+    border: 1px solid #eaecf0;
+    border-radius: 8px;
+    padding: 12px 16px;
+}
+
+.view-detail-box .detail-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #667085;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.view-detail-box .detail-value {
+    font-size: 14px;
+    color: #101828;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* ---------- Stock level indicators ---------- */
+.stock-level {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.stock-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.stock-dot.green { background: #10b981; }
+.stock-dot.yellow { background: #f59e0b; }
+.stock-dot.red { background: #ef4444; }

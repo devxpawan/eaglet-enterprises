@@ -1,0 +1,786 @@
+/* ═══════════════════════════════════════════════════════════════════
+   MOBILE RESPONSIVE OVERRIDES
+   Comprehensive mobile-first responsive design for BMS
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── Layout & Content Area ──────────────────────────────────── */
+
+@media (max-width: 575.98px) {
+    .container-fluid.px-4 {
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+    }
+
+    #layoutSidenav_content main {
+        padding-top: 8px;
+    }
+}
+
+/* ── Page Headers ───────────────────────────────────────────── */
+
+@media (max-width: 575.98px) {
+    .page-header {
+        padding: 14px 16px !important;
+        margin: 0 0 16px 0 !important;
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 12px;
+    }
+
+    .page-header h5 {
+        font-size: 18px !important;
+    }
+
+    .page-header .text-muted {
+        font-size: 13px !important;
+    }
+
+    .page-header .d-flex.gap-2 {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .page-header .d-flex.gap-2 .btn,
+    .page-header .d-flex.gap-2 a {
+        flex: 1;
+        min-width: 0;
+        white-space: nowrap;
+        justify-content: center;
+    }
+}
+
+/* ── Filter Bars ────────────────────────────────────────────── */
+
+@media (max-width: 575.98px) {
+    .invoice-filter-bar,
+    .quotation-filter-bar {
+        padding: 12px !important;
+    }
+
+    .invoice-filter-bar .row > div,
+    .quotation-filter-bar .row > div {
+        margin-bottom: 8px;
+    }
+
+    .invoice-filter-bar .row > div:last-child,
+    .quotation-filter-bar .row > div:last-child {
+        margin-bottom: 0;
+    }
+
+    .invoice-filter-bar .d-flex.flex-wrap,
+    .quotation-filter-bar .d-flex.flex-wrap {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .invoice-filter-bar .d-flex.flex-wrap .btn,
+    .quotation-filter-bar .d-flex.flex-wrap .btn,
+    .invoice-filter-bar .d-flex.flex-wrap a,
+    .quotation-filter-bar .d-flex.flex-wrap a {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .invoice-filter-bar .entries-label,
+    .quotation-filter-bar .entries-label {
+        font-size: 13px;
+    }
+
+    .entries-info {
+        font-size: 13px;
+    }
+
+    .search-count {
+        font-size: 11px;
+        padding: 3px 10px;
+    }
+}
+
+/* ── Tables → Horizontal Scroll on Mobile ──────────────────── */
+
+.table-responsive-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 0 -4px;
+    padding: 0 4px;
+}
+
+.table-responsive-wrapper::-webkit-scrollbar {
+    height: 4px;
+}
+
+.table-responsive-wrapper::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 4px;
+}
+
+.table-responsive-wrapper::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+/* Keep tables at minimum width so they scroll properly */
+@media (max-width: 767.98px) {
+    .table-invoice,
+    .table-users,
+    .table-product,
+    .table-quotation,
+    .table-inquiry,
+    .dash-table,
+    .inventory-container table,
+    .receive-stock-table {
+        min-width: 600px;
+    }
+
+    .table-invoice thead th,
+    .table-users thead th,
+    .table-product thead th,
+    .table-quotation thead th,
+    .table-inquiry thead th,
+    .dash-table thead th,
+    .inventory-container table thead th,
+    .receive-stock-table thead th {
+        padding: 8px 10px !important;
+        font-size: 10px !important;
+        letter-spacing: 0.03em;
+    }
+
+    .table-invoice tbody td,
+    .table-users tbody td,
+    .table-product tbody td,
+    .table-quotation tbody td,
+    .table-inquiry tbody td,
+    .dash-table tbody td,
+    .inventory-container table tbody td,
+    .receive-stock-table tbody td {
+        padding: 8px 10px !important;
+        font-size: 12px !important;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .table-invoice thead th,
+    .table-users thead th,
+    .table-product thead th,
+    .table-quotation thead th,
+    .table-inquiry thead th,
+    .dash-table thead th,
+    .inventory-container table thead th,
+    .receive-stock-table thead th {
+        padding: 6px 8px !important;
+        font-size: 9px !important;
+    }
+
+    .table-invoice tbody td,
+    .table-users tbody td,
+    .table-product tbody td,
+    .table-quotation tbody td,
+    .table-inquiry tbody td,
+    .dash-table tbody td,
+    .inventory-container table tbody td,
+    .receive-stock-table tbody td {
+        padding: 6px 8px !important;
+        font-size: 11px !important;
+    }
+
+    .invoice-card .card-body,
+    .product-card .card-body,
+    .quotation-card .card-body,
+    .inquiry-card .card-body,
+    .inventory-card .card-body {
+        padding: 12px !important;
+    }
+
+    .invoice-card .section-title,
+    .product-card .section-title,
+    .quotation-card .section-title,
+    .inquiry-card .section-title,
+    .inventory-card .section-title {
+        font-size: 14px;
+        margin-bottom: 12px;
+        padding-bottom: 8px;
+    }
+}
+
+/* ── Action Buttons (touch targets) ─────────────────────────── */
+
+@media (max-width: 575.98px) {
+    .action-btn-group {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 4px;
+    }
+
+    .action-btn-group .btn {
+        width: 36px !important;
+        height: 36px !important;
+        min-width: 36px;
+        min-height: 36px;
+        font-size: 13px !important;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Full-width action button group for tables (when space is tight, show as dropdown or icon-only) */
+    .action-btn-group .btn:active {
+        transform: scale(0.92);
+    }
+}
+
+/* ── Forms ──────────────────────────────────────────────────── */
+
+@media (max-width: 575.98px) {
+    .premium-form-container {
+        padding: 16px !important;
+        border-radius: 12px !important;
+    }
+
+    .premium-section-header {
+        font-size: 14px !important;
+        padding: 10px 16px !important;
+        margin-bottom: 16px;
+    }
+
+    .form-label {
+        font-size: 12px;
+        margin-bottom: 4px;
+    }
+
+    .form-control,
+    .form-select {
+        font-size: 13px !important;
+        height: 38px !important;
+        padding: 6px 10px !important;
+    }
+
+    textarea.form-control {
+        height: auto !important;
+    }
+
+    .detail-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .detail-card {
+        padding: 12px 14px !important;
+    }
+
+    .detail-card .detail-value {
+        font-size: 13px;
+    }
+
+    /* Stack form rows */
+    .row.g-3 > [class*="col-"] {
+        margin-bottom: 4px;
+    }
+
+    .save-btn,
+    .back-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 10px 18px !important;
+        font-size: 14px;
+    }
+
+    .d-flex.gap-2.flex-wrap {
+        flex-direction: column;
+    }
+
+    .d-flex.gap-2.flex-wrap .btn,
+    .d-flex.gap-2.flex-wrap a {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* ── Pagination ─────────────────────────────────────────────── */
+
+@media (max-width: 575.98px) {
+    .pagination .page-link {
+        padding: 6px 10px !important;
+        font-size: 12px !important;
+        border-radius: 6px !important;
+    }
+
+    .d-flex.justify-content-between.align-items-center.flex-wrap {
+        flex-direction: column;
+        gap: 12px;
+        align-items: stretch !important;
+    }
+
+    .d-flex.justify-content-between.align-items-center.flex-wrap .entries-info {
+        text-align: center;
+    }
+
+    .d-flex.justify-content-between.align-items-center.flex-wrap .pagination {
+        justify-content: center;
+    }
+}
+
+/* ── Badges ─────────────────────────────────────────────────── */
+
+@media (max-width: 575.98px) {
+    .badge-soft {
+        padding: 3px 10px !important;
+        font-size: 11px !important;
+    }
+}
+
+/* ── Amount / Currency ──────────────────────────────────────── */
+
+@media (max-width: 575.98px) {
+    .amount-text {
+        font-size: 13px !important;
+    }
+
+    .currency-symbol {
+        font-size: 11px !important;
+    }
+
+    .invoice-id {
+        font-size: 12px !important;
+    }
+}
+
+/* ── Modals ─────────────────────────────────────────────────── */
+
+@media (max-width: 575.98px) {
+    .modal-dialog {
+        margin: 8px !important;
+    }
+
+    .modal-system .modal-content {
+        border-radius: 10px !important;
+    }
+
+    .modal-system .modal-header {
+        padding: 14px 16px !important;
+    }
+
+    .modal-system .modal-body {
+        padding: 16px !important;
+    }
+
+    .modal-system .modal-footer {
+        padding: 12px 16px !important;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .modal-system .modal-footer .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .view-detail-box {
+        padding: 10px 14px !important;
+    }
+}
+
+/* ── Dashboard Page ─────────────────────────────────────────── */
+
+@media (max-width: 575.98px) {
+    .dash-header h4 {
+        font-size: 20px !important;
+    }
+
+    .dash-header .dash-subtitle {
+        font-size: 13px !important;
+    }
+
+    .dash-header .date-badge {
+        font-size: 12px;
+        padding: 6px 12px;
+    }
+
+    .dash-actions {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        flex-wrap: nowrap;
+        padding-bottom: 12px !important;
+    }
+
+    .dash-actions::-webkit-scrollbar {
+        display: none;
+    }
+
+    .dash-action-btn {
+        flex-shrink: 0;
+        padding: 8px 14px !important;
+        font-size: 12px !important;
+    }
+
+    .dash-action-btn .dash-action-icon {
+        width: 26px;
+        height: 26px;
+        font-size: 11px;
+    }
+}
+
+/* ── SimpleDataTables overrides for mobile ──────────────────── */
+
+@media (max-width: 575.98px) {
+    .datatable-wrapper .datatable-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .datatable-wrapper .datatable-top {
+        flex-direction: column;
+        gap: 8px;
+        padding: 12px;
+    }
+
+    .datatable-wrapper .datatable-top .datatable-dropdown {
+        width: 100%;
+    }
+
+    .datatable-wrapper .datatable-top .datatable-dropdown label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+    }
+
+    .datatable-wrapper .datatable-top .datatable-dropdown select {
+        width: auto;
+        min-width: 60px;
+    }
+
+    .datatable-wrapper .datatable-top .datatable-search {
+        width: 100%;
+    }
+
+    .datatable-wrapper .datatable-top .datatable-search input {
+        width: 100% !important;
+    }
+
+    .datatable-wrapper .datatable-bottom {
+        flex-direction: column;
+        gap: 8px;
+        padding: 12px;
+        text-align: center;
+    }
+
+    .datatable-wrapper .datatable-bottom .datatable-info {
+        font-size: 13px;
+    }
+
+    .datatable-wrapper .datatable-bottom .datatable-pagination {
+        justify-content: center;
+    }
+
+    .datatable-wrapper .datatable-pagination .datatable-pagination-button {
+        padding: 4px 10px !important;
+        font-size: 12px !important;
+    }
+}
+
+/* ── User Select / Avatar / Name cells ──────────────────────── */
+
+@media (max-width: 575.98px) {
+    .user-name {
+        font-size: 13px;
+    }
+
+    .user-role {
+        font-size: 11px;
+    }
+
+    .user-id-text {
+        font-size: 12px;
+    }
+
+    .product-name {
+        font-size: 13px;
+    }
+
+    .product-id {
+        font-size: 12px;
+    }
+
+    .product-desc {
+        font-size: 12px;
+        max-width: 120px;
+    }
+
+    .product-price {
+        font-size: 13px;
+    }
+
+    .message-cell .message-content {
+        max-width: 140px;
+        font-size: 12px;
+    }
+}
+
+/* ── Empty States ───────────────────────────────────────────── */
+
+@media (max-width: 575.98px) {
+    .empty-state {
+        padding: 32px 16px !important;
+    }
+
+    .empty-state i {
+        font-size: 2.2rem !important;
+    }
+
+    .empty-state p {
+        font-size: 13px !important;
+    }
+}
+
+/* ── Navbar mobile refinements ──────────────────────────────── */
+
+@media (max-width: 575.98px) {
+    .nav-dropdown-menu {
+        left: 8px !important;
+        right: 8px !important;
+        top: 64px !important;
+        border-radius: 14px !important;
+        min-width: auto !important;
+    }
+
+    .nav-dropdown-item {
+        padding: 12px 14px !important;
+        font-size: 14px !important;
+    }
+
+    .nav-dropdown-item .dd-icon {
+        width: 36px !important;
+        height: 36px !important;
+        font-size: 14px !important;
+    }
+
+    .nav-dropdown-header {
+        padding: 12px 16px !important;
+    }
+}
+
+/* ── Print invoice responsive ───────────────────────────────── */
+
+@media (max-width: 575.98px) {
+    .container-fluid.px-4 .card-body.p-5 {
+        padding: 16px !important;
+    }
+}
+
+/* ── Signin / Signup pages ──────────────────────────────────── */
+
+@media (max-width: 575.98px) {
+    .login-container,
+    .register-container {
+        padding: 16px !important;
+    }
+}
+
+/* ── Settings Page ──────────────────────────────────────────── */
+
+@media (max-width: 575.98px) {
+    .card[style*="margin: 0 32px"] {
+        margin: 0 12px 16px !important;
+    }
+
+    .card[style*="margin: 0 32px"] .card-body[style*="padding: 28px 32px"] {
+        padding: 16px !important;
+    }
+
+    .d-flex.justify-content-end.gap-3 {
+        flex-direction: column;
+        gap: 8px !important;
+    }
+
+    .d-flex.justify-content-end.gap-3 .back-btn,
+    .d-flex.justify-content-end.gap-3 .save-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* ── Invoice Create / Edit Form (Product Entry Table) ──────── */
+
+@media (max-width: 575.98px) {
+    #invoice_table thead th,
+    #quotation_table thead th {
+        white-space: nowrap;
+        font-size: 10px;
+        padding: 6px 8px;
+    }
+
+    #invoice_table tbody td,
+    #quotation_table tbody td {
+        padding: 6px 6px;
+    }
+
+    .input-group-sm .form-control,
+    .input-group-sm .input-group-text {
+        font-size: 11px !important;
+        padding: 2px 6px !important;
+    }
+
+    .input-group-sm .currency-symbol {
+        font-size: 10px !important;
+    }
+
+    .discount-group .btn {
+        font-size: 10px !important;
+        padding: 2px 6px !important;
+    }
+
+    .totals-section {
+        width: 100%;
+    }
+
+    .totals-section .row .col-6 {
+        font-size: 13px;
+    }
+
+    .totals-section .input-group-sm .form-control {
+        font-size: 12px !important;
+        height: 32px !important;
+    }
+
+    #add_product {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .d-flex.justify-content-between.align-items-start.mt-3 {
+        flex-direction: column;
+        align-items: stretch !important;
+    }
+
+    /* Customer select modal */
+    #customerModal .input-group {
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    #customerModal .input-group .form-control {
+        width: 100% !important;
+    }
+
+    #customerModal .input-group .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .customer-modal-content {
+        margin: 8px !important;
+        border-radius: 12px !important;
+    }
+}
+
+/* ── Extra Small Screens (≤400px) ──────────────────────────── */
+
+@media (max-width: 400px) {
+    .container-fluid.px-4 {
+        padding-left: 8px !important;
+        padding-right: 8px !important;
+    }
+
+    .page-header {
+        padding: 10px 12px !important;
+    }
+
+    .page-header h5 {
+        font-size: 16px !important;
+    }
+
+    .invoice-filter-bar,
+    .quotation-filter-bar {
+        padding: 8px !important;
+    }
+
+    .invoice-card .card-body,
+    .product-card .card-body,
+    .quotation-card .card-body,
+    .inquiry-card .card-body,
+    .inventory-card .card-body {
+        padding: 8px !important;
+    }
+
+    .table-invoice thead th,
+    .table-users thead th,
+    .table-product thead th,
+    .table-quotation thead th,
+    .table-inquiry thead th,
+    .dash-table thead th,
+    .inventory-container table thead th,
+    .receive-stock-table thead th {
+        padding: 4px 6px !important;
+        font-size: 8px !important;
+    }
+
+    .table-invoice tbody td,
+    .table-users tbody td,
+    .table-product tbody td,
+    .table-quotation tbody td,
+    .table-inquiry tbody td,
+    .dash-table tbody td,
+    .inventory-container table tbody td,
+    .receive-stock-table tbody td {
+        padding: 4px 6px !important;
+        font-size: 10px !important;
+    }
+
+    .action-btn-group .btn {
+        width: 32px !important;
+        height: 32px !important;
+        min-width: 32px;
+        min-height: 32px;
+        font-size: 11px !important;
+    }
+
+    .badge-soft {
+        padding: 2px 8px !important;
+        font-size: 10px !important;
+    }
+
+    .stat-card .stat-value {
+        font-size: 18px !important;
+    }
+
+    .premium-form-container {
+        padding: 12px !important;
+    }
+
+    .form-control,
+    .form-select {
+        font-size: 12px !important;
+        height: 34px !important;
+    }
+}
+
+/* ── Prevent hover sticking on touch devices ────────────────── */
+
+body.touch-device .btn:hover,
+body.touch-device .nav-link:hover,
+body.touch-device .stat-card:hover,
+body.touch-device .dash-action-btn:hover,
+body.touch-device .action-btn-group .btn:hover,
+body.touch-device .nav-dropdown-item:hover {
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+body.touch-device .btn:active,
+body.touch-device .nav-link:active,
+body.touch-device .stat-card:active,
+body.touch-device .dash-action-btn:active {
+    transform: scale(0.97) !important;
+}
+
+/* ── Select2 mobile fix (used in invoice_create) ────────────── */
+
+@media (max-width: 575.98px) {
+    .select2-container {
+        width: 100% !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 38px !important;
+    }
+}

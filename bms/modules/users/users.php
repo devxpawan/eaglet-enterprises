@@ -1,0 +1,605 @@
+<?php
+require_once __DIR__ . '/../../config/paths.php';
+
+// Start session at the very beginning
+session_start();
+
+// Check if user is logged in, if not redirect to login page
+if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
+    if (ob_get_level()) {
+        ob_end_clean();
+    }
+    header("Location: " . BASE_URL . "signin.php");
+    exit();
+}
+
+// Admin-only access
+if (!isset($_SESSION['role_id']) || $_SESSION['role_id'] != 1) {
+    header("Location: " . BASE_URL . "index.php");
+    exit();
+}
+
+// Include the database connection file
+require_once BASE_PATH . 'includes/db_connection.php';
+require_once BASE_PATH . 'includes/functions.php';
+
+        // Handle user status update via AJAX if it's a POST request
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'update_status') {
+            $response = ['success' => false, 'message' => 'Unknown error'];
+
+            // Only admin can update user status
+            if (!isset($_SESSION['role_id']) || $_SESSION['role_id'] != 1) {
+                $response = ['success' => false, 'message' => 'Access denied. Admin privileges required.'];
+                header('Content-Type: application/json');
+                echo json_encode($response);
+                exit();
+            }
+
+            if (isset($_POST['user_id']) && isset($_POST['new_status'])) {
+                $user_id = intval($_POST['user_id']);
+                $new_status = $_POST['new_status'];
+                $current_user_id = $_SESSION['user_id'];
+
+                // Prevent self-deactivation: admin cannot deactivate their own account
+                if ($user_id == $current_user_id && $new_status === 'inactive') {
+                    $response = [
+                        'success' => false, 
+                        'message' => 'You cannot deactivate your own account.'
+                    ];
+                    header('Content-Type: application/json');
+                    echo json_encode($response);
+                    exit();
+                }
+
+                if (in_array($new_status, ['active', 'inactive'])) {
+                    $conn->begin_transaction();
+
+                    try {
+                        $user_stmt = $conn->prepare("SELECT name FROM users WHERE id = ?");
+                        $user_stmt->bind_param("i", $user_id);
+                        $user_stmt->execute();
+                        $user_result = $user_stmt->get_result();
+                        $user_name = "";
+
+                        if ($user_result && $user_result->num_rows > 0) {
+                            $user_name = $user_result->fetch_assoc()['name'];
+                        }
+                        $user_stmt->close();
+
+                        $update_stmt = $conn->prepare("UPDATE users SET status = ? WHERE id = ?");
+                        $update_stmt->bind_param("si", $new_status, $user_id);
+                        $update_success = $update_stmt->execute();
+                        $affected = $update_stmt->affected_rows;
+                        $update_stmt->close();
+
+                if ($update_success) {
+                    if ($affected > 0) {
+                        $action_type = ($new_status === 'active') ? 'activate_user' : 'deactivate_user';
+                        $details = "User ID #$user_id ($user_name) was " .
+                                   ($new_status === 'active' ? 'activated' : 'deactivated') .
+                                   " by user ID #$current_user_id";
+
+                        $log_stmt = $conn->prepare("INSERT INTO user_logs (user_id, action_type, inquiry_id, details) VALUES (?, ?, '0', ?)");
+                        $log_stmt->bind_param("iss", $current_user_id, $action_type, $details);
+                        $log_success = $log_stmt->execute();
+                        $log_stmt->close();
+
+                        if (!$log_success) {
+                            $conn->rollback();
+                            $response = [
+                                'success' => false, 
+                                'message' => "Error logging status change: " . $conn->error
+                            ];
+                            header('Content-Type: application/json');
+                            echo json_encode($response);
+                            exit();
+                        }
+                    }
+
+                    $conn->commit();
+                    
+                    $response = [
+                        'success' => true, 
+                        'message' => "User status updated to $new_status successfully",
+                        'new_status' => $new_status
+                    ];
+                } else {
+                    // Rollback if update failed
+                    $conn->rollback();
+                    $response = [
+                        'success' => false, 
+                        'message' => "Error updating status: " . $conn->error
+                    ];
+                }
+            } catch (Exception $e) {
+                // Rollback on any exception
+                $conn->rollback();
+                $response = [
+                    'success' => false, 
+                    'message' => "Transaction failed: " . $e->getMessage()
+                ];
+            }
+        } else {
+            $response = [
+                'success' => false, 
+                'message' => "Invalid status value"
+            ];
+        }
+    } else {
+        $response = [
+            'success' => false, 
+            'message' => "Missing required parameters"
+        ];
+    }
+
+    // Send JSON response
+    header('Content-Type: application/json');
+    echo json_encode($response);
+    exit();
+}
+
+// Get current user's role_id from session
+$current_user_role = isset($_SESSION['role_id']) ? $_SESSION['role_id'] : 0;
+
+// Check if user is admin (role_id = 1)
+$is_admin = ($current_user_role == 1);
+
+// Initialize filter parameters
+$filter_name = isset($_GET['filter_name']) ? trim($_GET['filter_name']) : '';
+$filter_email = isset($_GET['filter_email']) ? trim($_GET['filter_email']) : '';
+$filter_mobile = isset($_GET['filter_mobile']) ? trim($_GET['filter_mobile']) : '';
+$filter_role = isset($_GET['filter_role']) ? (int)$_GET['filter_role'] : 0;
+$filter_position = isset($_GET['filter_position']) ? (int)$_GET['filter_position'] : 0;
+$filter_status = isset($_GET['filter_status']) ? trim($_GET['filter_status']) : '';
+$limit = 10;
+$page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+$offset = ($page - 1) * $limit;
+
+// Build WHERE conditions
+$conditions = [];
+if (!empty($filter_name)) {
+    $s = $conn->real_escape_string($filter_name);
+    $conditions[] = "u.name LIKE '%$s%'";
+}
+if (!empty($filter_email)) {
+    $s = $conn->real_escape_string($filter_email);
+    $conditions[] = "u.email LIKE '%$s%'";
+}
+if (!empty($filter_mobile)) {
+    $s = $conn->real_escape_string($filter_mobile);
+    $conditions[] = "u.mobile LIKE '%$s%'";
+}
+if ($filter_role > 0) {
+    $conditions[] = "u.role_id = $filter_role";
+}
+if ($filter_position > 0) {
+    $conditions[] = "u.position_id = $filter_position";
+}
+if ($filter_status !== '') {
+    $s = $conn->real_escape_string($filter_status);
+    $conditions[] = "u.status = '$s'";
+}
+
+$whereConditions = '';
+if (!empty($conditions)) {
+    $whereConditions = ' AND ' . implode(' AND ', $conditions);
+}
+
+// Fetch roles and positions for filter dropdowns
+$rolesResult = $conn->query("SELECT id, name FROM roles ORDER BY name");
+$positionsResult = $conn->query("SELECT id, name FROM positions ORDER BY name");
+
+// Build base query parts
+$baseFrom = "FROM users u JOIN roles r ON u.role_id = r.id LEFT JOIN positions p ON u.position_id = p.id";
+$selectCols = "u.*, r.name AS role_name, p.name AS position_name";
+
+if ($is_admin) {
+    $baseWhere = "1=1";
+} else {
+    $baseWhere = "u.role_id != 1";
+}
+
+$whereClause = $baseWhere . $whereConditions;
+
+$countQuery = "SELECT COUNT(*) as total $baseFrom WHERE $whereClause";
+$sql = "SELECT $selectCols $baseFrom WHERE $whereClause ORDER BY u.id DESC LIMIT $limit OFFSET $offset";
+
+// Execute queries
+$countResult = $conn->query($countQuery);
+$totalRows = 0;
+if ($countResult && $countResult->num_rows > 0) {
+    $totalRows = $countResult->fetch_assoc()['total'];
+}
+$totalPages = ceil($totalRows / $limit);
+
+$result = $conn->query($sql);
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <?php require_once BASE_PATH . 'includes/header.php'; ?>
+    <title>All Users</title>
+    <link href="<?= BASE_URL ?>css/users-list.css" rel="stylesheet" />
+    <link href="<?= BASE_URL ?>css/forms.css" rel="stylesheet" />
+</head>
+
+<body class="sb-nav-fixed">
+<?php require_once BASE_PATH . 'includes/navbar.php'; ?>
+
+<div id="layoutSidenav">
+    <?php require_once BASE_PATH . 'includes/sidebar.php'; ?>
+        <div id="layoutSidenav_content">
+            <main>
+                <div class="page-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5>Users List</h5>
+                        <p class="text-muted">Manage and review all system users</p>
+                    </div>
+                </div>
+
+                    <div class="card invoice-card mb-4">
+                        <div class="card-body">
+                            <!-- Filter Bar -->
+                            <div class="invoice-filter-bar">
+                                <form method="get" id="filterForm">
+                                    <div class="row g-2 align-items-end">
+                                        <div class="col-md-3 col-lg-2">
+                                            <label class="form-label mb-1" style="font-size:11px;font-weight:600;color:#667085;">Name</label>
+                                            <input type="text" name="filter_name" class="form-control" placeholder="User Name"
+                                                value="<?= htmlspecialchars($filter_name) ?>">
+                                        </div>
+                                        <div class="col-md-3 col-lg-2">
+                                            <label class="form-label mb-1" style="font-size:11px;font-weight:600;color:#667085;">Email</label>
+                                            <input type="text" name="filter_email" class="form-control" placeholder="Email"
+                                                value="<?= htmlspecialchars($filter_email) ?>">
+                                        </div>
+                                        <div class="col-md-3 col-lg-2">
+                                            <label class="form-label mb-1" style="font-size:11px;font-weight:600;color:#667085;">Phone</label>
+                                            <input type="text" name="filter_mobile" class="form-control" placeholder="Phone Number"
+                                                value="<?= htmlspecialchars($filter_mobile) ?>">
+                                        </div>
+                                        <div class="col-md-2 col-lg-1">
+                                            <label class="form-label mb-1" style="font-size:11px;font-weight:600;color:#667085;">Role</label>
+                                            <select name="filter_role" class="form-select">
+                                                <option value="0">All</option>
+                                                <?php if ($rolesResult): while ($role = $rolesResult->fetch_assoc()): ?>
+                                                    <option value="<?= $role['id'] ?>" <?= $filter_role == $role['id'] ? 'selected' : '' ?>><?= htmlspecialchars($role['name']) ?></option>
+                                                <?php endwhile; endif; ?>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2 col-lg-1">
+                                            <label class="form-label mb-1" style="font-size:11px;font-weight:600;color:#667085;">Position</label>
+                                            <select name="filter_position" class="form-select">
+                                                <option value="0">All</option>
+                                                <?php if ($positionsResult): while ($position = $positionsResult->fetch_assoc()): ?>
+                                                    <option value="<?= $position['id'] ?>" <?= $filter_position == $position['id'] ? 'selected' : '' ?>><?= htmlspecialchars($position['name']) ?></option>
+                                                <?php endwhile; endif; ?>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2 col-lg-1">
+                                            <label class="form-label mb-1" style="font-size:11px;font-weight:600;color:#667085;">Status</label>
+                                            <select name="filter_status" class="form-select">
+                                                <option value="">All</option>
+                                                <option value="active" <?= $filter_status === 'active' ? 'selected' : '' ?>>Active</option>
+                                                <option value="inactive" <?= $filter_status === 'inactive' ? 'selected' : '' ?>>Inactive</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2 col-lg-auto d-flex gap-1 align-items-end">
+                                            <button type="submit" class="btn btn-primary btn-filter">
+                                                <i class="fas fa-search me-1"></i> Search
+                                            </button>
+                                            <a href="<?= BASE_URL ?>modules/users/users.php" class="btn btn-outline-secondary btn-clear">
+                                                <i class="fas fa-times me-1"></i> Clear
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" name="page" value="1">
+                                </form>
+                            </div>
+
+                            <div class="d-flex justify-content-start mt-2 mb-2">
+                                <span class="search-count"><?php echo $totalRows; ?> User<?= $totalRows !== 1 ? 's' : '' ?></span>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-users" id="users_table">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>User ID</th>
+                                            <th>Name</th>
+                                            <th>Username</th>
+                                            <th>Email</th>
+                                            <th>Mobile</th>
+                                            <th>Position</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php if ($result && $result->num_rows > 0): ?>
+                                            <?php while ($row = $result->fetch_assoc()): ?>
+                                                <tr id="user-row-<?= $row['id'] ?>">
+                                                    <td>
+                                                        <span class="fw-semibold"><?= htmlspecialchars($row['id']) ?></span>
+                                                        <br>
+                                                    </td>
+                                                    <td>
+                                                        <div class="user-name"><?= htmlspecialchars($row['name']) ?></div>
+                                                        <div class="user-role"><?= htmlspecialchars($row['role_name']) ?></div>
+                                                    </td>
+                                                    <td><?= htmlspecialchars($row['username']) ?></td>
+                                                    <td><?= htmlspecialchars($row['email']) ?></td>
+                                                    <td><?= isset($row['mobile']) ? htmlspecialchars($row['mobile']) : 'N/A' ?></td>
+                                                    <td>
+                                                        <?php if (!empty($row['position_name'])): ?>
+                                                            <span class="badge badge-soft badge-soft-info"><?= htmlspecialchars($row['position_name']) ?></span>
+                                                        <?php else: ?>
+                                                            <span class="text-muted">—</span>
+                                                        <?php endif; ?>
+                                                    </td>
+                                                    <td>
+                                                        <?php if ($row['status'] == 'active'): ?>
+                                                            <span class="user-status-badge badge-soft badge-soft-success">Active</span>
+                                                        <?php else: ?>
+                                                            <span class="user-status-badge badge-soft badge-soft-danger">Inactive</span>
+                                                        <?php endif; ?>
+                                                    </td>
+                                                    <td>
+                                                        <div class="action-btn-group d-flex gap-1">
+                                                            <a href="<?= BASE_URL ?>modules/users/edit_user.php?id=<?= htmlspecialchars($row['id']) ?>&name=<?= urlencode($row['name']) ?>&username=<?= urlencode($row['username']) ?>&email=<?= urlencode($row['email']) ?>&status=<?= htmlspecialchars($row['status']) ?>&role=<?= urlencode($row['role_name']) ?>"
+                                                                class="btn btn-edit"
+                                                                title="Edit User">
+                                                                <i class="fas fa-pen"></i>
+                                                            </a>
+                                                            <button class="btn btn-view view-user-btn"
+                                                                title="View Details"
+                                                                data-user-id="<?= $row['id'] ?>"
+                                                                data-user-name="<?= htmlspecialchars($row['name']) ?>"
+                                                                data-user-username="<?= htmlspecialchars($row['username']) ?>"
+                                                                data-user-email="<?= htmlspecialchars($row['email']) ?>"
+                                                                data-user-mobile="<?= isset($row['mobile']) ? htmlspecialchars($row['mobile']) : 'N/A' ?>"
+                                                                data-user-nic="<?= isset($row['nic']) ? htmlspecialchars($row['nic']) : 'N/A' ?>"
+                                                                data-user-status="<?= htmlspecialchars($row['status']) ?>"
+                                                                data-user-role="<?= htmlspecialchars($row['role_name']) ?>"
+                                                                data-user-role-id="<?= htmlspecialchars($row['role_id']) ?>"
+                                                                data-user-position="<?= isset($row['position_name']) ? htmlspecialchars($row['position_name']) : 'N/A' ?>"
+                                                                data-user-created="<?= htmlspecialchars($row['created_at']) ?>">
+                                                                <i class="fas fa-eye"></i>
+                                                            </button>
+                                                            <button class="btn <?= $row['status'] == 'active' ? 'btn-deactivate' : 'btn-activate' ?> toggle-status-btn"
+                                                                title="<?= $row['status'] == 'active' ? 'Deactivate' : 'Activate' ?>"
+                                                                data-user-id="<?= $row['id'] ?>"
+                                                                data-current-status="<?= $row['status'] ?>"
+                                                                data-user-name="<?= htmlspecialchars($row['name']) ?>">
+                                                                <i class="fas <?= $row['status'] == 'active' ? 'fa-ban' : 'fa-check' ?>"></i>
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            <?php endwhile; ?>
+                                        <?php else: ?>
+                                            <tr>
+                                                <td colspan="8" class="text-center py-4">
+                                                    <div class="empty-state">
+                                                        <i class="fas fa-users"></i>
+                                                        <p>No users found</p>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        <?php endif; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Pagination -->
+                            <div class="pagination-container d-flex justify-content-between align-items-center mt-4">
+                                <div class="entries-info">
+                                    <?php if ($result && $result->num_rows > 0): ?>
+                                        Showing <strong><?php echo ($offset + 1); ?></strong> to
+                                        <strong><?php echo min($offset + $limit, $totalRows); ?></strong> of <strong><?php echo $totalRows; ?></strong>
+                                        entries
+                                    <?php else: ?>
+                                        Showing <strong>0</strong> to <strong>0</strong> of <strong>0</strong> entries
+                                    <?php endif; ?>
+                                </div>
+                                <?= renderPagination($page, $totalPages) ?>
+                            </div>
+                        </div>
+                    </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- View User Modal -->
+    <div class="modal fade" id="viewUserModal" tabindex="-1" aria-labelledby="viewUserModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-system">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewUserModalLabel"><i class="fas fa-user-circle me-2"></i>User Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="viewUserModalBody">
+                    <!-- Dynamic content will be inserted here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+
+    <script src="<?= BASE_URL ?>js/scripts.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+
+
+
+        // View User Modal Handling
+        const viewButtons = document.querySelectorAll('.view-user-btn');
+        const viewUserModal = new bootstrap.Modal(document.getElementById('viewUserModal'));
+        const viewUserModalBody = document.getElementById('viewUserModalBody');
+
+        viewButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const userData = {
+                    name: this.getAttribute('data-user-name'),
+                    username: this.getAttribute('data-user-username'),
+                    email: this.getAttribute('data-user-email'),
+                    mobile: this.getAttribute('data-user-mobile'),
+                    nic: this.getAttribute('data-user-nic'),
+                    status: this.getAttribute('data-user-status'),
+                    role: this.getAttribute('data-user-role'),
+                    roleId: this.getAttribute('data-user-role-id'),
+                    position: this.getAttribute('data-user-position'),
+                    created: this.getAttribute('data-user-created')
+                };
+
+                viewUserModalBody.innerHTML = `
+                    <div class="detail-grid">
+                        <div class="detail-card">
+                            <span class="detail-label"><i class="fas fa-user"></i>Name</span>
+                            <p class="detail-value">${userData.name}</p>
+                        </div>
+                        <div class="detail-card">
+                            <span class="detail-label"><i class="fas fa-user-tag"></i>Username</span>
+                            <p class="detail-value">${userData.username}</p>
+                        </div>
+                        <div class="detail-card">
+                            <span class="detail-label"><i class="fas fa-envelope"></i>Email</span>
+                            <p class="detail-value">${userData.email}</p>
+                        </div>
+                        <div class="detail-card">
+                            <span class="detail-label"><i class="fas fa-phone"></i>Mobile</span>
+                            <p class="detail-value">${userData.mobile}</p>
+                        </div>
+                        <div class="detail-card">
+                            <span class="detail-label"><i class="fas fa-id-card"></i>NIC</span>
+                            <p class="detail-value">${userData.nic}</p>
+                        </div>
+                        <div class="detail-card">
+                            <span class="detail-label"><i class="fas fa-flag"></i>Status</span>
+                            <p class="detail-value">
+                                ${userData.status === 'active' 
+                                    ? '<span class="badge-soft badge-soft-success">Active</span>' 
+                                    : '<span class="badge-soft badge-soft-danger">Inactive</span>'}
+                            </p>
+                        </div>
+                        <div class="detail-card">
+                            <span class="detail-label"><i class="fas fa-briefcase"></i>Position</span>
+                            <p class="detail-value">${userData.position}</p>
+                        </div>
+                        <div class="detail-card full-width">
+                            <span class="detail-label"><i class="fas fa-calendar"></i>Created At</span>
+                            <p class="detail-value">${userData.created}</p>
+                        </div>
+                    </div>
+                `;
+
+                viewUserModal.show();
+            });
+        });
+
+        // Status Toggle Handling
+        const toggleStatusButtons = document.querySelectorAll('.toggle-status-btn');
+        const currentUserId = <?php echo $_SESSION['user_id']; ?>;
+
+        toggleStatusButtons.forEach(btn => {
+            const userId = parseInt(btn.getAttribute('data-user-id'));
+            const currentStatus = btn.getAttribute('data-current-status');
+            
+            // Hide the toggle button for the current user (self) to prevent self-deactivation
+            if (userId === currentUserId && currentStatus === 'active') {
+                btn.style.display = 'none';
+                return;
+            }
+
+            btn.addEventListener('click', function() {
+                const userId = this.getAttribute('data-user-id');
+                const currentStatus = this.getAttribute('data-current-status');
+                const userName = this.getAttribute('data-user-name');
+                const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
+                const actionText = currentStatus === 'active' ? 'deactivate' : 'activate';
+                const actionColor = currentStatus === 'active' ? '#d33' : '#28a745';
+                
+                // SweetAlert confirmation before status change
+                Swal.fire({
+                    title: `Are you sure?`,
+                    html: `You are about to <strong>${actionText}</strong> user: <br><strong>${userName}</strong>`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: actionColor,
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: `Yes, ${actionText} user!`,
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Show loading state
+                        Swal.fire({
+                            title: 'Processing...',
+                            html: `Updating user status to ${newStatus}`,
+                            allowOutsideClick: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
+                        
+                        // AJAX call to update status
+                        fetch('<?= BASE_URL ?>modules/users/users.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                            },
+                            body: `action=update_status&user_id=${userId}&new_status=${newStatus}`
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Update button and badge
+                                const userRow = document.getElementById(`user-row-${userId}`);
+                                const statusBadge = userRow.querySelector('.user-status-badge');
+                                const toggleButton = userRow.querySelector('.toggle-status-btn');
+
+                                if (newStatus === 'active') {
+                                    statusBadge.classList.remove('badge-soft-danger');
+                                    statusBadge.classList.add('badge-soft-success');
+                                    statusBadge.textContent = 'Active';
+                                    toggleButton.classList.remove('btn-activate');
+                                    toggleButton.classList.add('btn-deactivate');
+                                    toggleButton.innerHTML = '<i class="fas fa-ban"></i>';
+                                    toggleButton.setAttribute('title', 'Deactivate');
+                                } else {
+                                    statusBadge.classList.remove('badge-soft-success');
+                                    statusBadge.classList.add('badge-soft-danger');
+                                    statusBadge.textContent = 'Inactive';
+                                    toggleButton.classList.remove('btn-deactivate');
+                                    toggleButton.classList.add('btn-activate');
+                                    toggleButton.innerHTML = '<i class="fas fa-check"></i>';
+                                    toggleButton.setAttribute('title', 'Activate');
+                                }
+                                toggleButton.setAttribute('data-current-status', newStatus);
+
+                                // Show success message
+                                showToast('success', `User ${userName} has been ${newStatus === 'active' ? 'activated' : 'deactivated'} successfully.`);
+                            } else {
+                                // Show error message
+                                showToast('error', data.message || 'Failed to update user status');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showToast('error', 'An error occurred while updating user status');
+                        });
+                    }
+                });
+            });
+        });
+    });
+    </script>
+</body>
+</html>
+
+<?php
+$conn->close();
+?>
