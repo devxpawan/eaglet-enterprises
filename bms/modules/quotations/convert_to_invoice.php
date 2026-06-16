@@ -57,12 +57,12 @@ try {
     $stmt->execute();
     $items = $stmt->get_result();
 
-    $insertItemSql = "INSERT INTO invoice_items (invoice_id, product_id, product_name, quantity, description, discount, discount_type, total_amount, status, pay_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'active', 'unpaid')";
+    $insertItemSql = "INSERT INTO invoice_items (invoice_id, product_name, quantity, description, discount, discount_type, total_amount, status, pay_status) VALUES (?, ?, ?, ?, ?, ?, ?, 'active', 'unpaid')";
     $item_stmt = $conn->prepare($insertItemSql);
 
     while ($item = $items->fetch_assoc()) {
         $discount_type = $item['discount_type'] ?? 'flat';
-        $item_stmt->bind_param("iisisdsd", $invoice_id, $item['product_id'], $item['product_name'], $item['quantity'], $item['description'], $item['discount'], $discount_type, $item['total_amount']);
+        $item_stmt->bind_param("isisdsd", $invoice_id, $item['product_name'], $item['quantity'], $item['description'], $item['discount'], $discount_type, $item['total_amount']);
         $item_stmt->execute();
     }
 

@@ -116,13 +116,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $subtotal += $row_total;
             $total_discount += $discount;
             
-            // Determine if it's a real product (numeric ID) or custom product (text name)
-            $product_id = is_numeric($product_val) ? intval($product_val) : null;
-            $product_name = is_numeric($product_val) ? null : $product_val;
+            // Always store as text name (no product table dependency)
+            $product_name = $product_val;
             
             // Store item details for insertion
             $invoice_items[] = [
-                'product_id' => $product_id,
                 'product_name' => $product_name,
                 'price' => $price,
                 'qty' => $qty,
@@ -169,17 +167,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         // Invoice items insertion
         $insertItemSql = "INSERT INTO invoice_items (
-            invoice_id, product_id, product_name, quantity, discount, discount_type,
+            invoice_id, product_name, quantity, discount, discount_type,
             total_amount, pay_status, status, description
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($insertItemSql);
         
         foreach ($invoice_items as $item) {
             $item_total = ($item['price'] * $item['qty']) - $item['discount'];
             $stmt->bind_param(
-                "iisidsdsss", 
+                "isidsdsss", 
                 $invoice_id, 
-                $item['product_id'],
                 $item['product_name'],
                 $item['qty'],
                 $item['discount'],

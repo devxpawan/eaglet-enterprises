@@ -12,22 +12,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
 require_once BASE_PATH . 'includes/db_connection.php';
 require_once BASE_PATH . 'includes/functions.php';
 
-// Fetch necessary data for the form - only need to do this once
-$sql = "SELECT id, name, description, lkr_price, usd_price FROM products WHERE status = 'active' ORDER BY name ASC";
-$result = $conn->query($sql);
-$customerSql = "SELECT * FROM customers ORDER BY name ASC";
-$customerResult = $conn->query($customerSql);
-
-
-
-// Modify the SQL query to only fetch active products
-$sql = "SELECT id, name, description, lkr_price, usd_price 
-        FROM products 
-        WHERE status = 'active' 
-        ORDER BY name ASC";
-$result = $conn->query($sql);
-
-// Modify the customer SQL query to only fetch active customers
+// Fetch customers only (no products needed)
 $customerSql = "SELECT * FROM customers WHERE status = 'active' ORDER BY customer_id DESC";
 $customerResult = $conn->query($customerSql);
 
@@ -38,9 +23,7 @@ $customerResult = $conn->query($customerSql);
 <head>
     <?php require_once BASE_PATH . 'includes/header.php'; ?>
     <title>Create Invoice</title>
-    <!-- Select2 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -554,7 +537,7 @@ $customerResult = $conn->query($customerSql);
                                         <div>
                                             <label class="form-label">Phone</label>
                                             <input type="text" class="form-control" name="customer_phone"
-                                                id="customer_phone" placeholder="+94 77 123 4567">
+                                                id="customer_phone" placeholder="077 123 4567" maxlength="10" pattern="[0-9]{10}" inputmode="numeric">
                                         </div>
                                         <div class="mt-3">
                                             <label class="form-label">Address</label>
@@ -571,14 +554,14 @@ $customerResult = $conn->query($customerSql);
                             <div class="card-body">
                                 <div class="d-flex align-items-center gap-2 mb-3">
                                     <i class="fas fa-box text-primary" style="font-size: 18px;"></i>
-                                    <h6 class="card-title m-0">Products</h6>
+                                    <h6 class="card-title m-0">Items</h6>
                                 </div>
                                 <div class="table-responsive">
                                     <table class="table align-middle" id="invoice_table" style="table-layout: fixed; width: 100%;">
                                         <thead>
                                             <tr>
                                                 <th style="width: 46px;">#</th>
-                                                <th style="width: 220px;">Product</th>
+                                                <th style="width: 220px;">Item</th>
                                                 <th style="width: 200px;">Description</th>
                                                 <th style="width: 110px;">Price</th>
                                                 <th style="width: 60px;">Qty</th>
@@ -591,19 +574,7 @@ $customerResult = $conn->query($customerSql);
                                             <tr>
                                                 <td class="text-center text-muted" style="font-size: 13px; font-weight: 500;">1</td>
                                                 <td>
-                                                    <select name="invoice_product[]" class="form-select product-select">
-                                                        <option value="">-- Select Product --</option>
-                                                        <?php
-                                                        // Reset the pointer for $result
-                                                        $result->data_seek(0);
-                                                        while ($row = $result->fetch_assoc()): ?>
-                                                            <option value="<?= $row['id'] ?>"
-                                                                data-lkr-price="<?= $row['lkr_price'] ?>"
-                                                                data-description="<?= htmlspecialchars($row['description']) ?>">
-                                                                <?= htmlspecialchars($row['name']) ?>
-                                                            </option>
-                                                        <?php endwhile; ?>
-                                                    </select>
+                                                    <input type="text" name="invoice_product[]" class="form-control item-name" placeholder="Enter item name">
                                                 </td>
                                                 <td>
                                                     <input type="text" name="invoice_product_description[]"
@@ -649,7 +620,7 @@ $customerResult = $conn->query($customerSql);
 
                                 <div class="d-flex justify-content-between align-items-start mt-3 flex-wrap gap-3">
                                     <button type="button" id="add_product" class="btn btn-outline-success btn-sm">
-                                        <i class="fas fa-plus me-1"></i> Add Product
+                                        <i class="fas fa-plus me-1"></i> Add Item
                                     </button>
 
                                     <div class="totals-section">
@@ -817,26 +788,7 @@ $customerResult = $conn->query($customerSql);
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Select2 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
-        $(document).ready(function() {
-            $('.product-select').select2({
-                theme: 'bootstrap-5',
-                width: '100%',
-                tags: true,
-                createTag: function (params) {
-                    var term = $.trim(params.term);
-                    if (term === '') {
-                        return null;
-                    }
-                    return {
-                        id: term,
-                        text: term,
-                        newTag: true
-                    }
-                }
-            });
-        });
         $(document).ready(function () {
             // Email validation function
             function isValidEmail(email) {
@@ -882,27 +834,7 @@ $customerResult = $conn->query($customerSql);
                 return isValid;
             }
 
-            // Function to update product price based on currency (LKR only)
-            function updateProductPrice(row) {
-                var selectedOption = row.find('.product-select option:selected');
-                if (selectedOption.val() === "") return;
 
-                var priceField = row.find('.price');
-                var descriptionField = row.find('.product-description');
-                
-                // Check if it's a custom tag or a real product
-                if (selectedOption.data('lkr-price') !== undefined) {
-                    // Real product
-                    var price = parseFloat(selectedOption.data('lkr-price') || 0);
-                    var description = selectedOption.data('description') || '';
-
-                    priceField.val(isNaN(price) ? '0.00' : price.toFixed(2));
-                    descriptionField.val(description);
-                } else {
-                    // Custom product - don't overwrite if user has typed something
-                }
-                updateRowTotal(row);
-            }
 
             // Get the flat discount amount for a row based on discount type
             function getFlatDiscount(row) {
@@ -1066,25 +998,25 @@ $customerResult = $conn->query($customerSql);
                     return false;
                 }
 
-                // Validate at least one product is added
+                // Validate at least one item is added
                 if ($('#invoice_table tbody tr').length === 0) {
-                    showToast('warning', 'Please add at least one product to the invoice.');
+                    showToast('warning', 'Please add at least one item to the invoice.');
                     e.preventDefault();
                     return false;
                 }
 
-                // Validate product selection
-                let isProductValid = true;
+                // Validate item name is filled
+                let isItemValid = true;
                 $('#invoice_table tbody tr').each(function () {
-                    let productSelect = $(this).find('.product-select');
-                    if (productSelect.val() === "") {
-                        showToast('warning', 'Please select a product for all invoice lines.');
-                        isProductValid = false;
+                    let itemName = $(this).find('.item-name');
+                    if (itemName.val().trim() === "") {
+                        showToast('warning', 'Please enter a name for all invoice items.');
+                        isItemValid = false;
                         return false;
                     }
                 });
 
-                if (!isProductValid) {
+                if (!isItemValid) {
                     e.preventDefault();
                     return false;
                 }
@@ -1104,10 +1036,7 @@ $customerResult = $conn->query($customerSql);
                 return true;
             });
 
-            // Product selection change
-            $(document).on('change', '.product-select', function () {
-                updateProductPrice($(this).closest('tr'));
-            });
+
 
             // Renumber table rows
             function renumberRows() {
@@ -1116,16 +1045,11 @@ $customerResult = $conn->query($customerSql);
                 });
             }
 
-            // Add product row
+            // Add item row
             $('#add_product').click(function () {
-                // Destroy Select2 on the first row before cloning to prevent cloning the Select2 DOM elements
-                let firstSelect = $('#invoice_table tbody tr:first').find('.product-select');
-                if (firstSelect.hasClass('select2-hidden-accessible')) {
-                    firstSelect.select2('destroy');
-                }
-
                 let newRow = $('#invoice_table tbody tr:first').clone();
                 newRow.find('input').val('');
+                newRow.find('.item-name').val('');
                 newRow.find('.price').val('0.00');
                 newRow.find('.qty').val('1');
                 newRow.find('.discount').val('0');
@@ -1133,39 +1057,19 @@ $customerResult = $conn->query($customerSql);
                 newRow.find('.discount-group .discount-type-btn').removeClass('active');
                 newRow.find('.discount-group .discount-type-btn[data-type="flat"]').addClass('active');
                 newRow.find('.subtotal').val('0.00');
-                newRow.find('.product-select').val('');
                 $('#invoice_table tbody').append(newRow);
-
-                // Re-initialize Select2 on all product selects
-                $('.product-select').select2({
-                    theme: 'bootstrap-5',
-                    width: '100%',
-                    tags: true,
-                    createTag: function (params) {
-                        var term = $.trim(params.term);
-                        if (term === '') {
-                            return null;
-                        }
-                        return {
-                            id: term,
-                            text: term,
-                            newTag: true
-                        }
-                    }
-                });
 
                 renumberRows();
             });
 
-            // Remove product row
+            // Remove item row
             $(document).on('click', '.remove_product', function () {
                 if ($('#invoice_table tbody tr').length > 1) {
                     $(this).closest('tr').remove();
                     updateTotals();
                     renumberRows();
                 } else {
-                    // Optional: Show an alert if trying to remove the last row
-                    showToast('warning', 'At least one product is required.');
+                    showToast('warning', 'At least one item is required.');
                 }
             });
 
@@ -1216,7 +1120,6 @@ $customerResult = $conn->query($customerSql);
 </html>
 <?php
 // Close database connections
-$result->close();
 $customerResult->close();
 $conn->close();
 ?>

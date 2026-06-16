@@ -156,6 +156,7 @@ $result = $conn->query($sql);
                                                 <th>Due Date</th>
                                                 <th>Amount</th>
                                                 <th>Status</th>
+                                                <th>Cancel Reason</th>
                                                 <th>Created By</th>
                                                 <th>Actions</th>
                                             </tr>
@@ -214,6 +215,7 @@ $result = $conn->query($sql);
                                                     <td>
                                                         <span class="badge-soft badge-soft-danger">Canceled</span>
                                                     </td>
+                                                    <td><?php echo !empty($row['cancel_reason']) ? htmlspecialchars($row['cancel_reason']) : '<span class="text-muted">-</span>'; ?></td>
                                                     <td>
                                                         <?php 
                                                         if (isset($row['created_by']) && isset($row['creator_name'])) {

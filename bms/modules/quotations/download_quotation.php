@@ -39,10 +39,9 @@ $quotation = $result->fetch_assoc();
 $currency = 'lkr';
 $currencySymbol = 'LKR';
 
-$itemSql = "SELECT qi.*, p.name as product_name, qi.product_name as qi_product_name,
-            COALESCE(qi.description, p.description) as product_description
+$itemSql = "SELECT qi.*, qi.product_name as qi_product_name,
+            qi.description as product_description
             FROM quotation_items qi
-            LEFT JOIN products p ON qi.product_id = p.id
             WHERE qi.quotation_id = ?";
 
 $stmt = $conn->prepare($itemSql);
@@ -592,7 +591,7 @@ if (!empty($quotation['ref_no'])) {
                         <tr>
                             <td style="text-align: center;"><?php echo $i++; ?></td>
                             <td>
-                                <strong><?php echo htmlspecialchars($item['product_id'] ? $item['product_name'] : $item['qi_product_name']); ?></strong>
+                                <strong><?php echo htmlspecialchars($item['qi_product_name']); ?></strong>
                                 <?php if (!empty($item['product_description'])): ?>
                                     <br><span style="font-size: 11px; color: #555;"><?php echo nl2br(htmlspecialchars($item['product_description'])); ?></span>
                                 <?php endif; ?>

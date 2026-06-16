@@ -53,13 +53,12 @@ $currency = 'lkr';
 $currencySymbol = 'LKR';
 
 // Modified item query to include item-level discounts
-$itemSql = "SELECT ii.*, ii.pay_status, p.name as product_name, ii.product_name as ii_product_name,
-            COALESCE(ii.description, p.description) as product_description,
+$itemSql = "SELECT ii.*, ii.pay_status, ii.product_name as ii_product_name,
+            ii.description as product_description,
             ii.total_amount as item_subtotal,
             ii.quantity as item_qty,
             COALESCE(ii.discount, 0) as item_discount
             FROM invoice_items ii
-            LEFT JOIN products p ON ii.product_id = p.id
             WHERE ii.invoice_id = ?";
 
 $stmt = $conn->prepare($itemSql);
@@ -687,7 +686,7 @@ $quotation_ref = !empty($invoice['quotation_ref_no']) ? $invoice['quotation_ref_
                         <tr>
                             <td style="text-align: center;"><?php echo $i++; ?></td>
                             <td>
-                                <strong><?php echo htmlspecialchars($item['product_id'] ? $item['product_name'] : $item['ii_product_name']); ?></strong>
+                                <strong><?php echo htmlspecialchars($item['ii_product_name']); ?></strong>
                                 <?php if (!empty($item['product_description'])): ?>
                                     <br><span style="font-size: 11px; color: #555;"><?php echo nl2br(htmlspecialchars($item['product_description'])); ?></span>
                                 <?php endif; ?>

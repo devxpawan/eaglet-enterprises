@@ -69,11 +69,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $subtotal += $row_total;
             $total_discount += $discount;
             
-            $product_id = is_numeric($product_val) ? intval($product_val) : null;
-            $product_name = is_numeric($product_val) ? null : $product_val;
+            $product_name = $product_val;
             
             $items_to_insert[] = [
-                'product_id' => $product_id,
                 'product_name' => $product_name,
                 'price' => $price,
                 'qty' => $qty,
@@ -95,11 +93,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $quotation_id = $conn->insert_id;
         
         // Insert Items
-        $insertItemSql = "INSERT INTO quotation_items (quotation_id, product_id, product_name, quantity, description, price, discount, discount_type, total_amount) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $insertItemSql = "INSERT INTO quotation_items (quotation_id, product_name, quantity, description, price, discount, discount_type, total_amount) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($insertItemSql);
         
         foreach ($items_to_insert as $item) {
-            $stmt->bind_param("iisisddsd", $quotation_id, $item['product_id'], $item['product_name'], $item['qty'], $item['description'], $item['price'], $item['discount'], $item['discount_type'], $item['total']);
+            $stmt->bind_param("isisddsd", $quotation_id, $item['product_name'], $item['qty'], $item['description'], $item['price'], $item['discount'], $item['discount_type'], $item['total']);
             $stmt->execute();
         }
         

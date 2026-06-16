@@ -166,19 +166,18 @@ try {
         $subtotal += $row_total;
         $total_discount += $discount;
 
-        // Determine if it's a real product (numeric ID) or custom product (text name)
-        $product_id = is_numeric($product_val) ? intval($product_val) : null;
-        $product_name = is_numeric($product_val) ? null : $product_val;
+        // Always store as text name (no product table dependency)
+        $product_name = $product_val;
 
         $invoice_items[] = [
             'item_id' => $item_id,
-            'product_id' => $product_id,
             'product_name' => $product_name,
             'price' => $price,
             'qty' => $qty,
             'discount' => $discount,
             'discount_type' => $discount_type,
-            'description' => $description
+            'description' => $description,
+            'total' => $row_total - $discount
         ];
     }
 
@@ -248,11 +247,11 @@ try {
     }
     
     // Update existing items and insert new ones
-    $updateItemSql = "UPDATE invoice_items SET product_id = ?, product_name = ?, quantity = ?, discount = ?, discount_type = ?, total_amount = ?, description = ? WHERE item_id = ?";
+    $updateItemSql = "UPDATE invoice_items SET product_name = ?, quantity = ?, discount = ?, discount_type = ?, total_amount = ?, description = ? WHERE item_id = ?";
     $insertItemSql = "INSERT INTO invoice_items (
-        invoice_id, product_id, product_name, quantity, discount, discount_type,
+        invoice_id, product_name, quantity, discount, discount_type,
         total_amount, pay_status, status, description
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     
     $updateStmt = $conn->prepare($updateItemSql);
     $insertStmt = $conn->prepare($insertItemSql);
@@ -262,16 +261,15 @@ try {
         
         if ($item['item_id'] > 0) {
             // Update existing item
-            $updateStmt->bind_param("isidsdssi", $item['product_id'], $item['product_name'], $item['qty'], $item['discount'], $item['discount_type'], $item_total, $item['description'], $item['item_id']);
+            $updateStmt->bind_param("sidsdsi", $item['product_name'], $item['qty'], $item['discount'], $item['discount_type'], $item_total, $item['description'], $item['item_id']);
             $updateStmt->execute();
         } else {
             // Insert new item
             $pay_status = 'unpaid';
             $status = 'pending';
             $insertStmt->bind_param(
-                "iisidsdsss",
+                "isidsdsss",
                 $invoice_id,
-                $item['product_id'],
                 $item['product_name'],
                 $item['qty'],
                 $item['discount'],

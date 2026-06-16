@@ -23,8 +23,8 @@ if ($invoice_id > 0) {
     $result = $stmt->get_result();
     $invoice = $result->fetch_assoc();
 
-    $itemStmt = $conn->prepare("SELECT ii.*, p.name as product_name, p.description as product_description
-        FROM invoice_items ii JOIN products p ON ii.product_id = p.id WHERE ii.invoice_id = ?");
+    $itemStmt = $conn->prepare("SELECT ii.*
+        FROM invoice_items ii WHERE ii.invoice_id = ?");
     $itemStmt->bind_param("i", $invoice_id);
     $itemStmt->execute();
     $itemsResult = $itemStmt->get_result();
@@ -340,7 +340,7 @@ if ($invoice_id > 0) {
                                                             </td>
                                                             <td>
                                                                 <div class="text-muted">
-                                                                    <?= htmlspecialchars($item['product_description'] ?? '') ?>
+                                                                    <?= htmlspecialchars($item['description'] ?? '') ?>
                                                                 </div>
                                                             </td>
                                                             <td style="text-align: right;">

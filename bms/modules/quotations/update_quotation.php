@@ -99,12 +99,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $subtotal += $row_total;
             $total_discount += $discount;
             
-            $product_id = is_numeric($product_val) ? intval($product_val) : null;
-            $product_name = is_numeric($product_val) ? null : $product_val;
+            // Always store as text name (no product table dependency)
+            $product_name = $product_val;
             
             $items_to_process[] = [
                 'item_id' => $item_id,
-                'product_id' => $product_id,
                 'product_name' => $product_name,
                 'price' => $price,
                 'qty' => $qty,
@@ -167,8 +166,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
         
         // Update existing items and insert new ones
-        $updateItemSql = "UPDATE quotation_items SET product_id = ?, product_name = ?, quantity = ?, description = ?, price = ?, discount = ?, discount_type = ?, total_amount = ? WHERE id = ?";
-        $insertItemSql = "INSERT INTO quotation_items (quotation_id, product_id, product_name, quantity, description, price, discount, discount_type, total_amount) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $updateItemSql = "UPDATE quotation_items SET product_name = ?, quantity = ?, description = ?, price = ?, discount = ?, discount_type = ?, total_amount = ? WHERE id = ?";
+        $insertItemSql = "INSERT INTO quotation_items (quotation_id, product_name, quantity, description, price, discount, discount_type, total_amount) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         
         $updateStmt = $conn->prepare($updateItemSql);
         $insertStmt = $conn->prepare($insertItemSql);
@@ -176,11 +175,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         foreach ($items_to_process as $item) {
             if ($item['item_id'] > 0) {
                 // Update existing item
-                $updateStmt->bind_param("isisddsdi", $item['product_id'], $item['product_name'], $item['qty'], $item['description'], $item['price'], $item['discount'], $item['discount_type'], $item['total'], $item['item_id']);
+                $updateStmt->bind_param("sisddsdi", $item['product_name'], $item['qty'], $item['description'], $item['price'], $item['discount'], $item['discount_type'], $item['total'], $item['item_id']);
                 $updateStmt->execute();
             } else {
                 // Insert new item
-                $insertStmt->bind_param("iisisddsd", $quotation_id, $item['product_id'], $item['product_name'], $item['qty'], $item['description'], $item['price'], $item['discount'], $item['discount_type'], $item['total']);
+                $insertStmt->bind_param("isisddsd", $quotation_id, $item['product_name'], $item['qty'], $item['description'], $item['price'], $item['discount'], $item['discount_type'], $item['total']);
                 $insertStmt->execute();
             }
         }

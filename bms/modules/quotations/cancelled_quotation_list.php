@@ -137,6 +137,7 @@ $result = $conn->query($sql);
                                             <th>Expiry</th>
                                             <th>Amount</th>
                                             <th>Status</th>
+                                            <th>Cancel Reason</th>
                                             <th>Created By</th>
                                             <th>Actions</th>
                                         </tr>
@@ -168,6 +169,7 @@ $result = $conn->query($sql);
                                                             Cancelled
                                                         </span>
                                                     </td>
+                                                    <td><?php echo !empty($row['cancel_reason']) ? htmlspecialchars($row['cancel_reason']) : '<span class="text-muted">-</span>'; ?></td>
                                                     <td><?php echo htmlspecialchars($row['creator_name']); ?></td>
 <td>
                             <div class="action-btn-group d-flex gap-1">

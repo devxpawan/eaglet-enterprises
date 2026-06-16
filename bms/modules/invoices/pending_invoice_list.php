@@ -30,6 +30,7 @@ if ($current_user_role !== 1 && $current_user_role !== 3) {
 if (isset($_POST['cancel_invoice']) && isset($_POST['invoice_id'])) {
     $invoice_id = $_POST['invoice_id'];
     $user_id = $_SESSION['user_id']; // Current logged-in user ID
+    $cancel_reason = isset($_POST['cancel_reason']) ? trim($_POST['cancel_reason']) : '';
     
     // Get invoice details for logging
     $invoice_sql = "SELECT c.name FROM invoices i 
@@ -46,10 +47,10 @@ if (isset($_POST['cancel_invoice']) && isset($_POST['invoice_id'])) {
     $conn->begin_transaction();
     
     try {
-        // 1. Update the invoice status to 'cancel'
-        $update_invoice_sql = "UPDATE invoices SET status = 'cancel' WHERE invoice_id = ?";
+        // 1. Update the invoice status to 'cancel' and save cancel_reason
+        $update_invoice_sql = "UPDATE invoices SET status = 'cancel', cancel_reason = ? WHERE invoice_id = ?";
         $stmt = $conn->prepare($update_invoice_sql);
-        $stmt->bind_param("s", $invoice_id);
+        $stmt->bind_param("ss", $cancel_reason, $invoice_id);
         $stmt->execute();
         
         // 2. Update all related invoice items to 'cancel' status
@@ -61,6 +62,9 @@ if (isset($_POST['cancel_invoice']) && isset($_POST['invoice_id'])) {
         // 3. Log the action in user_logs table
         $action_type = "cancel_invoice";
         $details = "Invoice ID #$invoice_id for customer ($customer_name) was canceled by user ID #$user_id";
+        if (!empty($cancel_reason)) {
+            $details .= " Reason: $cancel_reason";
+        }
         
         $log_sql = "INSERT INTO user_logs (user_id, action_type, inquiry_id, details, created_at) 
                    VALUES (?, ?, ?, ?, NOW())";
@@ -179,6 +183,14 @@ $result = $conn->query($sql);
                     </div>
                 </div>
                     
+                    <?php if (isset($_SESSION['invoice_success'])): ?>
+                        <script>document.addEventListener('DOMContentLoaded', function() { showToast('success', '<?php echo addslashes($_SESSION["invoice_success"]); ?>'); });</script>
+                        <?php unset($_SESSION['invoice_success']); ?>
+                    <?php endif; ?>
+                    <?php if (isset($_SESSION['invoice_error'])): ?>
+                        <script>document.addEventListener('DOMContentLoaded', function() { showToast('error', '<?php echo addslashes($_SESSION["invoice_error"]); ?>'); });</script>
+                        <?php unset($_SESSION['invoice_error']); ?>
+                    <?php endif; ?>
                     <?php if (isset($_SESSION['message'])): ?>
                         <script>document.addEventListener('DOMContentLoaded', function() { showToast('<?php echo $_SESSION["message_type"] === "danger" ? "error" : $_SESSION["message_type"]; ?>', '<?php echo addslashes($_SESSION["message"]); ?>'); });</script>
                         <?php unset($_SESSION['message']); unset($_SESSION['message_type']); ?>
@@ -454,6 +466,10 @@ $result = $conn->query($sql);
                                 </div>
                             </div>
                         </div>
+                        <div class="col-12">
+                            <label for="cancel_reason" class="form-label fw-semibold">Cancel Reason <span class="text-muted">(Optional)</span></label>
+                            <textarea class="form-control" id="cancel_reason" name="cancel_reason" rows="3" placeholder="Enter the reason for cancellation..."></textarea>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer bg-light border-top-0 py-3">
@@ -461,6 +477,7 @@ $result = $conn->query($sql);
                     <form method="post" id="cancelInvoiceForm" class="m-0">
                         <input type="hidden" name="invoice_id" id="confirm_cancel_invoice_id">
                         <input type="hidden" name="cancel_invoice" value="1">
+                        <input type="hidden" name="cancel_reason" id="confirm_cancel_reason">
                             <?php foreach (['search','filter_from_date','filter_to_date','filter_customer'] as $f):
                                     if (!empty($$f)): ?>
                                     <input type="hidden" name="<?= $f ?>" value="<?= htmlspecialchars($$f) ?>">
@@ -599,7 +616,12 @@ $result = $conn->query($sql);
                 $('#cancel_invoice_id').text(invoiceId);
                 $('#cancel_customer_name').text(customerName);
                 $('#confirm_cancel_invoice_id').val(invoiceId);
+                $('#cancel_reason').val('');
                 $('#cancelInvoiceModal').modal('show');
+            });
+
+            $('#cancelInvoiceForm').on('submit', function() {
+                $('#confirm_cancel_reason').val($('#cancel_reason').val());
             });
             
 

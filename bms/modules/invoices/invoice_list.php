@@ -116,10 +116,7 @@ $result = $conn->query($sql);
                     </div>
                 </div>
                     
-                    <?php if (isset($_SESSION['message'])): ?>
-                        <script>document.addEventListener('DOMContentLoaded', function() { showToast('<?php echo $_SESSION["message_type"] === "danger" ? "error" : $_SESSION["message_type"]; ?>', '<?php echo addslashes($_SESSION["message"]); ?>'); });</script>
-                        <?php unset($_SESSION['message']); unset($_SESSION['message_type']); ?>
-                    <?php endif; ?>
+
                     
                     <div class="card invoice-card">
                         <div class="card-body">

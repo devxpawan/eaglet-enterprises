@@ -81,10 +81,7 @@ $result = $conn->query($sql);
                     </div>
                 </div>
                     
-                    <?php if (isset($_SESSION['quotation_success'])): ?>
-                        <script>document.addEventListener('DOMContentLoaded', function() { showToast('success', '<?php echo addslashes($_SESSION["quotation_success"]); ?>'); });</script>
-                        <?php unset($_SESSION['quotation_success']); ?>
-                    <?php endif; ?>
+
                     
                     <div class="card quotation-card">
                         <div class="card-body">

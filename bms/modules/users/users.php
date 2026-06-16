@@ -36,7 +36,7 @@ if ($requestAction === 'list_positions') {
         sendJsonResponse(['success' => false, 'message' => 'Access denied. Admin privileges required.']);
     }
 
-    $positionsResult = $conn->query("SELECT id, name, description, status, created_at FROM positions ORDER BY status ASC, name ASC");
+    $positionsResult = $conn->query("SELECT p.id, p.name, p.description, p.status, p.created_at, COUNT(u.id) AS user_count FROM positions p LEFT JOIN users u ON u.position_id = p.id GROUP BY p.id ORDER BY p.status ASC, p.name ASC");
     $positions = [];
 
     if ($positionsResult) {
@@ -46,6 +46,25 @@ if ($requestAction === 'list_positions') {
     }
 
     sendJsonResponse(['success' => true, 'positions' => $positions]);
+}
+
+if ($requestAction === 'list_position_users') {
+    $positionId = isset($_GET['position_id']) ? (int)$_GET['position_id'] : 0;
+    if ($positionId <= 0) {
+        sendJsonResponse(['success' => false, 'message' => 'Invalid position.']);
+    }
+
+    $stmt = $conn->prepare("SELECT u.id, u.name, u.username, u.email, u.mobile, u.status FROM users u WHERE u.position_id = ? ORDER BY u.name ASC");
+    $stmt->bind_param("i", $positionId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $users = [];
+    while ($row = $result->fetch_assoc()) {
+        $users[] = $row;
+    }
+    $stmt->close();
+
+    sendJsonResponse(['success' => true, 'users' => $users]);
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($requestAction, ['add_position', 'update_position', 'toggle_position'], true)) {
@@ -620,13 +639,14 @@ $result = $conn->query($sql);
                                 <tr>
                                     <th>Position</th>
                                     <th>Description</th>
+                                    <th>Users</th>
                                     <th>Status</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="positionsTableBody">
                                 <tr>
-                                    <td colspan="4" class="text-center py-4">
+                                    <td colspan="5" class="text-center py-4">
                                         <div class="spinner-border spinner-border-sm text-primary" role="status">
                                             <span class="visually-hidden">Loading...</span>
                                         </div>
@@ -732,7 +752,7 @@ $result = $conn->query($sql);
         function showPositionLoading() {
             positionsTableBody.innerHTML = `
                 <tr>
-                    <td colspan="4" class="text-center py-4">
+                    <td colspan="5" class="text-center py-4">
                         <div class="spinner-border spinner-border-sm text-primary" role="status">
                             <span class="visually-hidden">Loading...</span>
                         </div>
@@ -746,7 +766,7 @@ $result = $conn->query($sql);
 
             const row = document.createElement('tr');
             const cell = document.createElement('td');
-            cell.colSpan = 4;
+            cell.colSpan = 5;
             cell.className = `text-center py-4 ${isError ? 'text-danger' : 'text-muted'}`;
             cell.textContent = message;
             row.appendChild(cell);
@@ -819,6 +839,12 @@ $result = $conn->query($sql);
                 const descriptionCell = document.createElement('td');
                 descriptionCell.textContent = position.description || '—';
 
+                const usersCell = document.createElement('td');
+                const usersCount = document.createElement('span');
+                usersCount.className = 'fw-semibold';
+                usersCount.textContent = position.user_count || 0;
+                usersCell.appendChild(usersCount);
+
                 const statusCell = document.createElement('td');
                 const statusBadge = document.createElement('span');
                 statusBadge.className = `badge-soft ${position.status === 'active' ? 'badge-soft-success' : 'badge-soft-danger'}`;
@@ -886,7 +912,7 @@ $result = $conn->query($sql);
                 });
 
                 actionCell.append(editButton, toggleButton);
-                row.append(nameCell, descriptionCell, statusCell, actionCell);
+                row.append(nameCell, descriptionCell, usersCell, statusCell, actionCell);
                 positionsTableBody.appendChild(row);
             });
         }
