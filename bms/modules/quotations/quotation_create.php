@@ -537,6 +537,11 @@ $customerResult = $conn->query($customerSql);
                                                 id="customer_name" placeholder="Enter customer name" required>
                                         </div>
                                         <div class="mt-3">
+                                            <label class="form-label">Business Name</label>
+                                            <input type="text" class="form-control" name="customer_business_name"
+                                                id="customer_business_name" placeholder="Enter business name (optional)">
+                                        </div>
+                                        <div class="mt-3">
                                             <label class="form-label">Email</label>
                                             <input type="email" class="form-control" name="customer_email"
                                                 id="customer_email" placeholder="customer@example.com">
@@ -747,6 +752,7 @@ $customerResult = $conn->query($customerSql);
                                     while ($customer = $customerResult->fetch_assoc()): ?>
                                         <tr class="customer-row" data-id="<?= $customer['customer_id'] ?? '' ?>"
                                             data-name="<?= htmlspecialchars($customer['name'] ?? '') ?>"
+                                            data-business-name="<?= htmlspecialchars($customer['business_name'] ?? '') ?>"
                                             data-email="<?= htmlspecialchars($customer['email'] ?? '') ?>"
                                             data-phone="<?= htmlspecialchars($customer['phone'] ?? '') ?>"
                                             data-address="<?= htmlspecialchars($customer['address'] ?? '') ?>">
@@ -874,6 +880,7 @@ $customerResult = $conn->query($customerSql);
             var row = $(this).closest('tr');
             $('#customer_id').val(row.data('id'));
             $('#customer_name').val(row.data('name'));
+            $('#customer_business_name').val(row.data('business-name'));
             $('#customer_email').val(row.data('email'));
             $('#customer_phone').val(row.data('phone'));
             $('#customer_address').val(row.data('address'));
@@ -1038,7 +1045,6 @@ $customerResult = $conn->query($customerSql);
                 $('input[name="expiry_date"]').val(expDate.toISOString().split('T')[0]);
             }
         });
-    });
     </script>
     <script src="<?= BASE_URL ?>js/scripts.js"></script>
 </body>

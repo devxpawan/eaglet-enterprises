@@ -457,7 +457,7 @@ if (!empty($quotation['ref_no'])) {
             .quotation-container {
                 box-shadow: none;
                 padding: 0;
-                padding-bottom: 60px; /* space for the fixed footer */
+                padding-bottom: 60px;
                 margin: 0;
                 width: 100%;
                 max-width: 100%;
@@ -467,14 +467,56 @@ if (!empty($quotation['ref_no'])) {
                 display: none !important;
             }
 
-            .header-table, .info-table, .product-table, .totals-table-wrapper,
-            .amount-in-words-box, .validity-terms-box, .bank-details-box,
-            .signature-section {
+            .header-table, .info-table {
                 page-break-inside: avoid;
                 break-inside: avoid;
             }
 
+            .product-table {
+                font-size: 11px;
+            }
+
+            .product-table thead {
+                display: table-header-group;
+            }
+
+            .product-table thead tr {
+                background-color: #f8f9fa !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .product-table tbody tr {
+                page-break-inside: auto;
+                break-inside: auto;
+            }
+
             .product-table tr {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+
+            .totals-table-wrapper {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+
+            .amount-in-words-box {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+
+            .validity-terms-box {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+
+            .bank-details-box {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+
+            .signature-section {
                 page-break-inside: avoid;
                 break-inside: avoid;
             }
@@ -707,20 +749,21 @@ if (!empty($quotation['ref_no'])) {
                 </div>
             </div>
 
-            <!-- Footer (fixed to bottom of paper when printing) -->
-            <div class="print-footer">
-                <div class="footer-line"></div>
-                <div class="footer-text">
-                    <?php 
-                    $footer_addr = $company['address'] ? htmlspecialchars(str_replace("\n", ", ", $company['address'])) : '';
-                    echo $footer_addr;
-                    if (!empty($company['phone']) || !empty($company['email'])):
-                        echo "<br>";
-                        if ($company['phone']) echo "Hot line / Tel: " . htmlspecialchars($company['phone']) . " ";
-                        if ($company['email']) echo "| E-Mail: " . htmlspecialchars($company['email']) . " ";
-                    endif;
-                    ?>
-                </div>
+        </div>
+
+        <!-- Footer (fixed to bottom of paper when printing) -->
+        <div class="print-footer">
+            <div class="footer-line"></div>
+            <div class="footer-text">
+                <?php 
+                $footer_addr = $company['address'] ? htmlspecialchars(str_replace("\n", ", ", $company['address'])) : '';
+                echo $footer_addr;
+                if (!empty($company['phone']) || !empty($company['email'])):
+                    echo "<br>";
+                    if ($company['phone']) echo "Hot line / Tel: " . htmlspecialchars($company['phone']) . " ";
+                    if ($company['email']) echo "| E-Mail: " . htmlspecialchars($company['email']) . " ";
+                endif;
+                ?>
             </div>
         </div>
     </div>

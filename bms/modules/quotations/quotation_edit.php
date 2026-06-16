@@ -499,6 +499,12 @@ while ($row = $items_result->fetch_assoc()) {
                                                 value="<?php echo htmlspecialchars($quotation['customer_name']); ?>">
                                         </div>
                                         <div class="mt-3">
+                                            <label class="form-label">Business Name</label>
+                                            <input type="text" class="form-control" name="customer_business_name"
+                                                id="customer_business_name" placeholder="Enter business name (optional)"
+                                                value="<?php echo htmlspecialchars($quotation['customer_business_name'] ?? ''); ?>">
+                                        </div>
+                                        <div class="mt-3">
                                             <label class="form-label">Email</label>
                                             <input type="email" class="form-control" name="customer_email"
                                                 id="customer_email" placeholder="customer@example.com"

@@ -478,8 +478,7 @@ $result = $conn->query($sql);
                                             <th>User ID</th>
                                             <th>Name</th>
                                             <th>Username</th>
-                                            <th>Email</th>
-                                            <th>Mobile</th>
+                                            <th>Contact</th>
                                             <th>Position</th>
                                             <th>Status</th>
                                             <th>Actions</th>
@@ -498,8 +497,12 @@ $result = $conn->query($sql);
                                                         <div class="user-role"><?= htmlspecialchars($row['role_name']) ?></div>
                                                     </td>
                                                     <td><?= htmlspecialchars($row['username']) ?></td>
-                                                    <td><?= htmlspecialchars($row['email']) ?></td>
-                                                    <td><?= isset($row['mobile']) ? htmlspecialchars($row['mobile']) : 'N/A' ?></td>
+                                                    <td>
+                                                        <div><i class="fas fa-phone me-1 text-muted"></i><?= isset($row['mobile']) ? htmlspecialchars($row['mobile']) : 'N/A' ?></div>
+                                                        <?php if (!empty($row['email'])): ?>
+                                                            <div class="text-muted" style="font-size: 0.82rem;"><i class="fas fa-envelope me-1"></i><?= htmlspecialchars($row['email']) ?></div>
+                                                        <?php endif; ?>
+                                                    </td>
                                                     <td>
                                                         <?php if (!empty($row['position_name'])): ?>
                                                             <span class="badge badge-soft badge-soft-info"><?= htmlspecialchars($row['position_name']) ?></span>
@@ -549,7 +552,7 @@ $result = $conn->query($sql);
                                             <?php endwhile; ?>
                                         <?php else: ?>
                                             <tr>
-                                                <td colspan="8" class="text-center py-4">
+                                                <td colspan="7" class="text-center py-4">
                                                     <div class="empty-state">
                                                         <i class="fas fa-users"></i>
                                                         <p>No users found</p>

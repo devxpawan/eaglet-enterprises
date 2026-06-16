@@ -30,7 +30,7 @@ if (!isset($_GET['id']) || empty($_GET['id'])) {
 $invoice_id = (int) $_GET['id'];
 
 $invoiceSql = "SELECT i.*, c.name as customer_name, c.email as customer_email,
-               c.phone as customer_phone, c.address as customer_address
+               c.phone as customer_phone, c.address as customer_address, c.business_name as customer_business_name
                FROM invoices i
                LEFT JOIN customers c ON i.customer_id = c.customer_id
                WHERE i.invoice_id = ?";
@@ -585,6 +585,12 @@ $invoice_vat_pct = ($invoice_net > 0) ? ($invoice_vat / $invoice_net * 100) : 0;
                                                 value="<?= htmlspecialchars($invoice['customer_name'] ?? '') ?>" required>
                                         </div>
                                         <div class="mt-3">
+                                            <label class="form-label">Business Name</label>
+                                            <input type="text" class="form-control" name="customer_business_name"
+                                                id="customer_business_name" placeholder="Enter business name (optional)"
+                                                value="<?= htmlspecialchars($invoice['customer_business_name'] ?? '') ?>">
+                                        </div>
+                                        <div class="mt-3">
                                             <label class="form-label">Email</label>
                                             <input type="email" class="form-control" name="customer_email"
                                                 id="customer_email" placeholder="customer@example.com"
@@ -816,6 +822,7 @@ $invoice_vat_pct = ($invoice_net > 0) ? ($invoice_vat / $invoice_net * 100) : 0;
                                     while ($customer = $customerResult->fetch_assoc()): ?>
                                         <tr class="customer-row" data-id="<?= $customer['customer_id'] ?? '' ?>"
                                             data-name="<?= htmlspecialchars($customer['name'] ?? '') ?>"
+                                            data-business-name="<?= htmlspecialchars($customer['business_name'] ?? '') ?>"
                                             data-email="<?= htmlspecialchars($customer['email'] ?? '') ?>"
                                             data-phone="<?= htmlspecialchars($customer['phone'] ?? '') ?>"
                                             data-address="<?= htmlspecialchars($customer['address'] ?? '') ?>">
@@ -990,6 +997,7 @@ $invoice_vat_pct = ($invoice_net > 0) ? ($invoice_vat / $invoice_net * 100) : 0;
                 var row = $(this).closest('tr');
                 $('#customer_id').val(row.data('id'));
                 $('#customer_name').val(row.data('name'));
+                $('#customer_business_name').val(row.data('business-name'));
                 $('#customer_email').val(row.data('email'));
                 $('#customer_phone').val(row.data('phone'));
                 $('#customer_address').val(row.data('address'));

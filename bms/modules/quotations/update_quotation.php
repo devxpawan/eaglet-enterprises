@@ -43,20 +43,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $customer_email = !empty($_POST['customer_email']) ? trim($_POST['customer_email']) : null;
         $customer_address = $_POST['customer_address'] ?? '';
         $customer_phone = $_POST['customer_phone'] ?? '';
+        $customer_business_name = !empty($_POST['customer_business_name']) ? trim($_POST['customer_business_name']) : null;
         
         // Customer handling - update existing or create new
         $customer_id = $_POST['customer_id'] ?? 0;
         if (!empty($customer_id)) {
             // Update existing customer
-            $updateCustomerSql = "UPDATE customers SET name = ?, email = ?, phone = ?, address = ? WHERE customer_id = ?";
+            $updateCustomerSql = "UPDATE customers SET name = ?, email = ?, phone = ?, address = ?, business_name = ? WHERE customer_id = ?";
             $stmt = $conn->prepare($updateCustomerSql);
-            $stmt->bind_param("ssssi", $customer_name, $customer_email, $customer_phone, $customer_address, $customer_id);
+            $stmt->bind_param("sssssi", $customer_name, $customer_email, $customer_phone, $customer_address, $customer_business_name, $customer_id);
             $stmt->execute();
         } else {
             // Create new customer
-            $insertCustomerSql = "INSERT INTO customers (name, email, phone, address, status) VALUES (?, ?, ?, ?, 'Active')";
+            $insertCustomerSql = "INSERT INTO customers (name, email, phone, address, business_name, status) VALUES (?, ?, ?, ?, ?, 'Active')";
             $stmt = $conn->prepare($insertCustomerSql);
-            $stmt->bind_param("ssss", $customer_name, $customer_email, $customer_phone, $customer_address);
+            $stmt->bind_param("sssss", $customer_name, $customer_email, $customer_phone, $customer_address, $customer_business_name);
             $stmt->execute();
             $customer_id = $conn->insert_id;
         }

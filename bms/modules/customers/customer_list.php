@@ -166,9 +166,8 @@ $result = $conn->query($sql);
                                  <thead class="table-light">
                                      <tr>
                                          <th>Customer ID</th>
-                                         <th>Business Name</th>
-                                         <th>Customer Name</th>
-                                         <th>Phone</th>
+                                         <th>Name</th>
+                                         <th>Contact</th>
                                          <th>Address</th>
                                          <th>Status</th>
                                          <th>Actions</th>
@@ -177,15 +176,21 @@ $result = $conn->query($sql);
                                  <tbody>
                                      <?php while ($row = $result->fetch_assoc()): ?>
                                          <tr id="customer-row-<?= $row['customer_id'] ?>">
+                                             <td><?= htmlspecialchars($row['customer_id']) ?></td>
                                              <td>
-                                                 <span class="fw-semibold"><?= htmlspecialchars($row['customer_id']) ?></span>
+                                                 <?php if (!empty($row['business_name'])): ?>
+                                                     <div class="fw-semibold"><?= htmlspecialchars($row['business_name']) ?></div>
+                                                     <div class="text-muted" style="font-size: 0.82rem;"><?= htmlspecialchars($row['name']) ?></div>
+                                                 <?php else: ?>
+                                                     <div class="fw-semibold"><?= htmlspecialchars($row['name']) ?></div>
+                                                 <?php endif; ?>
                                              </td>
-                                             <td><?= htmlspecialchars($row['business_name']) ?></td>
                                              <td>
-                                                 <div class="fw-semibold"><?= htmlspecialchars($row['name']) ?></div>
-                                                 <div class="text-muted" style="font-size: 0.82rem;"><?= htmlspecialchars($row['email']) ?></div>
+                                                 <div><i class="fas fa-phone me-1 text-muted"></i><?= htmlspecialchars($row['phone']) ?></div>
+                                                 <?php if (!empty($row['email'])): ?>
+                                                     <div class="text-muted" style="font-size: 0.82rem;"><i class="fas fa-envelope me-1"></i><?= htmlspecialchars($row['email']) ?></div>
+                                                 <?php endif; ?>
                                              </td>
-                                             <td><?= htmlspecialchars($row['phone']) ?></td>
                                              <td><?= htmlspecialchars($row['address']) ?></td>
                                              <td>
                                               <?php if ($row['status'] == 'Active'): ?>
