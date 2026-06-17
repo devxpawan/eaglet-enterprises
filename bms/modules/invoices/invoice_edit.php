@@ -12,13 +12,8 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
 require_once BASE_PATH . 'includes/db_connection.php';
 require_once BASE_PATH . 'includes/functions.php';
 
-$current_user_role = isset($_SESSION['role_id']) ? (int)$_SESSION['role_id'] : 0;
-if ($current_user_role !== 1 && $current_user_role !== 3) {
-    $_SESSION['message'] = "You do not have permission to edit invoices.";
-    $_SESSION['message_type'] = "danger";
-    header("Location: " . BASE_URL . "modules/invoices/invoice_list.php");
-    exit();
-}
+$current_user_id = $_SESSION['user_id'] ?? 0;
+$canEditDirectly = isApprover();
 
 if (!isset($_GET['id']) || empty($_GET['id'])) {
     $_SESSION['message'] = "Invoice ID is required.";
@@ -28,6 +23,24 @@ if (!isset($_GET['id']) || empty($_GET['id'])) {
 }
 
 $invoice_id = (int) $_GET['id'];
+
+if (!$canEditDirectly) {
+    $hasApprovedRequest = hasApprovedEditRequest($conn, $invoice_id, $current_user_id);
+    if (!$hasApprovedRequest) {
+        $hasPendingRequest = hasPendingEditRequest($conn, $invoice_id, $current_user_id);
+        if ($hasPendingRequest) {
+            $_SESSION['message'] = "Your edit request is pending approval. Please wait for a director to review it.";
+            $_SESSION['message_type'] = "warning";
+        } else {
+            $_SESSION['message'] = "You need approval to edit this invoice. Please submit an edit request.";
+            $_SESSION['message_type'] = "info";
+            header("Location: " . BASE_URL . "modules/invoices/request_edit.php?id=" . $invoice_id);
+            exit();
+        }
+        header("Location: " . BASE_URL . "modules/invoices/invoice_list.php");
+        exit();
+    }
+}
 
 $invoiceSql = "SELECT i.*, c.name as customer_name, c.email as customer_email,
                c.phone as customer_phone, c.address as customer_address, c.business_name as customer_business_name
@@ -553,7 +566,7 @@ $invoice_vat_pct = ($invoice_net > 0) ? ($invoice_vat / $invoice_net * 100) : 0;
                                                 <div>
                                                     <label class="form-label">Due Date</label>
                                                     <input type="date" class="form-control" name="due_date"
-                                                        value="<?= htmlspecialchars(isset($invoice['due_date']) ? date('Y-m-d', strtotime($invoice['due_date'])) : date('Y-m-d', strtotime('+30 days'))) ?>"
+                                                        value="<?= htmlspecialchars((!empty($invoice['due_date']) && $invoice['due_date'] !== '0000-00-00') ? date('Y-m-d', strtotime($invoice['due_date'])) : date('Y-m-d', strtotime('+30 days'))) ?>"
                                                         required>
                                                 </div>
                                             </div>
@@ -1116,6 +1129,19 @@ $invoice_vat_pct = ($invoice_net > 0) ? ($invoice_vat / $invoice_net * 100) : 0;
 
             // Calculate initial totals from existing items
             updateTotals();
+
+            // Disable submit button when no changes are made
+            var initialFormData = $('#invoiceEditForm').serialize();
+            function checkFormChanges() {
+                var currentFormData = $('#invoiceEditForm').serialize();
+                if (currentFormData === initialFormData) {
+                    $('#submit_invoice').prop('disabled', true).addClass('disabled');
+                } else {
+                    $('#submit_invoice').prop('disabled', false).removeClass('disabled');
+                }
+            }
+            checkFormChanges();
+            $('#invoiceEditForm').on('change input', 'input, select, textarea', checkFormChanges);
         });
     </script>
     <script src="<?= BASE_URL ?>js/scripts.js"></script>

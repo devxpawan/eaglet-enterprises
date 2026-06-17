@@ -45,10 +45,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 if (password_verify($password, $user['password']) || $password == $user['password']) { // Second condition for testing only, remove in production
                     // Password is correct, start session
                     $_SESSION['user'] = $user['email'];
-                    $_SESSION['user_id'] = $user['id']; // Storing user ID in session
-                    $_SESSION['role_id'] = $user['role_id']; // Storing role ID
-                    $_SESSION['name'] = $user['name']; // Storing user name
+                    $_SESSION['user_id'] = $user['id'];
+                    $_SESSION['role_id'] = $user['role_id'];
+                    $_SESSION['name'] = $user['name'];
                     $_SESSION['username'] = $user['username'];
+                    $_SESSION['position_id'] = $user['position_id'] ?? null;
+                    $_SESSION['is_approver'] = false;
+                    if (!empty($user['position_id'])) {
+                        $posStmt = $conn->prepare("SELECT is_approver FROM positions WHERE id = ?");
+                        $posStmt->bind_param("i", $user['position_id']);
+                        $posStmt->execute();
+                        $posResult = $posStmt->get_result();
+                        if ($posRow = $posResult->fetch_assoc()) {
+                            $_SESSION['is_approver'] = (bool)$posRow['is_approver'];
+                        }
+                    }
                     $_SESSION['logged_in'] = true;
 
                     // Handle "Remember Me" by setting cookies

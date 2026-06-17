@@ -63,6 +63,34 @@ function canEditProducts() {
     return isAdmin() || isModerator();
 }
 
+function isApprover() {
+    return isset($_SESSION['is_approver']) && $_SESSION['is_approver'] === true;
+}
+
+function canEditInvoices() {
+    return isAdmin() || isModerator() || isApprover();
+}
+
+function hasApprovedEditRequest($conn, $invoice_id, $user_id) {
+    $stmt = $conn->prepare("SELECT id FROM invoice_edit_requests WHERE invoice_id = ? AND requester_id = ? AND status = 'approved' LIMIT 1");
+    $stmt->bind_param("ii", $invoice_id, $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $exists = $result->num_rows > 0;
+    $stmt->close();
+    return $exists;
+}
+
+function hasPendingEditRequest($conn, $invoice_id, $user_id) {
+    $stmt = $conn->prepare("SELECT id FROM invoice_edit_requests WHERE invoice_id = ? AND requester_id = ? AND status = 'pending' LIMIT 1");
+    $stmt->bind_param("ii", $invoice_id, $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $exists = $result->num_rows > 0;
+    $stmt->close();
+    return $exists;
+}
+
 function canCreateInvoices() {
     return true;
 }

@@ -691,7 +691,7 @@ $quotation_ref = !empty($invoice['quotation_ref_no']) ? $invoice['quotation_ref_
                 </td>
                 <td class="invoice-meta-cell">
                     <strong>Date :</strong> <?php echo date('j/n/Y', strtotime($invoice['issue_date'])); ?><br>
-                    <strong>Due Date :</strong> <?php echo date('j/n/Y', strtotime($invoice['due_date'])); ?><br>
+                    <strong>Due Date :</strong> <?php echo (!empty($invoice['due_date']) && $invoice['due_date'] !== '0000-00-00') ? date('j/n/Y', strtotime($invoice['due_date'])) : ''; ?><br>
                     <strong>Ref No :</strong> <?php echo htmlspecialchars($ref_no); ?><br>
                     <?php if (!empty($quotation_ref)): ?>
                         <strong>From Quotation :</strong> <?php echo htmlspecialchars($quotation_ref); ?><br>

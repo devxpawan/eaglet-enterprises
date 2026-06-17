@@ -216,7 +216,7 @@ if ($pu) {
                                                     </td>
                                                     <td><?php echo isset($row['issue_date']) ? htmlspecialchars(date('d/m/Y', strtotime($row['issue_date']))) : ''; ?>
                                                     </td>
-                                                    <td><?php echo isset($row['due_date']) ? htmlspecialchars(date('d/m/Y', strtotime($row['due_date']))) : ''; ?>
+                                                    <td><?php echo (isset($row['due_date']) && !empty($row['due_date']) && $row['due_date'] !== '0000-00-00') ? htmlspecialchars(date('d/m/Y', strtotime($row['due_date']))) : ''; ?>
                                                     </td>
                                                     <td>
                                                         <?php

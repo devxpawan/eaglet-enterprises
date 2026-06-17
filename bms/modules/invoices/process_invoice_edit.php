@@ -24,15 +24,26 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     exit();
 }
 
-$current_user_role = isset($_SESSION['role_id']) ? (int)$_SESSION['role_id'] : 0;
-if ($current_user_role !== 1 && $current_user_role !== 3) {
-    while (ob_get_level()) {
-        ob_end_clean();
-    }
+$current_user_id = $_SESSION['user_id'] ?? 0;
+$canEditDirectly = isApprover();
+
+if (!$canEditDirectly && empty($_POST['invoice_id'])) {
+    while (ob_get_level()) ob_end_clean();
     $_SESSION['message'] = "You do not have permission to edit invoices.";
     $_SESSION['message_type'] = "danger";
     header("Location: " . BASE_URL . "modules/invoices/pending_invoice_list.php");
     exit();
+}
+
+if (!$canEditDirectly) {
+    $invoice_id_check = isset($_POST['invoice_id']) ? (int)$_POST['invoice_id'] : 0;
+    if ($invoice_id_check === 0 || !hasApprovedEditRequest($conn, $invoice_id_check, $current_user_id)) {
+        while (ob_get_level()) ob_end_clean();
+        $_SESSION['message'] = "You do not have an approved edit request for this invoice.";
+        $_SESSION['message_type'] = "danger";
+        header("Location: " . BASE_URL . "modules/invoices/invoice_list.php");
+        exit();
+    }
 }
 
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
@@ -128,7 +139,7 @@ try {
     }
 
     $invoice_date = $_POST['invoice_date'] ?? date('Y-m-d');
-    $due_date = $_POST['due_date'] ?? date('Y-m-d', strtotime('+30 days'));
+    $due_date = !empty($_POST['due_date']) ? $_POST['due_date'] : date('Y-m-d', strtotime('+30 days'));
     $notes = $_POST['notes'] ?? '';
     $currency = 'lkr';
 
@@ -202,7 +213,7 @@ try {
 
     $stmt = $conn->prepare($updateInvoiceSql);
     $stmt->bind_param(
-        "isdddddssi",
+        "issddddssi",
         $customer_id,
         $invoice_date,
         $due_date,

@@ -19,9 +19,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
 require_once BASE_PATH . 'includes/db_connection.php';
 require_once BASE_PATH . 'includes/functions.php'; // Include helper functions
 
-// Get current user's role_id from session
-$current_user_role = isset($_SESSION['role_id']) ? (int)$_SESSION['role_id'] : 0;
-$canEditRecords = ($current_user_role === 1 || $current_user_role === 3);
+$canEditRecords = isApprover();
 
 
 
@@ -226,7 +224,7 @@ $result = $conn->query($sql);
                                                     </td>
                                                     <td><?php echo isset($row['issue_date']) ? htmlspecialchars(date('d/m/Y', strtotime($row['issue_date']))) : ''; ?>
                                                     </td>
-                                                    <td><?php echo isset($row['due_date']) ? htmlspecialchars(date('d/m/Y', strtotime($row['due_date']))) : ''; ?>
+                                                    <td><?php echo (isset($row['due_date']) && !empty($row['due_date']) && $row['due_date'] !== '0000-00-00') ? htmlspecialchars(date('d/m/Y', strtotime($row['due_date']))) : ''; ?>
                                                     </td>
                                                     <td>
                                                         <?php
@@ -285,7 +283,6 @@ $result = $conn->query($sql);
                                                                 target="_blank">
                                                                 <i class="fas fa-download"></i>
                                                             </a>
-                                                            
 
                                                         </div>
                                                     </td>

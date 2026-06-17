@@ -19,9 +19,9 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
 require_once BASE_PATH . 'includes/db_connection.php';
 require_once BASE_PATH . 'includes/functions.php'; // Include helper functions
 
-// Only Admin and Moderator can access pending invoices
 $current_user_role = isset($_SESSION['role_id']) ? (int)$_SESSION['role_id'] : 0;
-if ($current_user_role !== 1 && $current_user_role !== 3) {
+$user_id = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : 0;
+if ($current_user_role !== 1 && $current_user_role !== 3 && !isApprover()) {
     header("Location: " . BASE_URL . "modules/invoices/invoice_list.php");
     exit();
 }
@@ -157,6 +157,27 @@ if ($countResult && $countResult->num_rows > 0) {
 $totalPages = ceil($totalRows / $limit);
 $result = $conn->query($sql);
 
+// Collect invoices and check pending edit requests
+$invoices = [];
+$pendingEditIds = [];
+if ($result && $result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $invoices[] = $row;
+    }
+    $invoiceIds = array_map(function($inv) { return (int)$inv['invoice_id']; }, $invoices);
+    if (!empty($invoiceIds)) {
+        $ids = implode(',', $invoiceIds);
+        $peStmt = $conn->prepare("SELECT invoice_id FROM invoice_edit_requests WHERE invoice_id IN ($ids) AND requester_id = ? AND status = 'pending'");
+        $peStmt->bind_param("i", $user_id);
+        $peStmt->execute();
+        $peResult = $peStmt->get_result();
+        while ($pe = $peResult->fetch_assoc()) {
+            $pendingEditIds[] = $pe['invoice_id'];
+        }
+        $peStmt->close();
+    }
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -254,8 +275,8 @@ $result = $conn->query($sql);
                                             </tr>
                                         </thead>
                                     <tbody>
-                                        <?php if ($result && $result->num_rows > 0): ?>
-                                            <?php while ($row = $result->fetch_assoc()): ?>
+                                        <?php if (!empty($invoices)): ?>
+                                            <?php foreach ($invoices as $row): ?>
                                                 <tr>
                                                     <td><?php echo isset($row['invoice_id']) ? htmlspecialchars($row['invoice_id']) : ''; ?>
                                                     </td>
@@ -286,7 +307,7 @@ $result = $conn->query($sql);
                                                     </td>
                                                     <td><?php echo isset($row['issue_date']) ? htmlspecialchars(date('d/m/Y', strtotime($row['issue_date']))) : ''; ?>
                                                     </td>
-                                                    <td><?php echo isset($row['due_date']) ? htmlspecialchars(date('d/m/Y', strtotime($row['due_date']))) : ''; ?>
+                                                    <td><?php echo (isset($row['due_date']) && !empty($row['due_date']) && $row['due_date'] !== '0000-00-00') ? htmlspecialchars(date('d/m/Y', strtotime($row['due_date']))) : ''; ?>
                                                     </td>
                                                     <td>
                                                         <?php
@@ -332,11 +353,19 @@ $result = $conn->query($sql);
                                                             <?php if ($payStatus == 'paid'): ?>
 
                                                             <?php else: ?>
-                                                                <a href="<?= BASE_URL ?>modules/invoices/invoice_edit.php?id=<?php echo isset($row['invoice_id']) ? $row['invoice_id'] : ''; ?>"
-                                                                    class="btn btn-edit"
-                                                                    title="Edit Invoice">
-                                                                    <i class="fas fa-edit"></i>
-                                                                </a>
+                                                                <?php if (in_array($row['invoice_id'], $pendingEditIds)): ?>
+                                                                    <button class="btn btn-edit disabled"
+                                                                        title="Edit request pending approval"
+                                                                        style="opacity:0.5;cursor:not-allowed;">
+                                                                        <i class="fas fa-edit"></i>
+                                                                    </button>
+                                                                <?php else: ?>
+                                                                    <a href="<?= BASE_URL ?>modules/invoices/invoice_edit.php?id=<?php echo isset($row['invoice_id']) ? $row['invoice_id'] : ''; ?>"
+                                                                        class="btn btn-edit"
+                                                                        title="Edit Invoice">
+                                                                        <i class="fas fa-edit"></i>
+                                                                    </a>
+                                                                <?php endif; ?>
                                                                 <a href="#" class="btn btn-view mark-paid"
                                                                     title="Mark as Paid"
                                                                     data-id="<?php echo isset($row['invoice_id']) ? $row['invoice_id'] : ''; ?>">
@@ -352,7 +381,7 @@ $result = $conn->query($sql);
                                                         </div>
                                                     </td>
                                                 </tr>
-                                            <?php endwhile; ?>
+                                            <?php endforeach; ?>
                                         <?php else: ?>
 <tr>
                                                         <td colspan="9" class="text-center">No pending invoices found</td>
@@ -365,7 +394,7 @@ $result = $conn->query($sql);
                             <!-- Pagination -->
                             <div class="pagination-container d-flex justify-content-between align-items-center mt-4">
                                 <div class="entries-info">
-                                    <?php if ($result && $result->num_rows > 0): ?>
+                                    <?php if (!empty($invoices)): ?>
                                         Showing <strong><?php echo ($offset + 1); ?></strong> to
                                         <strong><?php echo min($offset + $limit, $totalRows); ?></strong> of <strong><?php echo $totalRows; ?></strong>
                                         entries

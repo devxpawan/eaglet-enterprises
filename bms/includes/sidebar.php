@@ -494,9 +494,10 @@ require_once __DIR__ . '/../config/paths.php';
                 $userRoleId = isset($_SESSION['role_id']) ? (int)$_SESSION['role_id'] : 0;
                 $isAdmin = ($userRoleId === 1);
                 $isModerator = ($userRoleId === 3);
-                $canApproveReject = $isAdmin || $isModerator;
+                $isApprover = isset($_SESSION['is_approver']) && $_SESSION['is_approver'] === true;
+                $canApproveReject = $isAdmin || $isModerator || $isApprover;
                 $canManageUsers = $isAdmin;
-                $canEditRecords = $isAdmin || $isModerator;
+                $canEditRecords = $isAdmin || $isModerator || $isApprover;
                 ?>
 
                 <div class="sb-sidenav-menu-heading">Main</div>
@@ -522,6 +523,10 @@ require_once __DIR__ . '/../config/paths.php';
                         <a class="nav-link" href="<?= BASE_URL ?>modules/invoices/pending_invoice_list.php" id="pending-invoices-link">Pending Invoices</a>
                         <a class="nav-link" href="<?= BASE_URL ?>modules/invoices/complete_invoice_list.php" id="complete-invoices-link">Complete Invoices</a>
                         <a class="nav-link" href="<?= BASE_URL ?>modules/invoices/cancel_invoice_list.php" id="cancel-invoices-link">Cancel Invoices</a>
+                        <?php endif; ?>
+                        <?php if ($isApprover): ?>
+                        <a class="nav-link" href="<?= BASE_URL ?>modules/invoices/edit_requests_list.php" id="edit-requests-link"></i> Edit Requests
+                        </a>
                         <?php endif; ?>
                     </nav>
                 </div>

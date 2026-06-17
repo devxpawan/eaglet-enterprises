@@ -950,6 +950,18 @@ $rev_label = ($quotation['revision_no'] == 0) ? 'Original' : 'R' . $quotation['r
                 return false;
             }
         });
+
+        var initialFormData = $('#quotationForm').serialize();
+        function checkFormChanges() {
+            var currentFormData = $('#quotationForm').serialize();
+            if (currentFormData === initialFormData) {
+                $('#submit_quotation').prop('disabled', true).addClass('disabled');
+            } else {
+                $('#submit_quotation').prop('disabled', false).removeClass('disabled');
+            }
+        }
+        checkFormChanges();
+        $('#quotationForm').on('change input', 'input, select, textarea', checkFormChanges);
     </script>
     <script src="<?= BASE_URL ?>js/scripts.js"></script>
 </body>
