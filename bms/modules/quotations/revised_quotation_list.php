@@ -22,7 +22,7 @@ $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 15;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $limit;
 
-$status_filter = "Accepted";
+$status_filter = "Revised";
 
 $baseFrom = "FROM quotations q 
              LEFT JOIN customers c ON q.customer_id = c.customer_id
@@ -67,7 +67,7 @@ $result = $conn->query($sql);
 <html lang="en">
 <head>
     <?php require_once BASE_PATH . 'includes/header.php'; ?>
-    <title>Accepted Quotations</title>
+    <title>Revised Quotations</title>
     <link href="<?= BASE_URL ?>css/quotation-list.css" rel="stylesheet" />
     <link href="<?= BASE_URL ?>css/forms.css" rel="stylesheet" />
 </head>
@@ -79,8 +79,8 @@ $result = $conn->query($sql);
             <main>
                 <div class="page-header d-flex justify-content-between align-items-center">
                     <div>
-                        <h5>Accepted Quotations</h5>
-                        <p class="text-muted">View accepted and confirmed quotations</p>
+                        <h5>Revised Quotations</h5>
+                        <p class="text-muted">Previously revised quotations that have been superseded by newer versions</p>
                     </div>
                 </div>
                     
@@ -113,7 +113,7 @@ $result = $conn->query($sql);
                                             <button type="submit" class="btn btn-primary btn-filter">
                                                 <i class="fas fa-search me-1"></i> Search
                                             </button>
-                                            <a href="<?= BASE_URL ?>modules/quotations/accepted_quotation_list.php" class="btn btn-outline-secondary btn-clear">
+                                            <a href="<?= BASE_URL ?>modules/quotations/revised_quotation_list.php" class="btn btn-outline-secondary btn-clear">
                                                 <i class="fas fa-times me-1"></i> Clear
                                             </a>
                                         </div>
@@ -124,7 +124,7 @@ $result = $conn->query($sql);
                             </div>
                             
                             <div class="d-flex justify-content-start mt-2 mb-2">
-                                <span class="search-count"><?php echo $totalRows; ?> Accepted Quotation<?= $totalRows !== 1 ? 's' : '' ?></span>
+                                <span class="search-count"><?php echo $totalRows; ?> Revised Quotation<?= $totalRows !== 1 ? 's' : '' ?></span>
                             </div>
                             <div class="table-responsive">
                                 <table class="table table-quotation">
@@ -164,8 +164,8 @@ $result = $conn->query($sql);
                                                         <div class="amount-text"><?php echo number_format($row['total_amount'], 2); ?> <span class="currency-symbol">(<?php echo $row['currency'] == 'usd' ? '$' : 'Rs'; ?>)</span></div>
                                                     </td>
                                                     <td>
-                                                        <span class="badge-soft badge-soft-accepted">
-                                                            Accepted
+                                                        <span class="badge-soft badge-soft-revised">
+                                                            Revised
                                                         </span>
                                                     </td>
                                                     <td><?php echo htmlspecialchars($row['creator_name']); ?></td>
@@ -178,13 +178,12 @@ $result = $conn->query($sql);
                                 <a href="<?= BASE_URL ?>modules/quotations/download_quotation.php?id=<?php echo $row['quotation_id']; ?>" class="btn btn-download" title="Download Quotation" target="_blank">
                                     <i class="fas fa-download"></i>
                                 </a>
-
                             </div>
                         </td>
                                                 </tr>
                                             <?php endwhile; ?>
                                         <?php else: ?>
-                                            <tr><td colspan="9" class="text-center empty-state"><i class="fas fa-file-alt"></i><p>No Accepted quotations found</p></td></tr>
+                                            <tr><td colspan="9" class="text-center empty-state"><i class="fas fa-file-alt"></i><p>No revised quotations found</p></td></tr>
                                         <?php endif; ?>
                                     </tbody>
                                 </table>

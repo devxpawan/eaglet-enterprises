@@ -28,6 +28,7 @@ try {
 
     if (!$quotation) throw new Exception("Quotation not found");
     if ($quotation['status'] === 'Accepted') throw new Exception("Quotation already converted to invoice");
+    if ($quotation['status'] === 'Revised') throw new Exception("Cannot convert a revised quotation. Please use the latest revision.");
 
     // 2. Create Invoice
     $issue_date = date('Y-m-d');

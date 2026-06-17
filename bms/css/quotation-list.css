@@ -193,6 +193,69 @@
     border: 1px solid #abf0d5;
 }
 
+.badge-soft-revised {
+    background: #f0f0ff;
+    color: #5a3ec8;
+    border: 1px solid #d4c8f0;
+}
+
+.badge-revision {
+    display: inline-block;
+    padding: 2px 8px;
+    font-size: 10px;
+    font-weight: 700;
+    border-radius: 10px;
+    background: #eef2ff;
+    color: #4338ca;
+    border: 1px solid #c7d2fe;
+    margin-left: 4px;
+    letter-spacing: 0.02em;
+}
+
+.revision-timeline {
+    margin: 16px 0;
+    padding: 0;
+    list-style: none;
+    position: relative;
+}
+
+.revision-timeline::before {
+    content: '';
+    position: absolute;
+    left: 12px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #e5e7eb;
+}
+
+.revision-timeline-item {
+    position: relative;
+    padding: 8px 0 8px 36px;
+}
+
+.revision-timeline-item::before {
+    content: '';
+    position: absolute;
+    left: 6px;
+    top: 12px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid #d0d5dd;
+}
+
+.revision-timeline-item.active::before {
+    background: #3B82F6;
+    border-color: #3B82F6;
+}
+
+.revision-timeline-item.revised::before {
+    background: #f0f0ff;
+    border-color: #5a3ec8;
+}
+
 .action-btn-group .btn {
     width: 34px;
     height: 34px;

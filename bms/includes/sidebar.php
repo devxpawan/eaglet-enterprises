@@ -540,6 +540,7 @@ require_once __DIR__ . '/../config/paths.php';
                         <a class="nav-link" href="<?= BASE_URL ?>modules/quotations/draft_quotation_list.php" id="draft-quotations-link">Draft Quotations</a>
                         <a class="nav-link" href="<?= BASE_URL ?>modules/quotations/accepted_quotation_list.php" id="accepted-quotations-link">Accepted Quotations</a>
                         <a class="nav-link" href="<?= BASE_URL ?>modules/quotations/cancelled_quotation_list.php" id="cancelled-quotations-link">Cancelled Quotations</a>
+                        <a class="nav-link" href="<?= BASE_URL ?>modules/quotations/revised_quotation_list.php" id="revised-quotations-link">Revised Quotations</a>
                     </nav>
                 </div>
 

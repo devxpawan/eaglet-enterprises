@@ -8,6 +8,10 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     exit();
 }
 
+header("Cache-Control: no-cache, no-store, must-revalidate");
+header("Pragma: no-cache");
+header("Expires: 0");
+
 require_once BASE_PATH . 'includes/db_connection.php';
 require_once BASE_PATH . 'includes/functions.php';
 
@@ -192,8 +196,12 @@ $result = $conn->query($sql);
                                         data-id="<?php echo $row['quotation_id']; ?>">
                                         <i class="fas fa-eye"></i>
                                     </a>
-                                    <a href="<?= BASE_URL ?>modules/quotations/quotation_edit.php?id=<?php echo $row['quotation_id']; ?>" class="btn btn-edit" title="Edit Quotation">
-                                        <i class="fas fa-edit"></i>
+                                    <a href="<?= BASE_URL ?>modules/quotations/revise_quotation.php?id=<?php echo $row['quotation_id']; ?>" class="btn btn-edit" title="Revise Quotation">
+                                        <i class="fas fa-history"></i>
+                                    </a>
+                                    <a href="javascript:void(0);" class="btn btn-view revision-history" title="Revision History"
+                                        data-id="<?php echo $row['quotation_id']; ?>">
+                                        <i class="fas fa-code-branch"></i>
                                     </a>
                                     <a href="<?= BASE_URL ?>modules/quotations/download_quotation.php?id=<?php echo $row['quotation_id']; ?>" class="btn btn-download" title="Download Quotation" target="_blank">
                                         <i class="fas fa-download"></i>
@@ -229,6 +237,25 @@ $result = $conn->query($sql);
         </div>
     </div>
     
+    <!-- Modal for Revision History -->
+    <div class="modal fade" id="revisionHistoryModal" tabindex="-1" aria-labelledby="revisionHistoryModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="revisionHistoryModalLabel"><i class="fas fa-code-branch me-2"></i>Revision History</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="revisionChainContent">
+                    Loading...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal for Viewing Quotation -->
     <div class="modal fade" id="viewQuotationModal" tabindex="-1" aria-labelledby="viewQuotationModalLabel"
         aria-hidden="true">
@@ -303,6 +330,24 @@ $result = $conn->query($sql);
     
     <script>
         $(document).ready(function () {
+            $('.revision-history').click(function (e) {
+                e.preventDefault();
+                var quotationId = $(this).data('id');
+                $('#revisionChainContent').html('Loading...');
+                $.ajax({
+                    url: 'get_revision_chain.php',
+                    type: 'GET',
+                    data: { id: quotationId },
+                    success: function (response) {
+                        $('#revisionChainContent').html(response);
+                        $('#revisionHistoryModal').modal('show');
+                    },
+                    error: function () {
+                        $('#revisionChainContent').html('Failed to load revision history.');
+                    }
+                });
+            });
+
             $('.view-quotation').click(function (e) {
                 e.preventDefault();
                 var quotationId = $(this).data('id');

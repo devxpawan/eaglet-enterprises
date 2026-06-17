@@ -24,7 +24,8 @@ $offset = ($page - 1) * $limit;
 
 $baseFrom = "FROM quotations q 
              LEFT JOIN customers c ON q.customer_id = c.customer_id
-             LEFT JOIN users u ON q.created_by = u.id";
+             LEFT JOIN users u ON q.created_by = u.id
+             WHERE q.status != 'Revised'";
 
 $selectCols = "q.*, c.name as customer_name, c.business_name as customer_business_name, 
                u.name as creator_name";
@@ -47,13 +48,13 @@ if (!empty($filter_customer)) {
     $conditions[] = "(c.name LIKE '%$c%' OR c.business_name LIKE '%$c%')";
 }
 
-$whereClause = '';
+$fullWhere = '';
 if (!empty($conditions)) {
-    $whereClause = ' WHERE ' . implode(' AND ', $conditions);
+    $fullWhere = ' AND ' . implode(' AND ', $conditions);
 }
 
-$countSql = "SELECT COUNT(*) as total $baseFrom $whereClause";
-$sql = "SELECT $selectCols $baseFrom $whereClause ORDER BY q.quotation_id DESC LIMIT $limit OFFSET $offset";
+$countSql = "SELECT COUNT(*) as total $baseFrom $fullWhere";
+$sql = "SELECT $selectCols $baseFrom $fullWhere ORDER BY q.quotation_id DESC LIMIT $limit OFFSET $offset";
 
 $countResult = $conn->query($countSql);
 $totalRows = ($countResult && $countResult->num_rows > 0) ? $countResult->fetch_assoc()['total'] : 0;
