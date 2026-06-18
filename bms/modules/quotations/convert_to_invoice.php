@@ -40,7 +40,7 @@ try {
     $insertInvSql = "INSERT INTO invoices (customer_id, user_id, issue_date, due_date, total_amount, discount, vat, pay_status, status, currency, quotation_ref_no, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($insertInvSql);
     $vat_default = 0;
-    $stmt->bind_param("iissdddsssss", $quotation['customer_id'], $quotation['user_id'], $issue_date, $due_date, $quotation['total_amount'], $quotation['discount'], $vat_default, $pay_status, $status, $quotation['currency'], $quotation_ref_no, $quotation['notes']);
+    $stmt->bind_param("iissdddsssss", $quotation['customer_id'], $_SESSION['user_id'], $issue_date, $due_date, $quotation['total_amount'], $quotation['discount'], $vat_default, $pay_status, $status, $quotation['currency'], $quotation_ref_no, $quotation['notes']);
     $stmt->execute();
     $invoice_id = $conn->insert_id;
     
