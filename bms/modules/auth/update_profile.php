@@ -18,11 +18,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Get form data
     $name = $_POST['name'] ?? '';
     $email = $_POST['email'] ?? '';
-    $role_id = $_POST['role_id'] ?? '';
     $status = $_POST['status'] ?? '';
     
     // Validate required fields
-    if (empty($name) || empty($email) || empty($role_id) || empty($status)) {
+    if (empty($name) || empty($email) || empty($status)) {
         $_SESSION['error_message'] = "All fields are required!";
         header("Location: profile.php");
         exit();
@@ -44,23 +43,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 name = ?, 
                 email = ?, 
                 phone = ?, 
-                role_id = ?, 
                 status = ?, 
                 updated_at = NOW() 
                 WHERE id = ?";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sssssi", $name, $email, $phone, $role_id, $status, $userId);
+        $stmt->bind_param("ssssi", $name, $email, $phone, $status, $userId);
     } else {
         // If phone column doesn't exist, exclude it from the update
         $sql = "UPDATE users SET 
                 name = ?, 
                 email = ?, 
-                role_id = ?, 
                 status = ?, 
                 updated_at = NOW() 
                 WHERE id = ?";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssssi", $name, $email, $role_id, $status, $userId);
+        $stmt->bind_param("sssi", $name, $email, $status, $userId);
     }
     
     if ($stmt === false) {

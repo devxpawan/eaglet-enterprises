@@ -22,10 +22,6 @@ function sendJsonResponse($success, $message, $newStatus = null) {
 if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     sendJsonResponse(false, "Please log in to continue.");
 }
-// Only Admin and Moderator can toggle customer status
-if (!isset($_SESSION['role_id']) || !in_array($_SESSION['role_id'], [1, 3])) {
-    sendJsonResponse(false, "Access denied. Admin or Moderator privileges required.");
-}
 // Validate POST parameters
 if (!isset($_POST['customer_id']) || !isset($_POST['action'])) {
     sendJsonResponse(false, "Invalid request parameters.");

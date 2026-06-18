@@ -46,7 +46,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     // Password is correct, start session
                     $_SESSION['user'] = $user['email'];
                     $_SESSION['user_id'] = $user['id'];
-                    $_SESSION['role_id'] = $user['role_id'];
                     $_SESSION['name'] = $user['name'];
                     $_SESSION['username'] = $user['username'];
                     $_SESSION['position_id'] = $user['position_id'] ?? null;
@@ -70,20 +69,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         setcookie("email", "", time() - 3600, "/");
                     }
 
-                    // Redirect based on user role
-                    switch ($user['role_id']) {
-                        case 1: // Superadmin
-                            header("Location: " . BASE_URL . "index.php");
-                            break;
-                        case 2: // Regular user
-                            header("Location: " . BASE_URL . "index.php"); // Fixed missing page name
-                            break;
-                        case 3: // Other user type
-                            header("Location: " . BASE_URL . "index.php"); // Fixed missing page name
-                            break;
-                        default:
-                            header("Location: " . BASE_URL . "index.php"); // Fixed missing page name
-                    }
+                    header("Location: " . BASE_URL . "index.php");
                     exit();
                 } else {
                     $error_message = "Invalid password.";

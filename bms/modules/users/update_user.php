@@ -24,12 +24,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     exit();
 }
 
-// Admin-only access
-if (!isset($_SESSION['role_id']) || $_SESSION['role_id'] != 1) {
-    ob_end_clean();
-    header("Location: " . BASE_URL . "index.php");
-    exit();
-}
+
 
 // Function to handle errors and redirect
 function handleError($errors, $user_id = 0) {
@@ -63,7 +58,6 @@ try {
     $nic = trim(filter_input(INPUT_POST, 'nic', FILTER_SANITIZE_SPECIAL_CHARS));
     $address = trim(filter_input(INPUT_POST, 'address', FILTER_SANITIZE_SPECIAL_CHARS));
     $status = 'active';
-    $role_id = filter_input(INPUT_POST, 'role_id', FILTER_VALIDATE_INT) ?: 0;
     $position_id = filter_input(INPUT_POST, 'position_id', FILTER_VALIDATE_INT) ?: null;
     // If position_id is 0 or empty, set to null for optional field
     if (empty($position_id)) $position_id = null;
@@ -84,11 +78,6 @@ try {
     // Mobile validation (optional, adjust regex as needed)
     if (!empty($mobile) && !preg_match('/^[0-9]{10}$/', $mobile)) {
         $errors[] = "Invalid mobile number.";
-    }
-
-    // Role validation
-    if (empty($role_id)) {
-        $errors[] = "Role selection is required.";
     }
 
     // Password handling 
@@ -142,19 +131,19 @@ try {
     if (!empty($password)) {
         // Insert with password 
         $hashed_password = password_hash($password, PASSWORD_BCRYPT);
-        $stmt = $conn->prepare("INSERT INTO users (name, username, email, mobile, nic, address, status, role_id, position_id, password, created_at) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
-        $stmt->bind_param("sssssssiss", 
+        $stmt = $conn->prepare("INSERT INTO users (name, username, email, mobile, nic, address, status, position_id, password, created_at) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+        $stmt->bind_param("sssssssss", 
             $name, $username, $email, $mobile, $nic, $address, 
-            $status, $role_id, $position_id, $hashed_password
+            $status, $position_id, $hashed_password
         );
     } else {
         // Insert without password
-        $stmt = $conn->prepare("INSERT INTO users (name, username, email, mobile, nic, address, status, role_id, position_id, created_at) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
-        $stmt->bind_param("sssssssii", 
+        $stmt = $conn->prepare("INSERT INTO users (name, username, email, mobile, nic, address, status, position_id, created_at) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+        $stmt->bind_param("sssssssi", 
             $name, $username, $email, $mobile, $nic, $address, 
-            $status, $role_id, $position_id
+            $status, $position_id
         );
     }
 

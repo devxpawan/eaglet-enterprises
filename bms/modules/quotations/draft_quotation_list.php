@@ -15,8 +15,7 @@ header("Expires: 0");
 require_once BASE_PATH . 'includes/db_connection.php';
 require_once BASE_PATH . 'includes/functions.php';
 
-$current_user_role = isset($_SESSION['role_id']) ? (int)$_SESSION['role_id'] : 0;
-$canEditRecords = ($current_user_role === 1 || $current_user_role === 3);
+$canEditRecords = true;
 
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 $filter_customer = isset($_GET['filter_customer']) ? trim($_GET['filter_customer']) : '';

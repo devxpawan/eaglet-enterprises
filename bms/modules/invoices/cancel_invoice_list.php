@@ -19,13 +19,6 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
 require_once BASE_PATH . 'includes/db_connection.php';
 require_once BASE_PATH . 'includes/functions.php'; // Include helper functions
 
-// Only Admin and Moderator can access cancel invoices
-$current_user_role = isset($_SESSION['role_id']) ? (int)$_SESSION['role_id'] : 0;
-if ($current_user_role !== 1 && $current_user_role !== 3) {
-    header("Location: " . BASE_URL . "modules/invoices/invoice_list.php");
-    exit();
-}
-
 // Initialize filter parameters
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 $filter_from_date = isset($_GET['filter_from_date']) ? trim($_GET['filter_from_date']) : '';

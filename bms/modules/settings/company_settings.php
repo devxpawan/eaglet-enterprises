@@ -13,12 +13,6 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     exit();
 }
 
-if (!isset($_SESSION['role_id']) || $_SESSION['role_id'] != 1) {
-    $_SESSION['error_message'] = "Access denied. Admin privileges required.";
-    header("Location: " . BASE_URL . "index.php");
-    exit();
-}
-
 require_once BASE_PATH . 'includes/db_connection.php';
 require_once BASE_PATH . 'includes/functions.php';
 

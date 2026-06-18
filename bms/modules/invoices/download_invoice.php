@@ -29,11 +29,11 @@ $invoice_query = "SELECT i.*, i.pay_status AS invoice_pay_status, c.name as cust
                 c.address as customer_address, c.email as customer_email, c.phone as customer_phone,
                 c.business_name as customer_business_name,
                 p.payment_id, p.amount_paid, p.payment_method, p.payment_date, p.pay_by,
-                r.name as paid_by_name, u.name as user_name
+                u2.name as paid_by_name, u.name as user_name
                 FROM invoices i 
                 LEFT JOIN customers c ON i.customer_id = c.customer_id
                 LEFT JOIN payments p ON i.invoice_id = p.invoice_id
-                LEFT JOIN roles r ON p.pay_by = r.id
+                LEFT JOIN users u2 ON p.pay_by = u2.id
                 LEFT JOIN users u ON i.user_id = u.id
                 WHERE i.invoice_id = ?";
 

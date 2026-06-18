@@ -17,12 +17,6 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     exit(); // Stop execution immediately
 }
 
-// Only Admin and Moderator can add customers
-if (!isset($_SESSION['role_id']) || !in_array($_SESSION['role_id'], [1, 3])) {
-    header("Location: " . BASE_URL . "modules/customers/customer_list.php");
-    exit();
-}
-
 // Include the database connection file
 require_once BASE_PATH . 'includes/db_connection.php';
 

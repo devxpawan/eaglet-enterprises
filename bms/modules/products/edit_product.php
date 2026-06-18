@@ -9,11 +9,6 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     exit();
 }
 
-if (!isset($_SESSION['role_id']) || !in_array($_SESSION['role_id'], [1, 3])) {
-    header("Location: " . BASE_URL . "modules/products/product_list.php");
-    exit();
-}
-
 require_once BASE_PATH . 'includes/db_connection.php';
 require_once BASE_PATH . 'includes/functions.php';
 

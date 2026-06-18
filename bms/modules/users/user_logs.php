@@ -15,12 +15,6 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     exit(); // Stop execution immediately
 }
 
-// Admin-only access
-if (!isset($_SESSION['role_id']) || $_SESSION['role_id'] != 1) {
-    header("Location: " . BASE_URL . "index.php");
-    exit();
-}
-
 // Include the database connection file
 require_once BASE_PATH . 'includes/db_connection.php';
 require_once BASE_PATH . 'includes/functions.php'; // Include helper functions

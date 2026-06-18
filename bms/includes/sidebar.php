@@ -491,13 +491,10 @@
                 <?php
 require_once __DIR__ . '/../config/paths.php';
 
-                $userRoleId = isset($_SESSION['role_id']) ? (int)$_SESSION['role_id'] : 0;
-                $isAdmin = ($userRoleId === 1);
-                $isModerator = ($userRoleId === 3);
                 $isApprover = isset($_SESSION['is_approver']) && $_SESSION['is_approver'] === true;
-                $canApproveReject = $isAdmin || $isModerator || $isApprover;
-                $canManageUsers = $isAdmin;
-                $canEditRecords = $isAdmin || $isModerator || $isApprover;
+                $canApproveReject = $isApprover;
+                $canManageUsers = true;
+                $canEditRecords = true;
                 ?>
 
                 <div class="sb-sidenav-menu-heading">Main</div>

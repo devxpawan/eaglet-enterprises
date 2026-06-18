@@ -19,13 +19,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
 require_once BASE_PATH . 'includes/db_connection.php';
 require_once BASE_PATH . 'includes/functions.php'; // Include helper functions
 
-$current_user_role = isset($_SESSION['role_id']) ? (int)$_SESSION['role_id'] : 0;
 $user_id = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : 0;
-if ($current_user_role !== 1 && $current_user_role !== 3 && !isApprover()) {
-    header("Location: " . BASE_URL . "modules/invoices/invoice_list.php");
-    exit();
-}
-
 // Process invoice cancellation
 if (isset($_POST['cancel_invoice']) && isset($_POST['invoice_id'])) {
     $invoice_id = $_POST['invoice_id'];

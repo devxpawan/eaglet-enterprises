@@ -15,11 +15,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     exit(); // Stop execution immediately
 }
 
-// Admin-only access
-if (!isset($_SESSION['role_id']) || $_SESSION['role_id'] != 1) {
-    header("Location: " . BASE_URL . "index.php");
-    exit();
-}
+
 
 // Include necessary files
 require_once BASE_PATH . 'includes/db_connection.php';
@@ -68,21 +64,10 @@ if (!isset($_SESSION['csrf_token'])) {
     $mobile = isset($_GET['mobile']) ? urldecode($_GET['mobile']) : $user['mobile'];
     $nic = isset($_GET['nic']) ? urldecode($_GET['nic']) : $user['nic'];
     $address = isset($_GET['address']) ? urldecode($_GET['address']) : $user['address'];
-    $role_id = isset($_GET['role_id']) ? $_GET['role_id'] : $user['role_id'];
     $position_id = isset($_GET['position_id']) ? $_GET['position_id'] : ($user['position_id'] ?? '');
 
     // Check if current user is editing their own account
     $is_editing_self = ($user_id == $_SESSION['user_id']);
-
-    // Fetch available roles dynamically
-    $roles = [];
-    $roleQuery = "SELECT id, name FROM roles";
-    $roleResult = $conn->query($roleQuery);
-
-    // Collect roles into an array
-    while ($roleRow = $roleResult->fetch_assoc()) {
-        $roles[] = $roleRow;
-    }
 
     // Fetch available positions dynamically
     $positions = [];
@@ -219,21 +204,6 @@ if (!isset($_SESSION['csrf_token'])) {
                                                 placeholder="Enter Full Address" rows="3" data-original="<?php echo htmlspecialchars($address); ?>"><?php echo htmlspecialchars($address); ?></textarea>
                                         </div>
 
-                                        <!-- Role Field - Dynamically Populated -->
-                                        <div class="mb-3">
-                                            <label for="role_id" class="form-label">Role</label>
-                                            <select class="form-select" id="role_id" name="role_id" required data-original="<?php echo htmlspecialchars($role_id); ?>">
-                                                <option value="">Select Role...</option>
-                                                <?php foreach ($roles as $role): ?>
-                                                    <option value="<?= htmlspecialchars($role['id']) ?>" 
-                                                            <?php echo ($role['id'] == $role_id) ? 'selected' : ''; ?>>
-                                                        <?= htmlspecialchars($role['name']) ?>
-                                                    </option>
-                                                <?php endforeach; ?>
-                                            </select>
-                                            <div class="error-feedback" id="role-error"></div>
-                                        </div>
-
                                         <!-- Position Field - Dynamically Populated -->
                                         <div class="mb-3">
                                             <label for="position_id" class="form-label">Position</label>
@@ -283,12 +253,6 @@ if (!isset($_SESSION['csrf_token'])) {
             minimumResultsForSearch: Infinity
         });
 
-        $('#role_id').select2({
-            theme: 'bootstrap-5',
-            width: '100%',
-            minimumResultsForSearch: Infinity
-        });
-
         $('#position_id').select2({
             theme: 'bootstrap-5',
             width: '100%',
@@ -298,7 +262,7 @@ if (!isset($_SESSION['csrf_token'])) {
         });
 
         // Trigger change detection for Select2-managed dropdowns
-        $('#status, #role_id, #position_id').on('select2:select select2:unselect', function () {
+        $('#status, #position_id').on('select2:select select2:unselect', function () {
             checkForChanges();
         });
     });
@@ -575,21 +539,6 @@ function validateNIC(nic) {
     };
 }
 
-// Role validation function
-function validateRole(roleId) {
-    if (roleId.trim() === '') {
-        return {
-            valid: false,
-            message: 'Please select a role'
-        };
-    }
-    
-    return {
-        valid: true,
-        message: ''
-    };
-}
-
 // Setup validation for input fields with real-time feedback
 function setupValidation(inputId, validationFunction, errorId) {
     const inputElement = document.getElementById(inputId);
@@ -715,8 +664,6 @@ const validatePasswordField = setupValidation('password', validatePassword, 'pas
 const validateMobileField = setupValidation('mobile', validateMobile, 'mobile-error');
 const validateNICField = setupValidation('nic', validateNIC, 'nic-error');
 const validateAddressField = setupValidation('address', validateAddress, 'address-error');
-const validateRoleField = setupValidation('role_id', validateRole, 'role-error');
-
 const currentUserId = <?php echo $user_id; ?>;
 
 // Enhanced username validation with real-time availability check
@@ -871,8 +818,6 @@ document.getElementById('editUserForm').addEventListener('submit', function(even
     if (!validateMobileField()) isValid = false;
     if (!validateNICField()) isValid = false;
     if (!validateAddressField()) isValid = false;
-    if (!validateRoleField()) isValid = false;
-
     const usernameVal = usernameInput.value.trim();
     const usernameRegex = /^[a-zA-Z0-9_]{3,50}$/;
     if (!usernameVal || !usernameRegex.test(usernameVal)) {
@@ -912,7 +857,7 @@ document.getElementById('editUserForm').addEventListener('submit', function(even
     }
 
     // Check if any field has changed
-    const fields = ['name', 'username', 'email', 'mobile', 'nic', 'address', 'role_id', 'position_id'];
+    const fields = ['name', 'username', 'email', 'mobile', 'nic', 'address', 'position_id'];
     let hasChanged = false;
     for (const id of fields) {
         const el = document.getElementById(id);
@@ -933,7 +878,7 @@ document.getElementById('editUserForm').addEventListener('submit', function(even
 
 // Enable/disable submit button based on whether any field changed
 function checkForChanges() {
-    const fields = ['name', 'username', 'email', 'mobile', 'nic', 'address', 'role_id', 'position_id'];
+    const fields = ['name', 'username', 'email', 'mobile', 'nic', 'address', 'position_id'];
     let hasChanged = false;
     for (const id of fields) {
         const el = document.getElementById(id);
@@ -950,7 +895,7 @@ function checkForChanges() {
 }
 
 // Attach listeners to all tracked fields
-['name', 'username', 'email', 'mobile', 'nic', 'address', 'role_id', 'position_id', 'password'].forEach(function(id) {
+['name', 'username', 'email', 'mobile', 'nic', 'address', 'position_id', 'password'].forEach(function(id) {
     const el = document.getElementById(id);
     if (el) {
         el.addEventListener('input', checkForChanges);

@@ -12,8 +12,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
 require_once BASE_PATH . 'includes/db_connection.php';
 require_once BASE_PATH . 'includes/functions.php';
 
-$current_role = isset($_SESSION['role_id']) ? (int)$_SESSION['role_id'] : 0;
-$canEdit = ($current_role === 1 || $current_role === 3);
+$canEdit = true;
 
 // Handle CRUD
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $canEdit) {

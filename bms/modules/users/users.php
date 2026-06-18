@@ -13,11 +13,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     exit();
 }
 
-// Admin-only access
-if (!isset($_SESSION['role_id']) || $_SESSION['role_id'] != 1) {
-    header("Location: " . BASE_URL . "index.php");
-    exit();
-}
+
 
 // Include the database connection file
 require_once BASE_PATH . 'includes/db_connection.php';
@@ -32,10 +28,6 @@ function sendJsonResponse($data) {
 $requestAction = isset($_POST['action']) ? $_POST['action'] : (isset($_GET['action']) ? $_GET['action'] : '');
 
 if ($requestAction === 'list_positions') {
-    if (!isset($_SESSION['role_id']) || $_SESSION['role_id'] != 1) {
-        sendJsonResponse(['success' => false, 'message' => 'Access denied. Admin privileges required.']);
-    }
-
     $positionsResult = $conn->query("SELECT p.id, p.name, p.description, p.status, p.created_at, COUNT(u.id) AS user_count FROM positions p LEFT JOIN users u ON u.position_id = p.id GROUP BY p.id ORDER BY p.status ASC, p.name ASC");
     $positions = [];
 
@@ -68,10 +60,6 @@ if ($requestAction === 'list_position_users') {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($requestAction, ['add_position', 'update_position', 'toggle_position'], true)) {
-    if (!isset($_SESSION['role_id']) || $_SESSION['role_id'] != 1) {
-        sendJsonResponse(['success' => false, 'message' => 'Access denied. Admin privileges required.']);
-    }
-
     try {
         if ($requestAction === 'add_position') {
             $name = trim($_POST['position_name'] ?? '');
@@ -194,14 +182,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($requestAction, ['add_posi
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'update_status') {
             $response = ['success' => false, 'message' => 'Unknown error'];
 
-            // Only admin can update user status
-            if (!isset($_SESSION['role_id']) || $_SESSION['role_id'] != 1) {
-                $response = ['success' => false, 'message' => 'Access denied. Admin privileges required.'];
-                header('Content-Type: application/json');
-                echo json_encode($response);
-                exit();
-            }
-
             if (isset($_POST['user_id']) && isset($_POST['new_status'])) {
                 $user_id = intval($_POST['user_id']);
                 $new_status = $_POST['new_status'];
@@ -305,17 +285,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($requestAction, ['add_posi
     exit();
 }
 
-// Get current user's role_id from session
-$current_user_role = isset($_SESSION['role_id']) ? $_SESSION['role_id'] : 0;
-
-// Check if user is admin (role_id = 1)
-$is_admin = ($current_user_role == 1);
-
 // Initialize filter parameters
 $filter_name = isset($_GET['filter_name']) ? trim($_GET['filter_name']) : '';
 $filter_email = isset($_GET['filter_email']) ? trim($_GET['filter_email']) : '';
 $filter_mobile = isset($_GET['filter_mobile']) ? trim($_GET['filter_mobile']) : '';
-$filter_role = isset($_GET['filter_role']) ? (int)$_GET['filter_role'] : 0;
 $filter_position = isset($_GET['filter_position']) ? (int)$_GET['filter_position'] : 0;
 $filter_status = isset($_GET['filter_status']) ? trim($_GET['filter_status']) : '';
 $limit = 10;
@@ -336,9 +309,6 @@ if (!empty($filter_mobile)) {
     $s = $conn->real_escape_string($filter_mobile);
     $conditions[] = "u.mobile LIKE '%$s%'";
 }
-if ($filter_role > 0) {
-    $conditions[] = "u.role_id = $filter_role";
-}
 if ($filter_position > 0) {
     $conditions[] = "u.position_id = $filter_position";
 }
@@ -352,19 +322,14 @@ if (!empty($conditions)) {
     $whereConditions = ' AND ' . implode(' AND ', $conditions);
 }
 
-// Fetch roles and positions for filter dropdowns
-$rolesResult = $conn->query("SELECT id, name FROM roles ORDER BY name");
+// Fetch positions for filter dropdowns
 $positionsResult = $conn->query("SELECT id, name FROM positions ORDER BY name");
 
 // Build base query parts
-$baseFrom = "FROM users u JOIN roles r ON u.role_id = r.id LEFT JOIN positions p ON u.position_id = p.id";
-$selectCols = "u.*, r.name AS role_name, p.name AS position_name";
+$baseFrom = "FROM users u LEFT JOIN positions p ON u.position_id = p.id";
+$selectCols = "u.*, p.name AS position_name";
 
-if ($is_admin) {
-    $baseWhere = "1=1";
-} else {
-    $baseWhere = "u.role_id != 1";
-}
+$baseWhere = "1=1";
 
 $whereClause = $baseWhere . $whereConditions;
 
@@ -430,15 +395,6 @@ $result = $conn->query($sql);
                                                 value="<?= htmlspecialchars($filter_mobile) ?>">
                                         </div>
                                         <div class="col-md-2 col-lg-1">
-                                            <label class="form-label mb-1" style="font-size:11px;font-weight:600;color:#667085;">Role</label>
-                                            <select name="filter_role" class="form-select">
-                                                <option value="0">All</option>
-                                                <?php if ($rolesResult): while ($role = $rolesResult->fetch_assoc()): ?>
-                                                    <option value="<?= $role['id'] ?>" <?= $filter_role == $role['id'] ? 'selected' : '' ?>><?= htmlspecialchars($role['name']) ?></option>
-                                                <?php endwhile; endif; ?>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-2 col-lg-1">
                                             <label class="form-label mb-1" style="font-size:11px;font-weight:600;color:#667085;">Position</label>
                                             <select name="filter_position" class="form-select">
                                                 <option value="0">All</option>
@@ -494,7 +450,6 @@ $result = $conn->query($sql);
                                                     </td>
                                                     <td>
                                                         <div class="user-name"><?= htmlspecialchars($row['name']) ?></div>
-                                                        <div class="user-role"><?= htmlspecialchars($row['role_name']) ?></div>
                                                     </td>
                                                     <td><?= htmlspecialchars($row['username']) ?></td>
                                                     <td>
@@ -519,7 +474,7 @@ $result = $conn->query($sql);
                                                     </td>
                                                     <td>
                                                         <div class="action-btn-group d-flex gap-1">
-                                                            <a href="<?= BASE_URL ?>modules/users/edit_user.php?id=<?= htmlspecialchars($row['id']) ?>&name=<?= urlencode($row['name']) ?>&username=<?= urlencode($row['username']) ?>&email=<?= urlencode($row['email']) ?>&status=<?= htmlspecialchars($row['status']) ?>&role=<?= urlencode($row['role_name']) ?>"
+                                                            <a href="<?= BASE_URL ?>modules/users/edit_user.php?id=<?= htmlspecialchars($row['id']) ?>&name=<?= urlencode($row['name']) ?>&username=<?= urlencode($row['username']) ?>&email=<?= urlencode($row['email']) ?>&status=<?= htmlspecialchars($row['status']) ?>"
                                                                 class="btn btn-edit"
                                                                 title="Edit User">
                                                                 <i class="fas fa-pen"></i>
@@ -533,9 +488,7 @@ $result = $conn->query($sql);
                                                                 data-user-mobile="<?= isset($row['mobile']) ? htmlspecialchars($row['mobile']) : 'N/A' ?>"
                                                                 data-user-nic="<?= isset($row['nic']) ? htmlspecialchars($row['nic']) : 'N/A' ?>"
                                                                 data-user-status="<?= htmlspecialchars($row['status']) ?>"
-                                                                data-user-role="<?= htmlspecialchars($row['role_name']) ?>"
-                                                                data-user-role-id="<?= htmlspecialchars($row['role_id']) ?>"
-                                                                data-user-position="<?= isset($row['position_name']) ? htmlspecialchars($row['position_name']) : 'N/A' ?>"
+                                                                 data-user-position="<?= isset($row['position_name']) ? htmlspecialchars($row['position_name']) : 'N/A' ?>"
                                                                 data-user-created="<?= htmlspecialchars($row['created_at']) ?>">
                                                                 <i class="fas fa-eye"></i>
                                                             </button>
@@ -685,8 +638,6 @@ $result = $conn->query($sql);
                     mobile: this.getAttribute('data-user-mobile'),
                     nic: this.getAttribute('data-user-nic'),
                     status: this.getAttribute('data-user-status'),
-                    role: this.getAttribute('data-user-role'),
-                    roleId: this.getAttribute('data-user-role-id'),
                     position: this.getAttribute('data-user-position'),
                     created: this.getAttribute('data-user-created')
                 };

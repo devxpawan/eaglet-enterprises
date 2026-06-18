@@ -16,11 +16,9 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
 require_once BASE_PATH . 'includes/db_connection.php';
 require_once BASE_PATH . 'includes/functions.php';
 
-// Role checks
-$current_user_role = isset($_SESSION['role_id']) ? (int)$_SESSION['role_id'] : 0;
-$isAdmin = ($current_user_role === 1);
-$isModerator = ($current_user_role === 3);
 $currentUserId = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : 0;
+$isAdmin = true;
+$isModerator = true;
 
 // Helper function to safely query the database
 function safeQuery($conn, $query) {
@@ -53,9 +51,7 @@ $stats = [
     'total_price_lists' => 0
 ];
 
-if ($isAdmin) {
-    $stats['total_users'] = safeQuery($conn, "SELECT COUNT(*) as count FROM users");
-}
+$stats['total_users'] = safeQuery($conn, "SELECT COUNT(*) as count FROM users");
 
 $tableExists = $conn->query("SHOW TABLES LIKE 'customers'");
 if ($tableExists && $tableExists->num_rows > 0) {

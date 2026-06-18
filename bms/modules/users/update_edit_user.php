@@ -15,11 +15,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     exit(); // Stop execution immediately
 }
 
-// Admin-only access
-if (!isset($_SESSION['role_id']) || $_SESSION['role_id'] != 1) {
-    header("Location: " . BASE_URL . "index.php");
-    exit();
-}
+
 
 // Include necessary files
 require_once BASE_PATH . 'includes/db_connection.php';
@@ -40,7 +36,7 @@ if (!isset($_POST['csrf_token']) || !isset($_SESSION['csrf_token']) || $_POST['c
 }
 
 // Basic validation of required fields
-$required_fields = ['name', 'username', 'email', 'role_id', 'user_id'];
+$required_fields = ['name', 'username', 'email', 'user_id'];
 foreach ($required_fields as $field) {
     if (!isset($_POST[$field]) || empty(trim($_POST[$field]))) {
         $_SESSION['error_message'] = ucfirst($field) . " is required.";
@@ -54,7 +50,6 @@ $user_id = intval($_POST['user_id']);
 $name = trim($_POST['name']);
 $username = trim($_POST['username']);
 $email = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
-$role_id = intval($_POST['role_id']);
 $mobile = isset($_POST['mobile']) ? trim($_POST['mobile']) : '';
 $nic = isset($_POST['nic']) ? trim($_POST['nic']) : '';
 $address = isset($_POST['address']) ? trim($_POST['address']) : '';
@@ -110,20 +105,6 @@ if ($username_result->num_rows > 0) {
 }
 $username_stmt->close();
 
-    // Check if role exists
-$role_check_stmt = $conn->prepare("SELECT id FROM roles WHERE id = ?");
-$role_check_stmt->bind_param("i", $role_id);
-$role_check_stmt->execute();
-$role_result = $role_check_stmt->get_result();
-
-if ($role_result->num_rows === 0) {
-    $_SESSION['error_message'] = "Selected role does not exist.";
-    header("Location: " . BASE_URL . "modules/users/users.php");
-    $role_check_stmt->close();
-    exit();
-}
-$role_check_stmt->close();
-
 // Prepare database operation for updating user
 try {
     $conn->begin_transaction();
@@ -140,7 +121,7 @@ try {
     
     // Fetch the original user data to track changes
     $original_user_stmt = $conn->prepare("
-        SELECT name, username, email, status, role_id, mobile, nic, address, position_id
+        SELECT name, username, email, status, mobile, nic, address, position_id
         FROM users WHERE id = ?
     ");
     $original_user_stmt->bind_param("i", $user_id);
@@ -162,21 +143,6 @@ try {
     }
     if (!empty($password)) {
         $changes[] = "Password was updated";
-    }
-    if ($original_user['role_id'] != $role_id) {
-        // Get role names for better logging
-        $role_names_stmt = $conn->prepare("
-            SELECT r1.name as old_role, r2.name as new_role 
-            FROM roles r1, roles r2 
-            WHERE r1.id = ? AND r2.id = ?
-        ");
-        $role_names_stmt->bind_param("ii", $original_user['role_id'], $role_id);
-        $role_names_stmt->execute();
-        $role_result = $role_names_stmt->get_result();
-        $roles = $role_result->fetch_assoc();
-        $role_names_stmt->close();
-        
-        $changes[] = "Role changed from '{$roles['old_role']}' to '{$roles['new_role']}'";
     }
     if ($original_user['mobile'] !== $mobile) {
         $changes[] = "Mobile changed from '{$original_user['mobile']}' to '{$mobile}'";
@@ -210,21 +176,21 @@ try {
         // Update with new password, username, and position_id
         $update_stmt = $conn->prepare("
             UPDATE users 
-            SET name = ?, username = ?, email = ?, password = ?, role_id = ?, position_id = ?,
+            SET name = ?, username = ?, email = ?, password = ?, position_id = ?,
                 mobile = ?, nic = ?, address = ?, updated_at = NOW() 
             WHERE id = ?
         ");
-        $update_stmt->bind_param("ssssiisssi", $name, $username, $email, $hashed_password, $role_id, 
+        $update_stmt->bind_param("ssssisssi", $name, $username, $email, $hashed_password, 
                                 $position_id, $mobile, $nic, $address, $user_id);
     } else {
         // Update without changing password, but with username and position_id
         $update_stmt = $conn->prepare("
             UPDATE users 
-            SET name = ?, username = ?, email = ?, role_id = ?, position_id = ?,
+            SET name = ?, username = ?, email = ?, position_id = ?,
                 mobile = ?, nic = ?, address = ?, updated_at = NOW() 
             WHERE id = ?
         ");
-        $update_stmt->bind_param("sssiisssi", $name, $username, $email, $role_id, $position_id, 
+        $update_stmt->bind_param("sssisssi", $name, $username, $email, $position_id, 
                                 $mobile, $nic, $address, $user_id);
     }
     

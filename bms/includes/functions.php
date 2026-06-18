@@ -10,65 +10,9 @@ function sanitizeInput($data) {
     return htmlspecialchars(trim($data));
 }
 
-// RBAC Helper Functions
-function getUserRoleId() {
-    return isset($_SESSION['role_id']) ? (int)$_SESSION['role_id'] : 0;
-}
-
-function isAdmin() {
-    return getUserRoleId() === 1;
-}
-
-function isModerator() {
-    return getUserRoleId() === 3;
-}
-
-function isUser() {
-    return getUserRoleId() === 2;
-}
-
-function canManageUsers() {
-    return isAdmin();
-}
-
-function canManageSettings() {
-    return isAdmin();
-}
-
-function canViewLogs() {
-    return isAdmin();
-}
-
-function canApproveRejectInquiries() {
-    return isAdmin() || isModerator();
-}
-
-function canEditRecords() {
-    return isAdmin() || isModerator();
-}
-
-function canDeleteRecords() {
-    return isAdmin();
-}
-
-function canAddCustomers() {
-    return isAdmin() || isModerator();
-}
-
-function canAddProducts() {
-    return isAdmin() || isModerator();
-}
-
-function canEditProducts() {
-    return isAdmin() || isModerator();
-}
-
+// Approval helper
 function isApprover() {
     return isset($_SESSION['is_approver']) && $_SESSION['is_approver'] === true;
-}
-
-function canEditInvoices() {
-    return isAdmin() || isModerator() || isApprover();
 }
 
 function hasApprovedEditRequest($conn, $invoice_id, $user_id) {
@@ -89,28 +33,6 @@ function hasPendingEditRequest($conn, $invoice_id, $user_id) {
     $exists = $result->num_rows > 0;
     $stmt->close();
     return $exists;
-}
-
-function canCreateInvoices() {
-    return true;
-}
-
-function canCancelInvoices() {
-    return isAdmin() || isModerator();
-}
-
-function requireRole($allowedRoles, $redirectPage = 'index.php') {
-    if (!in_array(getUserRoleId(), $allowedRoles)) {
-        header("Location: $redirectPage");
-        exit();
-    }
-}
-
-function requireAdmin($redirectPage = 'index.php') {
-    if (!isAdmin()) {
-        header("Location: $redirectPage");
-        exit();
-    }
 }
 
 function getCompanyInfo($conn) {

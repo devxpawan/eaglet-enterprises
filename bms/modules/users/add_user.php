@@ -28,25 +28,11 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     exit(); // Stop execution immediately
 }
 
-// Admin-only access
-if (!isset($_SESSION['role_id']) || $_SESSION['role_id'] != 1) {
-    header("Location: " . BASE_URL . "index.php");
-    exit();
-}
+
 
 // Initialize error message variable
 $errorMsg = '';
 $successMsg = '';
-
-// Fetch available roles dynamically
-$roles = [];
-$roleQuery = "SELECT id, name FROM roles";
-$roleResult = $conn->query($roleQuery);
-
-// Collect roles into an array
-while ($roleRow = $roleResult->fetch_assoc()) {
-    $roles[] = $roleRow;
-}
 
 // Fetch available positions dynamically
 $positions = [];
@@ -75,7 +61,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $nic = trim(filter_input(INPUT_POST, 'nic', FILTER_SANITIZE_SPECIAL_CHARS));
         $address = trim(filter_input(INPUT_POST, 'address', FILTER_SANITIZE_SPECIAL_CHARS));
         $status = 'active';
-        $role_id = filter_input(INPUT_POST, 'role_id', FILTER_VALIDATE_INT) ?: 0;
         $position_id = filter_input(INPUT_POST, 'position_id', FILTER_VALIDATE_INT) ?: null;
         if (empty($position_id)) $position_id = null;
 
@@ -89,9 +74,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         if (!empty($mobile) && !preg_match('/^[0-9]{10}$/', $mobile)) {
             $errors[] = "Invalid mobile number.";
-        }
-        if (empty($role_id)) {
-            $errors[] = "Role selection is required.";
         }
 
         // Password handling
@@ -136,18 +118,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $conn->begin_transaction();
             if (!empty($password)) {
                 $hashed_password = password_hash($password, PASSWORD_BCRYPT);
-                $stmt = $conn->prepare("INSERT INTO users (name, username, email, mobile, nic, address, status, role_id, position_id, password, created_at) 
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
-                $stmt->bind_param("sssssssiss",
+                $stmt = $conn->prepare("INSERT INTO users (name, username, email, mobile, nic, address, status, position_id, password, created_at) 
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+                $stmt->bind_param("sssssssss",
                     $name, $username, $email, $mobile, $nic, $address,
-                    $status, $role_id, $position_id, $hashed_password
+                    $status, $position_id, $hashed_password
                 );
             } else {
-                $stmt = $conn->prepare("INSERT INTO users (name, username, email, mobile, nic, address, status, role_id, position_id, created_at) 
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
-                $stmt->bind_param("sssssssii",
+                $stmt = $conn->prepare("INSERT INTO users (name, username, email, mobile, nic, address, status, position_id, created_at) 
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+                $stmt->bind_param("sssssssi",
                     $name, $username, $email, $mobile, $nic, $address,
-                    $status, $role_id, $position_id
+                    $status, $position_id
                 );
             }
 
@@ -290,20 +272,6 @@ if (isset($_SESSION['success_message'])) {
                                             <div class="error-feedback" id="address-error"></div>
                                         </div>
 
-                                        <!-- Role Field - Dynamically Populated -->
-                                        <div class="mb-3">
-                                            <label for="role_id" class="form-label">Role</label>
-                                            <select class="form-select" id="role_id" name="role_id" required>
-                                                <option value="" selected>Select Role...</option>
-                                                <?php foreach ($roles as $role): ?>
-                                                    <option value="<?= htmlspecialchars($role['id']) ?>">
-                                                        <?= htmlspecialchars($role['name']) ?>
-                                                    </option>
-                                                <?php endforeach; ?>
-                                            </select>
-                                            <div class="error-feedback" id="role-error"></div>
-                                        </div>
-
                                         <!-- Position Field - Dynamically Populated -->
                                         <div class="mb-3">
                                             <label for="position_id" class="form-label">Position</label>
@@ -347,12 +315,6 @@ if (isset($_SESSION['success_message'])) {
     <script>
     // Initialize Select2
     $(document).ready(function() {
-        $('#role_id').select2({
-            theme: 'bootstrap-5',
-            width: '100%',
-            minimumResultsForSearch: Infinity
-        });
-
         $('#position_id').select2({
             theme: 'bootstrap-5',
             width: '100%',
@@ -662,21 +624,6 @@ function validatePassword(password) {
         xhr.send();
     }
 
-    // Role validation function
-    function validateRole(roleId) {
-        if (roleId.trim() === '') {
-            return {
-                valid: false,
-                message: 'Please select a role'
-            };
-        }
-        
-        return {
-            valid: true,
-            message: ''
-        };
-    }
-
     // Setup validation for input fields with real-time feedback
     function setupValidation(inputId, validationFunction, errorId) {
         const inputElement = document.getElementById(inputId);
@@ -760,8 +707,6 @@ function validatePassword(password) {
     const validateMobileField = setupValidation('mobile', validateMobile, 'mobile-error');
     const validateNICField = setupValidation('nic', validateNIC, 'nic-error');
     const validateAddressField = setupValidation('address', validateAddress, 'address-error');
-    const validateRoleField = setupValidation('role_id', validateRole, 'role-error');
-
     // Enhanced username validation with real-time availability check
     const usernameInput = document.getElementById('username');
     const usernameError = document.getElementById('username-error');
@@ -944,8 +889,6 @@ function validatePassword(password) {
         if (!validateMobileField()) isValid = false;
         if (!validateNICField()) isValid = false;
         if (!validateAddressField()) isValid = false;
-        if (!validateRoleField()) isValid = false;
-
         // Synchronous checks for email and username formats
         const emailVal = emailInput.value.trim().toLowerCase();
         const emailFormatResult = validateEmail(emailVal);

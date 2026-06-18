@@ -22,19 +22,10 @@ require_once BASE_PATH . 'includes/db_connection.php';
 
 require_once BASE_PATH . 'includes/functions.php'; // Include helper functions
 
-// Get current user's role_id from session
-$current_user_role = isset($_SESSION['role_id']) ? (int)$_SESSION['role_id'] : 0;
-$canEditRecords = ($current_user_role === 1 || $current_user_role === 3);
+$canEditRecords = true;
 
 // Process status toggle if submitted
 if(isset($_POST['toggle_status'])) {
-    // Only Admin and Moderator can toggle product status
-    if (!in_array($current_user_role, [1, 3])) {
-        $_SESSION['error_message'] = "Access denied. Admin or Moderator privileges required.";
-        header("Location: " . BASE_URL . "modules/products/product_list.php");
-        exit();
-    }
-    
     $product_id = $_POST['product_id'];
     $new_status = $_POST['new_status'];
     $user_id = $_SESSION['user_id']; // Get the current user's ID from session
