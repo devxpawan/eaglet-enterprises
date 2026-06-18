@@ -549,6 +549,7 @@ function getUserInitials($name) {
                 <i class="fas fa-chevron-down nav-chevron d-none d-lg-block"></i>
             </a>
             <ul class="dropdown-menu dropdown-menu-end nav-dropdown-menu" aria-labelledby="userDropdown">
+                <?php if (hasAccess('settings')): ?>
                 <li>
                     <a class="dropdown-item nav-dropdown-item" href="<?= BASE_URL ?>modules/settings/company_settings.php">
                         <span class="dd-icon"><i class="fas fa-cog"></i></span>
@@ -556,6 +557,7 @@ function getUserInitials($name) {
                     </a>
                 </li>
                 <li><hr class="dropdown-divider nav-dropdown-divider"></li>
+                <?php endif; ?>
                 <li>
                     <a class="dropdown-item nav-dropdown-item item-danger" href="<?= BASE_URL ?>modules/auth/logout.php">
                         <span class="dd-icon"><i class="fas fa-arrow-right-from-bracket"></i></span>
