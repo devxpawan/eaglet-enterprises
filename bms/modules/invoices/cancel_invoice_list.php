@@ -220,6 +220,7 @@ $result = $conn->query($sql);
                                                     </td>
                                                     <td>
                                                         <div class="action-btn-group d-flex gap-1">
+                                                            <?php if (hasAccess('invoices.cancel')): ?>
                                                             <a href="#" class="btn btn-view view-invoice"
                                                                 title="View Invoice"
                                                                 data-id="<?php echo isset($row['invoice_id']) ? $row['invoice_id'] : ''; ?>"
@@ -232,6 +233,7 @@ $result = $conn->query($sql);
                                                                 target="_blank">
                                                                 <i class="fas fa-download"></i>
                                                             </a>
+                                                            <?php endif; ?>
                                                         </div>
                                                     </td>
                                                 </tr>

@@ -12,10 +12,8 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
 require_once BASE_PATH . 'includes/db_connection.php';
 require_once BASE_PATH . 'includes/functions.php';
 
-$canEdit = true;
-
 // Handle stock adjustment
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && $canEdit) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && hasAccess('inventory.stock_movements')) {
     $action = $_POST['action'] ?? '';
     
     if ($action === 'adjust_stock') {
@@ -133,7 +131,7 @@ $products = $conn->query("SELECT id, name, sku, stock_quantity, unit FROM produc
                             <h5>Stock Movements</h5>
                             <p class="text-muted">Track all inventory changes and adjustments</p>
                         </div>
-                        <?php if ($canEdit): ?>
+                        <?php if (hasAccess('inventory.stock_movements')): ?>
                         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#adjustStockModal">
                             <i class="fas fa-sliders-h"></i> Adjust Stock
                         </button>

@@ -12,10 +12,8 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
 require_once BASE_PATH . 'includes/db_connection.php';
 require_once BASE_PATH . 'includes/functions.php';
 
-$canEdit = true;
-
 // Handle status update
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && $canEdit) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && hasAccess('inventory.purchase_orders')) {
     $action = $_POST['action'] ?? '';
     
     if ($action === 'create') {
@@ -258,7 +256,7 @@ $products = $conn->query("SELECT id, name, sku, lkr_price, stock_quantity, unit 
                             <h5>Purchase Orders</h5>
                             <p class="text-muted">Create and manage purchase orders to suppliers</p>
                         </div>
-                        <?php if ($canEdit): ?>
+                        <?php if (hasAccess('inventory.purchase_orders')): ?>
                         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createPOModal">
                             <i class="fas fa-plus"></i> New Purchase Order
                         </button>
@@ -367,19 +365,19 @@ $products = $conn->query("SELECT id, name, sku, lkr_price, stock_quantity, unit 
                                                          <a href="<?= BASE_URL ?>modules/inventory/download_po.php?id=<?= $po['id'] ?>" target="_blank" class="btn btn-view" title="Download / Print" style="color: #6366f1; border-color: rgba(99, 102, 241, 0.2); background: rgba(99, 102, 241, 0.05);">
                                                              <i class="fas fa-file-pdf"></i>
                                                          </a>
-                                                         <?php if ($canEdit && in_array($po['status'], ['draft', 'pending'])): ?>
-                                                         <button class="btn btn-warning edit-po-btn" title="Edit Purchase Order"
-                                                             data-id="<?= $po['id'] ?>" style="color: #d97706; border-color: rgba(217, 119, 6, 0.2); background: rgba(217, 119, 6, 0.05);">
-                                                             <i class="fas fa-edit"></i>
+                                                          <?php if (hasAccess('inventory.purchase_orders') && in_array($po['status'], ['draft', 'pending'])): ?>
+                                                          <button class="btn btn-warning edit-po-btn" title="Edit Purchase Order"
+                                                              data-id="<?= $po['id'] ?>" style="color: #d97706; border-color: rgba(217, 119, 6, 0.2); background: rgba(217, 119, 6, 0.05);">
+                                                              <i class="fas fa-edit"></i>
+                                                          </button>
+                                                          <?php endif; ?>
+                                                         <?php if (hasAccess('inventory.purchase_orders') && $canReceive): ?>
+                                                         <button class="btn btn-success receive-po-btn" title="Receive Stock"
+                                                             data-id="<?= $po['id'] ?>">
+                                                             <i class="fas fa-truck-loading"></i>
                                                          </button>
                                                          <?php endif; ?>
-                                                        <?php if ($canEdit && $canReceive): ?>
-                                                        <button class="btn btn-success receive-po-btn" title="Receive Stock"
-                                                            data-id="<?= $po['id'] ?>">
-                                                            <i class="fas fa-truck-loading"></i>
-                                                        </button>
-                                                        <?php endif; ?>
-                                                        <?php if ($canEdit && in_array($po['status'], ['draft', 'pending'])): 
+                                                         <?php if (hasAccess('inventory.purchase_orders') && in_array($po['status'], ['draft', 'pending'])): 
                                                             $isSubmit = $po['status'] === 'draft';
                                                             $confirmMsg = $isSubmit ? 'Submit this purchase order for approval?' : 'Cancel this purchase order?';
                                                             $confirmTitle = $isSubmit ? 'Submit Purchase Order' : 'Cancel Purchase Order';
@@ -398,7 +396,7 @@ $products = $conn->query("SELECT id, name, sku, lkr_price, stock_quantity, unit 
                                                             </button>
                                                         </form>
                                                         <?php endif; ?>
-                                                        <?php if ($canEdit && $po['status'] === 'pending'): ?>
+                                                         <?php if (hasAccess('inventory.purchase_orders') && $po['status'] === 'pending'): ?>
                                                         <form method="POST" style="display:inline" class="confirm-po-form">
                                                             <input type="hidden" name="action" value="update_status">
                                                             <input type="hidden" name="po_id" value="<?= $po['id'] ?>">

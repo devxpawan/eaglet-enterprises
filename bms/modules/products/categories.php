@@ -12,10 +12,8 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
 require_once BASE_PATH . 'includes/db_connection.php';
 require_once BASE_PATH . 'includes/functions.php';
 
-$canEditRecords = true;
-
 // Handle CRUD actions
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && $canEditRecords) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && hasAccess('products.categories')) {
     $action = $_POST['action'] ?? '';
     
     if ($action === 'add') {
@@ -116,7 +114,7 @@ $allCats = $conn->query("SELECT id, name FROM categories WHERE status = 'active'
                             <h5>Product Categories</h5>
                             <p class="text-muted">Organize products into categories and subcategories</p>
                         </div>
-                        <?php if ($canEditRecords): ?>
+                        <?php if (hasAccess('products.categories')): ?>
                         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
                             <i class="fas fa-plus"></i> Add Category
                         </button>
@@ -174,7 +172,7 @@ $allCats = $conn->query("SELECT id, name FROM categories WHERE status = 'active'
                                             <th>Sub-Categories</th>
                                             <th>Products</th>
                                             <th>Status</th>
-                                            <?php if ($canEditRecords): ?><th>Actions</th><?php endif; ?>
+                                            <?php if (hasAccess('products.categories')): ?><th>Actions</th><?php endif; ?>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -203,7 +201,7 @@ $allCats = $conn->query("SELECT id, name FROM categories WHERE status = 'active'
                                                         <span class="badge-soft badge-soft-danger">Inactive</span>
                                                     <?php endif; ?>
                                                 </td>
-                                                <?php if ($canEditRecords): ?>
+                                                <?php if (hasAccess('products.categories')): ?>
                                                 <td>
                                                     <div class="action-btn-group d-flex gap-1">
                                                         <button class="btn btn-edit edit-cat-btn" title="Edit"
@@ -226,7 +224,7 @@ $allCats = $conn->query("SELECT id, name FROM categories WHERE status = 'active'
                                             </tr>
                                             <?php endwhile; ?>
                                         <?php else: ?>
-                                            <tr><td colspan="<?= $canEditRecords ? 8 : 7 ?>" class="text-center py-4">No categories found</td></tr>
+                                            <tr><td colspan="<?= hasAccess('products.categories') ? 8 : 7 ?>" class="text-center py-4">No categories found</td></tr>
                                         <?php endif; ?>
                                     </tbody>
                                 </table>

@@ -95,9 +95,11 @@ $result = $conn->query($sql);
                         <h5>Price Lists</h5>
                         <p class="text-muted">Manage and review all price lists</p>
                     </div>
+                    <?php if (hasAccess('price_lists')): ?>
                     <a href="<?= BASE_URL ?>modules/price-lists/price_list_create.php" class="btn btn-primary">
                         <i class="fas fa-plus me-1"></i> Create New
                     </a>
+                    <?php endif; ?>
                 </div>
 
                     <div class="card invoice-card">
@@ -162,6 +164,7 @@ $result = $conn->query($sql);
                                                     </td>
                                                     <td class="text-end pe-3">
                                 <div class="action-btn-group d-flex justify-content-end gap-1">
+                                    <?php if (hasAccess('price_lists')): ?>
                                     <a href="<?= BASE_URL ?>modules/price-lists/price_list_edit.php?id=<?= $row['id'] ?>" class="btn btn-edit" title="Edit">
                                         <i class="fas fa-pen"></i>
                                     </a>
@@ -172,6 +175,7 @@ $result = $conn->query($sql);
                                     <a href="<?= BASE_URL ?>modules/price-lists/view_price_list.php?id=<?= $row['id'] ?>" class="btn btn-download" title="Download Price List" target="_blank">
                                         <i class="fas fa-download"></i>
                                     </a>
+                                    <?php endif; ?>
                                 </div>
                             </td>
                                                 </tr>

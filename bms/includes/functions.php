@@ -10,6 +10,12 @@ function sanitizeInput($data) {
     return htmlspecialchars(trim($data));
 }
 
+// Permission check helper
+function hasAccess($permission) {
+    $access = $_SESSION['user_access'] ?? [];
+    return in_array($permission, $access, true);
+}
+
 // Approval helper
 function isApprover() {
     return isset($_SESSION['is_approver']) && $_SESSION['is_approver'] === true;

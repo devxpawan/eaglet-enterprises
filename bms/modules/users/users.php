@@ -436,6 +436,7 @@ $result = $conn->query($sql);
                                             <th>Username</th>
                                             <th>Contact</th>
                                             <th>Position</th>
+                                            <th>Access</th>
                                             <th>Status</th>
                                             <th>Actions</th>
                                         </tr>
@@ -458,12 +459,28 @@ $result = $conn->query($sql);
                                                             <div class="text-muted" style="font-size: 0.82rem;"><i class="fas fa-envelope me-1"></i><?= htmlspecialchars($row['email']) ?></div>
                                                         <?php endif; ?>
                                                     </td>
-                                                    <td>
+                                                     <td>
                                                         <?php if (!empty($row['position_name'])): ?>
                                                             <span class="badge badge-soft badge-soft-info"><?= htmlspecialchars($row['position_name']) ?></span>
                                                         <?php else: ?>
                                                             <span class="text-muted">—</span>
                                                         <?php endif; ?>
+                                                    </td>
+                                                    <td>
+                                                        <?php
+                                                        $permCount = 0;
+                                                        $userPerms = [];
+                                                        if (!empty($row['access'])) {
+                                                            $decoded = json_decode($row['access'], true);
+                                                            if (is_array($decoded)) {
+                                                                $permCount = count($decoded);
+                                                                $userPerms = $decoded;
+                                                            }
+                                                        }
+                                                        $summary = $permCount . ' permission' . ($permCount !== 1 ? 's' : '');
+                                                        $tooltip = !empty($userPerms) ? htmlspecialchars(implode(', ', $userPerms)) : 'none';
+                                                        ?>
+                                                        <span class="badge badge-soft badge-soft-secondary" title="<?= $tooltip ?>"><?= $summary ?></span>
                                                     </td>
                                                     <td>
                                                         <?php if ($row['status'] == 'active'): ?>
@@ -474,11 +491,22 @@ $result = $conn->query($sql);
                                                     </td>
                                                     <td>
                                                         <div class="action-btn-group d-flex gap-1">
+                                                            <?php if (hasAccess('users.add')): ?>
                                                             <a href="<?= BASE_URL ?>modules/users/edit_user.php?id=<?= htmlspecialchars($row['id']) ?>&name=<?= urlencode($row['name']) ?>&username=<?= urlencode($row['username']) ?>&email=<?= urlencode($row['email']) ?>&status=<?= htmlspecialchars($row['status']) ?>"
                                                                 class="btn btn-edit"
                                                                 title="Edit User">
                                                                 <i class="fas fa-pen"></i>
                                                             </a>
+                                                            <?php endif; ?>
+                                                            <?php if (hasAccess('users.permissions')): ?>
+                                                            <a href="<?= BASE_URL ?>modules/users/edit_permissions.php?id=<?= $row['id'] ?>"
+                                                                class="btn btn-edit"
+                                                                title="Manage Permissions"
+                                                                style="color: #6366f1; border-color: rgba(99, 102, 241, 0.2); background: rgba(99, 102, 241, 0.05);">
+                                                                <i class="fas fa-shield-alt"></i>
+                                                            </a>
+                                                            <?php endif; ?>
+                                                            <?php if (hasAccess('users')): ?>
                                                             <button class="btn btn-view view-user-btn"
                                                                 title="View Details"
                                                                 data-user-id="<?= $row['id'] ?>"
@@ -492,6 +520,8 @@ $result = $conn->query($sql);
                                                                 data-user-created="<?= htmlspecialchars($row['created_at']) ?>">
                                                                 <i class="fas fa-eye"></i>
                                                             </button>
+                                                            <?php endif; ?>
+                                                            <?php if (hasAccess('users.add')): ?>
                                                             <button class="btn <?= $row['status'] == 'active' ? 'btn-deactivate' : 'btn-activate' ?> toggle-status-btn"
                                                                 title="<?= $row['status'] == 'active' ? 'Deactivate' : 'Activate' ?>"
                                                                 data-user-id="<?= $row['id'] ?>"
@@ -499,13 +529,14 @@ $result = $conn->query($sql);
                                                                 data-user-name="<?= htmlspecialchars($row['name']) ?>">
                                                                 <i class="fas <?= $row['status'] == 'active' ? 'fa-ban' : 'fa-check' ?>"></i>
                                                             </button>
+                                                            <?php endif; ?>
                                                         </div>
                                                     </td>
                                                 </tr>
                                             <?php endwhile; ?>
                                         <?php else: ?>
-                                            <tr>
-                                                <td colspan="7" class="text-center py-4">
+                                             <tr>
+                                                <td colspan="8" class="text-center py-4">
                                                     <div class="empty-state">
                                                         <i class="fas fa-users"></i>
                                                         <p>No users found</p>

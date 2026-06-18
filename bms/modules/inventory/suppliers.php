@@ -12,10 +12,8 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
 require_once BASE_PATH . 'includes/db_connection.php';
 require_once BASE_PATH . 'includes/functions.php';
 
-$canEdit = true;
-
 // Handle CRUD
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && $canEdit) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && hasAccess('inventory.suppliers')) {
     $action = $_POST['action'] ?? '';
     
     if (in_array($action, ['add', 'edit'])) {
@@ -108,7 +106,7 @@ $suppliers = $conn->query("SELECT s.*, (SELECT COUNT(*) FROM purchase_orders WHE
                             <h5>Suppliers</h5>
                             <p class="text-muted">Manage your vendors and suppliers</p>
                         </div>
-                        <?php if ($canEdit): ?>
+                        <?php if (hasAccess('inventory.suppliers')): ?>
                         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
                             <i class="fas fa-plus"></i> Add Supplier
                         </button>
@@ -166,7 +164,7 @@ $suppliers = $conn->query("SELECT s.*, (SELECT COUNT(*) FROM purchase_orders WHE
                                             <th>Tax ID</th>
                                             <th>Orders</th>
                                             <th>Status</th>
-                                            <?php if ($canEdit): ?><th>Actions</th><?php endif; ?>
+                                            <?php if (hasAccess('inventory.suppliers')): ?><th>Actions</th><?php endif; ?>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -189,7 +187,7 @@ $suppliers = $conn->query("SELECT s.*, (SELECT COUNT(*) FROM purchase_orders WHE
                                                         <span class="badge-soft badge-soft-danger">Inactive</span>
                                                     <?php endif; ?>
                                                 </td>
-                                                <?php if ($canEdit): ?>
+                                                <?php if (hasAccess('inventory.suppliers')): ?>
                                                 <td>
                                                     <div class="action-btn-group d-flex gap-1">
                                                         <button class="btn btn-view view-supplier-btn" title="View"
@@ -234,7 +232,7 @@ $suppliers = $conn->query("SELECT s.*, (SELECT COUNT(*) FROM purchase_orders WHE
                                             </tr>
                                             <?php endwhile; ?>
                                         <?php else: ?>
-                                            <tr><td colspan="<?= $canEdit ? 8 : 7 ?>" class="text-center py-4">No suppliers found</td></tr>
+                                            <tr><td colspan="<?= hasAccess('inventory.suppliers') ? 8 : 7 ?>" class="text-center py-4">No suppliers found</td></tr>
                                         <?php endif; ?>
                                     </tbody>
                                 </table>

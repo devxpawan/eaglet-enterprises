@@ -159,7 +159,7 @@ $pendingCount = $conn->query("SELECT COUNT(*) as c FROM invoice_edit_requests WH
                                                     <?php endif; ?>
                                                 </td>
                                                 <td>
-                                                    <?php if ($row['status'] === 'pending'): ?>
+                                                    <?php if ($row['status'] === 'pending' && hasAccess('invoices.edit_requests')): ?>
                                                         <div class="d-flex gap-1">
                                                             <form method="post" action="<?= BASE_URL ?>modules/invoices/process_approve_request.php" style="display:inline;">
                                                                 <input type="hidden" name="request_id" value="<?= $row['id'] ?>">

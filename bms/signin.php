@@ -59,6 +59,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             $_SESSION['is_approver'] = (bool)$posRow['is_approver'];
                         }
                     }
+                    $_SESSION['user_access'] = [];
+                    if (!empty($user['access'])) {
+                        $decoded = json_decode($user['access'], true);
+                        if (is_array($decoded)) {
+                            $_SESSION['user_access'] = $decoded;
+                        }
+                    }
                     $_SESSION['logged_in'] = true;
 
                     // Handle "Remember Me" by setting cookies

@@ -77,6 +77,7 @@ if (!isset($_SESSION['csrf_token'])) {
     while ($positionRow = $positionResult->fetch_assoc()) {
         $positions[] = $positionRow;
     }
+
     ?>
 
 <!DOCTYPE html>
@@ -857,8 +858,8 @@ document.getElementById('editUserForm').addEventListener('submit', function(even
     }
 
     // Check if any field has changed
-    const fields = ['name', 'username', 'email', 'mobile', 'nic', 'address', 'position_id'];
     let hasChanged = false;
+    const fields = ['name', 'username', 'email', 'mobile', 'nic', 'address', 'position_id'];
     for (const id of fields) {
         const el = document.getElementById(id);
         if (el && !el.disabled && el.value !== el.getAttribute('data-original')) {
@@ -878,8 +879,8 @@ document.getElementById('editUserForm').addEventListener('submit', function(even
 
 // Enable/disable submit button based on whether any field changed
 function checkForChanges() {
-    const fields = ['name', 'username', 'email', 'mobile', 'nic', 'address', 'position_id'];
     let hasChanged = false;
+    const fields = ['name', 'username', 'email', 'mobile', 'nic', 'address', 'position_id'];
     for (const id of fields) {
         const el = document.getElementById(id);
         if (el && !el.disabled && el.value !== el.getAttribute('data-original')) {

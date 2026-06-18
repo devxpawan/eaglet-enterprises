@@ -333,6 +333,7 @@ if ($result && $result->num_rows > 0) {
                                                     </td>
                                                     <td>
                                                         <div class="action-btn-group d-flex gap-1">
+                                                            <?php if (hasAccess('invoices.pending')): ?>
                                                             <a href="#" class="btn btn-view view-invoice"
                                                                 title="View Invoice"
                                                                 data-id="<?php echo isset($row['invoice_id']) ? $row['invoice_id'] : ''; ?>">
@@ -344,9 +345,11 @@ if ($result && $result->num_rows > 0) {
                                                                 target="_blank">
                                                                 <i class="fas fa-download"></i>
                                                             </a>
+                                                            <?php endif; ?>
                                                             <?php if ($payStatus == 'paid'): ?>
 
                                                             <?php else: ?>
+                                                                <?php if (hasAccess('invoices.edit_requests')): ?>
                                                                 <?php if (in_array($row['invoice_id'], $pendingEditIds)): ?>
                                                                     <button class="btn btn-edit disabled"
                                                                         title="Edit request pending approval"
@@ -360,17 +363,22 @@ if ($result && $result->num_rows > 0) {
                                                                         <i class="fas fa-edit"></i>
                                                                     </a>
                                                                 <?php endif; ?>
+                                                                <?php endif; ?>
+                                                                <?php if (hasAccess('invoices.pending')): ?>
                                                                 <a href="#" class="btn btn-view mark-paid"
                                                                     title="Mark as Paid"
                                                                     data-id="<?php echo isset($row['invoice_id']) ? $row['invoice_id'] : ''; ?>">
                                                                     <i class="fas fa-check"></i>
                                                                 </a>
+                                                                <?php endif; ?>
+                                                                <?php if (hasAccess('invoices.cancel')): ?>
                                                                 <button type="button" class="btn btn-cancel cancel-invoice"
                                                                     title="Cancel Invoice"
                                                                     data-id="<?php echo isset($row['invoice_id']) ? $row['invoice_id'] : ''; ?>"
                                                                     data-customer="<?php echo htmlspecialchars($customerName); ?>">
                                                                     <i class="fas fa-times-circle"></i>
                                                                 </button>
+                                                                <?php endif; ?>
                                                             <?php endif; ?>
                                                         </div>
                                                     </td>

@@ -250,6 +250,7 @@ if ($pu) {
                                                     </td>
                                                     <td>
                                                         <div class="action-btn-group d-flex gap-1">
+                                                            <?php if (hasAccess('invoices.complete')): ?>
                                                             <a href="#" class="btn btn-view view-invoice"
                                                                 title="View Invoice"
                                                                 data-id="<?php echo isset($row['invoice_id']) ? $row['invoice_id'] : ''; ?>"
@@ -269,6 +270,7 @@ if ($pu) {
                                                                 data-id="<?php echo isset($row['invoice_id']) ? $row['invoice_id'] : ''; ?>">
                                                                 <i class="fas fa-receipt"></i>
                                                              </a>
+                                                             <?php endif; ?>
                                                              <?php endif; ?>
                                                          </div>
                                                     </td>

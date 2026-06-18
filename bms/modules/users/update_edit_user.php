@@ -167,7 +167,7 @@ try {
         
         $changes[] = "Position changed from '{$pos_names['old_pos']}' to '{$pos_names['new_pos']}'";
     }
-    
+
     // Prepare SQL based on whether password is being updated
     if (!empty($password)) {
         // Hash the password if it's being updated
@@ -227,6 +227,8 @@ try {
     if (!$log_result) {
         error_log("Failed to log user edit action: " . $log_stmt->error);
     }
+
+
     $log_stmt->close();
     
     $conn->commit();

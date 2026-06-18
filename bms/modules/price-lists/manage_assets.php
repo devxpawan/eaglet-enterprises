@@ -60,9 +60,11 @@ $result = $conn->query($sql);
                         <h5>Asset Management</h5>
                         <p class="text-muted">Manage assets used in price lists</p>
                     </div>
+                    <?php if (hasAccess('price_lists.manage_assets')): ?>
                     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#assetModal" onclick="prepareAdd()">
                         <i class="fas fa-plus me-1"></i> Add New Asset
                     </button>
+                    <?php endif; ?>
                 </div>
 
                     <div class="card invoice-card mb-4">
@@ -123,6 +125,7 @@ $result = $conn->query($sql);
                                                         </span>
                                                     </td>
                                                     <td class="text-center">
+                                                        <?php if (hasAccess('price_lists.manage_assets')): ?>
                                                         <div class="action-btn-group d-flex justify-content-center gap-1">
                                                             <button class="btn btn-edit"
                                                                     title="Edit"
@@ -148,6 +151,7 @@ $result = $conn->query($sql);
                                                                 <i class="fas <?= $row['status'] == 'active' ? 'fa-ban' : 'fa-check' ?>"></i>
                                                             </button>
                                                         </div>
+                                                        <?php endif; ?>
                                                     </td>
                                                 </tr>
                                             <?php endwhile; 

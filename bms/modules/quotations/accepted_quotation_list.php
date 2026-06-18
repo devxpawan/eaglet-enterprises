@@ -170,6 +170,7 @@ $result = $conn->query($sql);
                                                     <td><?php echo htmlspecialchars($row['creator_name']); ?></td>
 <td>
                             <div class="action-btn-group d-flex gap-1">
+                                <?php if (hasAccess('quotations.accepted')): ?>
                                 <a href="#" class="btn btn-view view-quotation" title="View Quotation"
                                     data-id="<?php echo $row['quotation_id']; ?>">
                                     <i class="fas fa-eye"></i>
@@ -177,7 +178,7 @@ $result = $conn->query($sql);
                                 <a href="<?= BASE_URL ?>modules/quotations/download_quotation.php?id=<?php echo $row['quotation_id']; ?>" class="btn btn-download" title="Download Quotation" target="_blank">
                                     <i class="fas fa-download"></i>
                                 </a>
-
+                                <?php endif; ?>
                             </div>
                         </td>
                                                 </tr>

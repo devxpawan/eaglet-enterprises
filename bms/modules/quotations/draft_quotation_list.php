@@ -191,6 +191,7 @@ $result = $conn->query($sql);
 <td><?php echo htmlspecialchars($row['creator_name']); ?></td>
                             <td>
                                 <div class="action-btn-group d-flex gap-1">
+                                    <?php if (hasAccess('quotations.draft')): ?>
                                     <a href="#" class="btn btn-view view-quotation" title="View Quotation"
                                         data-id="<?php echo $row['quotation_id']; ?>">
                                         <i class="fas fa-eye"></i>
@@ -213,6 +214,7 @@ $result = $conn->query($sql);
                                         data-customer="<?php echo htmlspecialchars($row['customer_business_name'] ?: $row['customer_name']); ?>">
                                         <i class="fas fa-times-circle"></i>
                                     </a>
+                                    <?php endif; ?>
                                 </div>
                             </td>
                                                 </tr>

@@ -8,8 +8,6 @@ session_start();
 require_once BASE_PATH . 'includes/db_connection.php';
 require_once BASE_PATH . 'includes/functions.php';
 
-$canEditRecords = true;
-
 // Check if user is logged in, if not redirect to login page
 if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     if (ob_get_level()) {
@@ -199,34 +197,36 @@ $result = $conn->query($sql);
                                              </td>
                                              <td>
                                                   <div class="action-btn-group d-flex gap-1">
-                                                      <?php if ($canEditRecords): ?>
-                                                      <a href="<?= BASE_URL ?>modules/customers/edit_customer.php?id=<?= htmlspecialchars($row['customer_id']) ?>"
-                                                          class="btn btn-edit"
-                                                          title="Edit Customer">
-                                                          <i class="fas fa-pen"></i>
-                                                      </a>
-                                                      <?php endif; ?>
-                                                       <button class="btn btn-view view-customer-btn"
-                                                           title="View Details"
+                                                       <?php if (hasAccess('customers.add')): ?>
+                                                       <a href="<?= BASE_URL ?>modules/customers/edit_customer.php?id=<?= htmlspecialchars($row['customer_id']) ?>"
+                                                           class="btn btn-edit"
+                                                           title="Edit Customer">
+                                                           <i class="fas fa-pen"></i>
+                                                       </a>
+                                                       <?php endif; ?>
+                                                       <?php if (hasAccess('customers')): ?>
+                                                        <button class="btn btn-view view-customer-btn"
+                                                            title="View Details"
+                                                            data-customer-id="<?= $row['customer_id'] ?>"
+                                                            data-customer-business="<?= htmlspecialchars($row['business_name']) ?>"
+                                                            data-customer-name="<?= htmlspecialchars($row['name']) ?>"
+                                                            data-customer-email="<?= htmlspecialchars($row['email']) ?>"
+                                                            data-customer-phone="<?= htmlspecialchars($row['phone']) ?>"
+                                                            data-customer-address="<?= htmlspecialchars($row['address']) ?>"
+                                                             data-customer-status="<?= htmlspecialchars($row['status']) ?>"
+                                                             data-customer-created="<?= htmlspecialchars($row['created_at']) ?>">
+                                                           <i class="fas fa-eye"></i>
+                                                       </button>
+                                                       <?php endif; ?>
+                                                       <?php if (hasAccess('customers.add')): ?>
+                                                       <button class="btn <?= $row['status'] == 'Active' ? 'btn-cancel' : 'btn-view' ?> toggle-status-btn"
+                                                           title="<?= $row['status'] == 'Active' ? 'Deactivate' : 'Activate' ?>"
                                                            data-customer-id="<?= $row['customer_id'] ?>"
-                                                           data-customer-business="<?= htmlspecialchars($row['business_name']) ?>"
-                                                           data-customer-name="<?= htmlspecialchars($row['name']) ?>"
-                                                           data-customer-email="<?= htmlspecialchars($row['email']) ?>"
-                                                           data-customer-phone="<?= htmlspecialchars($row['phone']) ?>"
-                                                           data-customer-address="<?= htmlspecialchars($row['address']) ?>"
-                                                            data-customer-status="<?= htmlspecialchars($row['status']) ?>"
-                                                            data-customer-created="<?= htmlspecialchars($row['created_at']) ?>">
-                                                          <i class="fas fa-eye"></i>
-                                                      </button>
-                                                      <?php if ($canEditRecords): ?>
-                                                      <button class="btn <?= $row['status'] == 'Active' ? 'btn-cancel' : 'btn-view' ?> toggle-status-btn"
-                                                          title="<?= $row['status'] == 'Active' ? 'Deactivate' : 'Activate' ?>"
-                                                          data-customer-id="<?= $row['customer_id'] ?>"
-                                                          data-current-status="<?= $row['status'] ?>"
-                                                          data-customer-name="<?= htmlspecialchars($row['name']) ?>">
-                                                          <i class="fas <?= $row['status'] == 'Active' ? 'fa-ban' : 'fa-check' ?>"></i>
-                                                      </button>
-                                                      <?php endif; ?>
+                                                           data-current-status="<?= $row['status'] ?>"
+                                                           data-customer-name="<?= htmlspecialchars($row['name']) ?>">
+                                                           <i class="fas <?= $row['status'] == 'Active' ? 'fa-ban' : 'fa-check' ?>"></i>
+                                                       </button>
+                                                       <?php endif; ?>
                                                   </div>
                                               </td>
                                          </tr>

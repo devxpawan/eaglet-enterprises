@@ -492,9 +492,6 @@
 require_once __DIR__ . '/../config/paths.php';
 
                 $isApprover = isset($_SESSION['is_approver']) && $_SESSION['is_approver'] === true;
-                $canApproveReject = $isApprover;
-                $canManageUsers = true;
-                $canEditRecords = true;
                 ?>
 
                 <div class="sb-sidenav-menu-heading">Main</div>
@@ -506,6 +503,7 @@ require_once __DIR__ . '/../config/paths.php';
                 <div class="sb-sidenav-menu-heading">Business</div>
 
                 <!-- Invoices -->
+                <?php if (hasAccess('invoices')): ?>
                 <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseInvoices"
                     aria-expanded="false" aria-controls="collapseInvoices" id="invoices-dropdown">
                     <div class="sb-nav-link-icon"><i class="fas fa-file-invoice"></i></div>
@@ -516,19 +514,24 @@ require_once __DIR__ . '/../config/paths.php';
                     <nav class="sb-sidenav-menu-nested nav">
                         <a class="nav-link" href="<?= BASE_URL ?>modules/invoices/invoice_create.php" id="create-invoice-link">Create Invoice</a>
                         <a class="nav-link" href="<?= BASE_URL ?>modules/invoices/invoice_list.php" id="all-invoices-link">All Invoices</a>
-                        <?php if ($canEditRecords): ?>
+                        <?php if (hasAccess('invoices.pending')): ?>
                         <a class="nav-link" href="<?= BASE_URL ?>modules/invoices/pending_invoice_list.php" id="pending-invoices-link">Pending Invoices</a>
+                        <?php endif; ?>
+                        <?php if (hasAccess('invoices.complete')): ?>
                         <a class="nav-link" href="<?= BASE_URL ?>modules/invoices/complete_invoice_list.php" id="complete-invoices-link">Complete Invoices</a>
+                        <?php endif; ?>
+                        <?php if (hasAccess('invoices.cancel')): ?>
                         <a class="nav-link" href="<?= BASE_URL ?>modules/invoices/cancel_invoice_list.php" id="cancel-invoices-link">Cancel Invoices</a>
                         <?php endif; ?>
-                        <?php if ($isApprover): ?>
-                        <a class="nav-link" href="<?= BASE_URL ?>modules/invoices/edit_requests_list.php" id="edit-requests-link"></i> Edit Requests
-                        </a>
+                        <?php if (hasAccess('invoices.edit_requests')): ?>
+                        <a class="nav-link" href="<?= BASE_URL ?>modules/invoices/edit_requests_list.php" id="edit-requests-link"> Edit Requests</a>
                         <?php endif; ?>
                     </nav>
                 </div>
+                <?php endif; ?>
 
                 <!-- Quotations -->
+                <?php if (hasAccess('quotations')): ?>
                 <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseQuotations"
                     aria-expanded="false" aria-controls="collapseQuotations" id="quotations-dropdown">
                     <div class="sb-nav-link-icon"><i class="fas fa-file-alt"></i></div>
@@ -539,14 +542,24 @@ require_once __DIR__ . '/../config/paths.php';
                     <nav class="sb-sidenav-menu-nested nav">
                         <a class="nav-link" href="<?= BASE_URL ?>modules/quotations/quotation_create.php" id="create-quotation-link">Create Quotation</a>
                         <a class="nav-link" href="<?= BASE_URL ?>modules/quotations/quotation_list.php" id="all-quotations-link">All Quotations</a>
+                        <?php if (hasAccess('quotations.draft')): ?>
                         <a class="nav-link" href="<?= BASE_URL ?>modules/quotations/draft_quotation_list.php" id="draft-quotations-link">Draft Quotations</a>
+                        <?php endif; ?>
+                        <?php if (hasAccess('quotations.accepted')): ?>
                         <a class="nav-link" href="<?= BASE_URL ?>modules/quotations/accepted_quotation_list.php" id="accepted-quotations-link">Accepted Quotations</a>
+                        <?php endif; ?>
+                        <?php if (hasAccess('quotations.cancelled')): ?>
                         <a class="nav-link" href="<?= BASE_URL ?>modules/quotations/cancelled_quotation_list.php" id="cancelled-quotations-link">Cancelled Quotations</a>
+                        <?php endif; ?>
+                        <?php if (hasAccess('quotations.revised')): ?>
                         <a class="nav-link" href="<?= BASE_URL ?>modules/quotations/revised_quotation_list.php" id="revised-quotations-link">Revised Quotations</a>
+                        <?php endif; ?>
                     </nav>
                 </div>
+                <?php endif; ?>
 
                 <!-- Price Lists -->
+                <?php if (hasAccess('price_lists')): ?>
                 <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapsePriceLists"
                     aria-expanded="false" aria-controls="collapsePriceLists" id="price-lists-dropdown">
                     <div class="sb-nav-link-icon"><i class="fas fa-tags"></i></div>
@@ -557,11 +570,15 @@ require_once __DIR__ . '/../config/paths.php';
                     <nav class="sb-sidenav-menu-nested nav">
                         <a class="nav-link" href="<?= BASE_URL ?>modules/price-lists/price_list_create.php" id="create-price-list-link">Create Price List</a>
                         <a class="nav-link" href="<?= BASE_URL ?>modules/price-lists/price_list.php" id="all-price-lists-link">All Price Lists</a>
+                        <?php if (hasAccess('price_lists.manage_assets')): ?>
                         <a class="nav-link" href="<?= BASE_URL ?>modules/price-lists/manage_assets.php" id="manage-assets-link">Manage Assets</a>
+                        <?php endif; ?>
                     </nav>
                 </div>
+                <?php endif; ?>
 
                 <!-- Customers -->
+                <?php if (hasAccess('customers')): ?>
                 <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseCustomers"
                     aria-expanded="false" aria-controls="collapseCustomers" id="customers-dropdown">
                     <div class="sb-nav-link-icon"><i class="fas fa-user-group"></i></div>
@@ -571,14 +588,15 @@ require_once __DIR__ . '/../config/paths.php';
                 <div class="collapse" id="collapseCustomers" data-bs-parent="#sidenavAccordion">
                     <nav class="sb-sidenav-menu-nested nav">
                         <a class="nav-link" href="<?= BASE_URL ?>modules/customers/customer_list.php" id="all-customers-link">All Customers</a>
-                        <?php if ($canEditRecords): ?>
+                        <?php if (hasAccess('customers.add')): ?>
                         <a class="nav-link" href="<?= BASE_URL ?>modules/customers/add_customer.php" id="add-customer-link">Add New Customer</a>
                         <?php endif; ?>
                     </nav>
                 </div>
+                <?php endif; ?>
 
-                <!-- Users (Admin Only) -->
-                <?php if ($canManageUsers): ?>
+                <!-- Users -->
+                <?php if (hasAccess('users')): ?>
                 <div class="sb-sidenav-menu-heading">Administration</div>
                 <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseUsers"
                     aria-expanded="false" aria-controls="collapseUsers" id="users-dropdown">
@@ -589,12 +607,18 @@ require_once __DIR__ . '/../config/paths.php';
                 <div class="collapse" id="collapseUsers" data-bs-parent="#sidenavAccordion">
                     <nav class="sb-sidenav-menu-nested nav">
                         <a class="nav-link" href="<?= BASE_URL ?>modules/users/users.php" id="all-users-link">All Users</a>
+                        <?php if (hasAccess('users.add')): ?>
                         <a class="nav-link" href="<?= BASE_URL ?>modules/users/add_user.php" id="add-user-link">Add New User</a>
+                        <?php endif; ?>
+                        <?php if (hasAccess('users.logs')): ?>
                         <a class="nav-link" href="<?= BASE_URL ?>modules/users/user_logs.php" id="user-logs-link">Activity Logs</a>
+                        <?php endif; ?>
                     </nav>
-                </div>                <?php endif; ?>
+                </div>
+                <?php endif; ?>
 
                 <!-- Products -->
+                <?php if (hasAccess('products')): ?>
                 <div class="sb-sidenav-menu-heading">Catalog</div>
                 <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseProducts"
                     aria-expanded="false" aria-controls="collapseProducts" id="products-dropdown">
@@ -605,14 +629,18 @@ require_once __DIR__ . '/../config/paths.php';
                 <div class="collapse" id="collapseProducts" data-bs-parent="#sidenavAccordion">
                     <nav class="sb-sidenav-menu-nested nav">
                         <a class="nav-link" href="<?= BASE_URL ?>modules/products/product_list.php" id="all-products-link">All Products</a>
+                        <?php if (hasAccess('products.categories')): ?>
                         <a class="nav-link" href="<?= BASE_URL ?>modules/products/categories.php" id="categories-link">Product Categories</a>
-                        <?php if ($canEditRecords): ?>
+                        <?php endif; ?>
+                        <?php if (hasAccess('products.add')): ?>
                         <a class="nav-link" href="<?= BASE_URL ?>modules/products/add_product.php" id="add-product-link">Add New Product</a>
                         <?php endif; ?>
                     </nav>
                 </div>
+                <?php endif; ?>
 
                 <!-- Inventory & Supply Chain -->
+                <?php if (hasAccess('inventory')): ?>
                 <div class="sb-sidenav-menu-heading">Inventory</div>
                 <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseInventory"
                     aria-expanded="false" aria-controls="collapseInventory" id="inventory-dropdown">
@@ -622,11 +650,18 @@ require_once __DIR__ . '/../config/paths.php';
                 </a>
                 <div class="collapse" id="collapseInventory" data-bs-parent="#sidenavAccordion">
                     <nav class="sb-sidenav-menu-nested nav">
+                        <?php if (hasAccess('inventory.suppliers')): ?>
                         <a class="nav-link" href="<?= BASE_URL ?>modules/inventory/suppliers.php" id="suppliers-link">Suppliers</a>
+                        <?php endif; ?>
+                        <?php if (hasAccess('inventory.purchase_orders')): ?>
                         <a class="nav-link" href="<?= BASE_URL ?>modules/inventory/purchase_orders.php" id="purchase-orders-link">Purchase Orders</a>
+                        <?php endif; ?>
+                        <?php if (hasAccess('inventory.stock_movements')): ?>
                         <a class="nav-link" href="<?= BASE_URL ?>modules/inventory/stock_movements.php" id="stock-movements-link">Stock Movements</a>
+                        <?php endif; ?>
                     </nav>
                 </div>
+                <?php endif; ?>
             </div>
         </div>
     </nav>
