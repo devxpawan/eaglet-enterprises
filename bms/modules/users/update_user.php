@@ -59,8 +59,6 @@ try {
     $address = trim(filter_input(INPUT_POST, 'address', FILTER_SANITIZE_SPECIAL_CHARS));
     $status = 'active';
     $position_id = filter_input(INPUT_POST, 'position_id', FILTER_VALIDATE_INT) ?: null;
-    // If position_id is 0 or empty, set to null for optional field
-    if (empty($position_id)) $position_id = null;
 
     // Input validation
     $errors = [];
@@ -68,6 +66,9 @@ try {
     // Name validation
     if (empty($name)) {
         $errors[] = "Name is required.";
+    }
+    if (empty($position_id)) {
+        $errors[] = "Position is required.";
     }
 
     // Email validation

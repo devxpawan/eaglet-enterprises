@@ -56,6 +56,12 @@ $address = isset($_POST['address']) ? trim($_POST['address']) : '';
 $password = isset($_POST['password']) ? trim($_POST['password']) : '';
 $position_id = isset($_POST['position_id']) && !empty($_POST['position_id']) ? intval($_POST['position_id']) : null;
 
+if (empty($position_id)) {
+    $_SESSION['error_message'] = "Position is required.";
+    header("Location: " . BASE_URL . "modules/users/users.php");
+    exit();
+}
+
 // Validate email format
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     $_SESSION['error_message'] = "Invalid email format.";

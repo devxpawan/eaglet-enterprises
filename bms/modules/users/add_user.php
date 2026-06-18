@@ -62,12 +62,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $address = trim(filter_input(INPUT_POST, 'address', FILTER_SANITIZE_SPECIAL_CHARS));
         $status = 'active';
         $position_id = filter_input(INPUT_POST, 'position_id', FILTER_VALIDATE_INT) ?: null;
-        if (empty($position_id)) $position_id = null;
 
         // Input validation
         $errors = [];
         if (empty($name)) {
             $errors[] = "Name is required.";
+        }
+        if (empty($position_id)) {
+            $errors[] = "Position is required.";
         }
         if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $errors[] = "Invalid email address.";
@@ -274,9 +276,9 @@ if (isset($_SESSION['success_message'])) {
 
                                         <!-- Position Field - Dynamically Populated -->
                                         <div class="mb-3">
-                                            <label for="position_id" class="form-label">Position</label>
-                                            <select class="form-select" id="position_id" name="position_id">
-                                                <option value="" selected>Select Position (Optional)...</option>
+                                            <label for="position_id" class="form-label">Position <span class="text-danger">*</span></label>
+                                            <select class="form-select" id="position_id" name="position_id" required>
+                                                <option value="" selected>Select Position...</option>
                                                 <?php foreach ($positions as $position): ?>
                                                     <option value="<?= htmlspecialchars($position['id']) ?>">
                                                         <?= htmlspecialchars($position['name']) ?>

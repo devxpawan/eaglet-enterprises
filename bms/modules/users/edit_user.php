@@ -207,9 +207,9 @@ if (!isset($_SESSION['csrf_token'])) {
 
                                         <!-- Position Field - Dynamically Populated -->
                                         <div class="mb-3">
-                                            <label for="position_id" class="form-label">Position</label>
-                                            <select class="form-select" id="position_id" name="position_id" data-original="<?php echo htmlspecialchars($position_id); ?>">
-                                                <option value="">Select Position (Optional)...</option>
+                                            <label for="position_id" class="form-label">Position <span class="text-danger">*</span></label>
+                                            <select class="form-select" id="position_id" name="position_id" data-original="<?php echo htmlspecialchars($position_id); ?>" required>
+                                                <option value="">Select Position...</option>
                                                 <?php foreach ($positions as $position): ?>
                                                     <option value="<?= htmlspecialchars($position['id']) ?>" 
                                                             <?php echo (!empty($position_id) && $position['id'] == $position_id) ? 'selected' : ''; ?>>
