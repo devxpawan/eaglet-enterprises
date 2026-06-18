@@ -62,7 +62,7 @@ if ($tableExists && $tableExists->num_rows > 0) {
 
 $tableExists = $conn->query("SHOW TABLES LIKE 'quotations'");
 if ($tableExists && $tableExists->num_rows > 0) {
-    $stats['total_quotations'] = safeQuery($conn, "SELECT COUNT(*) as count FROM quotations");
+    $stats['total_quotations'] = safeQuery($conn, "SELECT COUNT(*) as count FROM quotations WHERE status != 'Revised'");
     $stats['draft_quotations'] = safeQuery($conn, "SELECT COUNT(*) as count FROM quotations WHERE status = 'draft'");
     $stats['accepted_quotations'] = safeQuery($conn, "SELECT COUNT(*) as count FROM quotations WHERE status = 'accepted'");
     $stats['cancelled_quotations'] = safeQuery($conn, "SELECT COUNT(*) as count FROM quotations WHERE status = 'cancelled'");
