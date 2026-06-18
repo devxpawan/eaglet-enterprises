@@ -75,8 +75,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $currentDateTime = date('Y-m-d H:i:s');
         $currentDate = date('Y-m-d');
         
-        // Default payment method
-        $payment_method = 'Cash'; // You can modify this if you collect payment method from the form
+        // Payment method from form
+        $payment_method = isset($_POST['payment_method']) ? $_POST['payment_method'] : 'Cash';
         
         // Update invoice status in the invoices table
         $invoiceStmt = $conn->prepare("UPDATE invoices SET pay_status = 'paid', pay_date = ?, slip = ?, status = 'done', pay_by = ? WHERE invoice_id = ?");

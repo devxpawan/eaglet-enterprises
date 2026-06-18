@@ -449,6 +449,20 @@ if ($result && $result->num_rows > 0) {
                         </div>
 
                         <div class="detail-card">
+                            <label class="detail-label mb-2"><i class="fas fa-credit-card"></i> Payment Method</label>
+                            <div class="d-flex gap-4 mt-2">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="payment_method" id="payment_cash" value="Cash" checked>
+                                    <label class="form-check-label" for="payment_cash">Cash</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="payment_method" id="payment_bank" value="Bank Transfer">
+                                    <label class="form-check-label" for="payment_bank">Bank Transfer</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="detail-card">
                             <label for="payment_slip" class="detail-label mb-2"><i class="fas fa-upload"></i>Upload Payment Slip</label>
                             <input type="file" class="form-control" id="payment_slip" name="payment_slip" accept=".jpg,.jpeg,.png,.pdf">
                             <small class="form-text text-muted mt-2 d-block">Supported formats: JPG, PNG, PDF (Max 2MB)</small>

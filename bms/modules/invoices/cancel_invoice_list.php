@@ -148,7 +148,6 @@ $result = $conn->query($sql);
                                                 <th>Issue Date</th>
                                                 <th>Due Date</th>
                                                 <th>Amount</th>
-                                                <th>Status</th>
                                                 <th>Cancel Reason</th>
                                                 <th>Created By</th>
                                                 <th>Actions</th>
@@ -204,9 +203,6 @@ $result = $conn->query($sql);
                                                             <span class="badge-soft badge-soft-danger mt-1">Unpaid</span>
                                                         <?php endif;
                                                         ?>
-                                                    </td>
-                                                    <td>
-                                                        <span class="badge-soft badge-soft-danger">Canceled</span>
                                                     </td>
                                                     <td><?php echo !empty($row['cancel_reason']) ? htmlspecialchars($row['cancel_reason']) : '<span class="text-muted">-</span>'; ?></td>
                                                     <td>

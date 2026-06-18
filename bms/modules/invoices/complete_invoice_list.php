@@ -170,7 +170,7 @@ if ($pu) {
                                                 <th>Issue Date</th>
                                                 <th>Due Date</th>
                                                 <th>Amount</th>
-                                                <th>Status</th>
+                                                <th>Payment Method</th>
                                                 <th>Processed By</th>
                                                 <th>Created By</th>
                                                 <th>Actions</th>
@@ -228,7 +228,7 @@ if ($pu) {
                                                         ?>
                                                     </td>
                                                     <td>
-                                                        <span class="badge-soft badge-soft-success">Complete</span>
+                                                        <?= htmlspecialchars($row['payment_method'] ?? 'N/A') ?>
                                                     </td>
                                                     <td>
                                                         <?php 
