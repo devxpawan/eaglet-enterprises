@@ -490,8 +490,6 @@
             <div class="nav">
                 <?php
 require_once __DIR__ . '/../config/paths.php';
-
-                $isApprover = isset($_SESSION['is_approver']) && $_SESSION['is_approver'] === true;
                 ?>
 
                 <div class="sb-sidenav-menu-heading">Main</div>
@@ -512,8 +510,12 @@ require_once __DIR__ . '/../config/paths.php';
                 </a>
                 <div class="collapse" id="collapseInvoices" data-bs-parent="#sidenavAccordion">
                     <nav class="sb-sidenav-menu-nested nav">
+                        <?php if (hasAccess('invoices.create')): ?>
                         <a class="nav-link" href="<?= BASE_URL ?>modules/invoices/invoice_create.php" id="create-invoice-link">Create Invoice</a>
+                        <?php endif; ?>
+                        <?php if (hasAccess('invoices.view_all')): ?>
                         <a class="nav-link" href="<?= BASE_URL ?>modules/invoices/invoice_list.php" id="all-invoices-link">All Invoices</a>
+                        <?php endif; ?>
                         <?php if (hasAccess('invoices.pending')): ?>
                         <a class="nav-link" href="<?= BASE_URL ?>modules/invoices/pending_invoice_list.php" id="pending-invoices-link">Pending Invoices</a>
                         <?php endif; ?>
@@ -540,8 +542,12 @@ require_once __DIR__ . '/../config/paths.php';
                 </a>
                 <div class="collapse" id="collapseQuotations" data-bs-parent="#sidenavAccordion">
                     <nav class="sb-sidenav-menu-nested nav">
+                        <?php if (hasAccess('quotations.create')): ?>
                         <a class="nav-link" href="<?= BASE_URL ?>modules/quotations/quotation_create.php" id="create-quotation-link">Create Quotation</a>
+                        <?php endif; ?>
+                        <?php if (hasAccess('quotations.view_all')): ?>
                         <a class="nav-link" href="<?= BASE_URL ?>modules/quotations/quotation_list.php" id="all-quotations-link">All Quotations</a>
+                        <?php endif; ?>
                         <?php if (hasAccess('quotations.draft')): ?>
                         <a class="nav-link" href="<?= BASE_URL ?>modules/quotations/draft_quotation_list.php" id="draft-quotations-link">Draft Quotations</a>
                         <?php endif; ?>
@@ -568,8 +574,12 @@ require_once __DIR__ . '/../config/paths.php';
                 </a>
                 <div class="collapse" id="collapsePriceLists" data-bs-parent="#sidenavAccordion">
                     <nav class="sb-sidenav-menu-nested nav">
+                        <?php if (hasAccess('price_lists.create')): ?>
                         <a class="nav-link" href="<?= BASE_URL ?>modules/price-lists/price_list_create.php" id="create-price-list-link">Create Price List</a>
+                        <?php endif; ?>
+                        <?php if (hasAccess('price_lists.view_all')): ?>
                         <a class="nav-link" href="<?= BASE_URL ?>modules/price-lists/price_list.php" id="all-price-lists-link">All Price Lists</a>
+                        <?php endif; ?>
                         <?php if (hasAccess('price_lists.manage_assets')): ?>
                         <a class="nav-link" href="<?= BASE_URL ?>modules/price-lists/manage_assets.php" id="manage-assets-link">Manage Assets</a>
                         <?php endif; ?>
@@ -587,7 +597,9 @@ require_once __DIR__ . '/../config/paths.php';
                 </a>
                 <div class="collapse" id="collapseCustomers" data-bs-parent="#sidenavAccordion">
                     <nav class="sb-sidenav-menu-nested nav">
+                        <?php if (hasAccess('customers.view_all')): ?>
                         <a class="nav-link" href="<?= BASE_URL ?>modules/customers/customer_list.php" id="all-customers-link">All Customers</a>
+                        <?php endif; ?>
                         <?php if (hasAccess('customers.add')): ?>
                         <a class="nav-link" href="<?= BASE_URL ?>modules/customers/add_customer.php" id="add-customer-link">Add New Customer</a>
                         <?php endif; ?>
@@ -606,7 +618,9 @@ require_once __DIR__ . '/../config/paths.php';
                 </a>
                 <div class="collapse" id="collapseUsers" data-bs-parent="#sidenavAccordion">
                     <nav class="sb-sidenav-menu-nested nav">
+                        <?php if (hasAccess('users.view_all')): ?>
                         <a class="nav-link" href="<?= BASE_URL ?>modules/users/users.php" id="all-users-link">All Users</a>
+                        <?php endif; ?>
                         <?php if (hasAccess('users.add')): ?>
                         <a class="nav-link" href="<?= BASE_URL ?>modules/users/add_user.php" id="add-user-link">Add New User</a>
                         <?php endif; ?>
@@ -628,7 +642,9 @@ require_once __DIR__ . '/../config/paths.php';
                 </a>
                 <div class="collapse" id="collapseProducts" data-bs-parent="#sidenavAccordion">
                     <nav class="sb-sidenav-menu-nested nav">
+                        <?php if (hasAccess('products.view_all')): ?>
                         <a class="nav-link" href="<?= BASE_URL ?>modules/products/product_list.php" id="all-products-link">All Products</a>
+                        <?php endif; ?>
                         <?php if (hasAccess('products.categories')): ?>
                         <a class="nav-link" href="<?= BASE_URL ?>modules/products/categories.php" id="categories-link">Product Categories</a>
                         <?php endif; ?>

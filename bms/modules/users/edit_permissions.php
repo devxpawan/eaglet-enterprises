@@ -66,6 +66,8 @@ $permissionGroups = [
     ],
     'Invoices' => [
         'invoices'               => 'Invoices - Basic Access',
+        'invoices.create'        => 'Invoices - Create',
+        'invoices.view_all'      => 'Invoices - View All',
         'invoices.pending'       => 'Invoices - Pending',
         'invoices.complete'      => 'Invoices - Complete',
         'invoices.cancel'        => 'Invoices - Cancelled',
@@ -74,6 +76,8 @@ $permissionGroups = [
 
     'Quotations' => [
         'quotations'             => 'Quotations - Basic Access',
+        'quotations.create'      => 'Quotations - Create',
+        'quotations.view_all'    => 'Quotations - View All',
         'quotations.draft'       => 'Quotations - Draft',
         'quotations.accepted'    => 'Quotations - Accepted',
         'quotations.cancelled'   => 'Quotations - Cancelled',
@@ -81,23 +85,28 @@ $permissionGroups = [
     ],
 
     'Price Lists' => [
-        'price_lists'            => 'Price Lists - Basic Access',
-        'price_lists.manage_assets' => 'Price Lists - Manage Assets',
+        'price_lists'                => 'Price Lists - Basic Access',
+        'price_lists.create'         => 'Price Lists - Create',
+        'price_lists.view_all'       => 'Price Lists - View All',
+        'price_lists.manage_assets'  => 'Price Lists - Manage Assets',
     ],
 
     'Customers' => [
         'customers'              => 'Customers - Basic Access',
+        'customers.view_all'     => 'Customers - View All',
         'customers.add'          => 'Customers - Add/Edit',
     ],
 
     'Administration' => [
         'users'             => 'Users - View',
+        'users.view_all'    => 'Users - View All',
         'users.add'         => 'Users - Add/Edit',
         'users.permissions' => 'Users - Manage Permissions',
-        'users.logs' => 'Users - Activity Logs',
+        'users.logs'        => 'Users - Activity Logs',
     ],
     'Catalog' => [
         'products'            => 'Products - Basic Access',
+        'products.view_all'   => 'Products - View All',
         'products.categories' => 'Products - Categories',
         'products.add'        => 'Products - Add/Edit',
     ],
@@ -201,6 +210,59 @@ $permissionGroups = [
             document.querySelectorAll('.permission-check').forEach(function(cb) {
                 cb.checked = this.checked;
             }, this);
+        });
+
+        // Collect all parent keys (keys that have children)
+        var parentKeys = [];
+        document.querySelectorAll('.permission-check').forEach(function(cb) {
+            var val = cb.value;
+            if (val.indexOf('.') === -1) {
+                // Potential parent — check if any child exists
+                document.querySelectorAll('.permission-check').forEach(function(other) {
+                    if (other.value.indexOf(val + '.') === 0) {
+                        if (parentKeys.indexOf(val) === -1) parentKeys.push(val);
+                    }
+                });
+            }
+        });
+
+        document.querySelectorAll('.permission-check').forEach(function(cb) {
+            cb.addEventListener('change', function() {
+                var val = this.value;
+
+                // If this is a parent, sync all children
+                if (parentKeys.indexOf(val) !== -1) {
+                    document.querySelectorAll('.permission-check').forEach(function(other) {
+                        if (other.value.indexOf(val + '.') === 0) {
+                            other.checked = this.checked;
+                        }
+                    }, this);
+                }
+
+                // If this is a child being changed, sync the parent
+                var dotIdx = val.indexOf('.');
+                if (dotIdx !== -1) {
+                    var parentKey = val.substring(0, dotIdx);
+                    var parentCb = document.getElementById('perm_' + parentKey);
+                    if (parentCb) {
+                        if (this.checked) {
+                            // Child checked → ensure parent is checked
+                            parentCb.checked = true;
+                        } else {
+                            // Child unchecked → if no siblings checked, uncheck parent
+                            var anySiblingChecked = false;
+                            document.querySelectorAll('.permission-check').forEach(function(other) {
+                                if (other.value !== val && other.value.indexOf(parentKey + '.') === 0 && other.checked) {
+                                    anySiblingChecked = true;
+                                }
+                            });
+                            if (!anySiblingChecked) {
+                                parentCb.checked = false;
+                            }
+                        }
+                    }
+                }
+            });
         });
     </script>
 </body>

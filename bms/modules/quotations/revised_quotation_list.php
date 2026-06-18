@@ -11,8 +11,6 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
 require_once BASE_PATH . 'includes/db_connection.php';
 require_once BASE_PATH . 'includes/functions.php';
 
-$canEditRecords = true;
-
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 $filter_customer = isset($_GET['filter_customer']) ? trim($_GET['filter_customer']) : '';
 $filter_from_date = isset($_GET['filter_from_date']) ? trim($_GET['filter_from_date']) : '';
