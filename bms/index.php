@@ -17,9 +17,6 @@ require_once BASE_PATH . 'includes/db_connection.php';
 require_once BASE_PATH . 'includes/functions.php';
 
 $currentUserId = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : 0;
-$isAdmin = true;
-$isModerator = true;
-
 // Helper function to safely query the database
 function safeQuery($conn, $query) {
     try {
@@ -65,17 +62,10 @@ if ($tableExists && $tableExists->num_rows > 0) {
 
 $tableExists = $conn->query("SHOW TABLES LIKE 'quotations'");
 if ($tableExists && $tableExists->num_rows > 0) {
-    if ($isAdmin) {
-        $stats['total_quotations'] = safeQuery($conn, "SELECT COUNT(*) as count FROM quotations");
-        $stats['draft_quotations'] = safeQuery($conn, "SELECT COUNT(*) as count FROM quotations WHERE status = 'draft'");
-        $stats['accepted_quotations'] = safeQuery($conn, "SELECT COUNT(*) as count FROM quotations WHERE status = 'accepted'");
-        $stats['cancelled_quotations'] = safeQuery($conn, "SELECT COUNT(*) as count FROM quotations WHERE status = 'cancelled'");
-    } else {
-        $stats['total_quotations'] = safeQuery($conn, "SELECT COUNT(*) as count FROM quotations WHERE created_by = $currentUserId");
-        $stats['draft_quotations'] = safeQuery($conn, "SELECT COUNT(*) as count FROM quotations WHERE created_by = $currentUserId AND status = 'draft'");
-        $stats['accepted_quotations'] = safeQuery($conn, "SELECT COUNT(*) as count FROM quotations WHERE created_by = $currentUserId AND status = 'accepted'");
-        $stats['cancelled_quotations'] = safeQuery($conn, "SELECT COUNT(*) as count FROM quotations WHERE created_by = $currentUserId AND status = 'cancelled'");
-    }
+    $stats['total_quotations'] = safeQuery($conn, "SELECT COUNT(*) as count FROM quotations");
+    $stats['draft_quotations'] = safeQuery($conn, "SELECT COUNT(*) as count FROM quotations WHERE status = 'draft'");
+    $stats['accepted_quotations'] = safeQuery($conn, "SELECT COUNT(*) as count FROM quotations WHERE status = 'accepted'");
+    $stats['cancelled_quotations'] = safeQuery($conn, "SELECT COUNT(*) as count FROM quotations WHERE status = 'cancelled'");
 }
 
 $tableExists = $conn->query("SHOW TABLES LIKE 'price_lists'");
@@ -86,9 +76,7 @@ if ($tableExists && $tableExists->num_rows > 0) {
 // Fetch recent invoices
 $recent_invoices = [];
 if ($conn->query("SHOW TABLES LIKE 'invoices'")->num_rows > 0) {
-    $ri_query = $isAdmin
-        ? "SELECT i.*, c.name as customer_name FROM invoices i LEFT JOIN customers c ON i.customer_id = c.customer_id ORDER BY i.created_at DESC LIMIT 5"
-        : "SELECT i.*, c.name as customer_name FROM invoices i LEFT JOIN customers c ON i.customer_id = c.customer_id WHERE i.created_by = $currentUserId ORDER BY i.created_at DESC LIMIT 5";
+    $ri_query = "SELECT i.*, c.name as customer_name FROM invoices i LEFT JOIN customers c ON i.customer_id = c.customer_id ORDER BY i.created_at DESC LIMIT 5";
     $ri_result = $conn->query($ri_query);
     if ($ri_result) {
         while ($row = $ri_result->fetch_assoc()) {
@@ -99,17 +87,10 @@ if ($conn->query("SHOW TABLES LIKE 'invoices'")->num_rows > 0) {
 
 $tableExists = $conn->query("SHOW TABLES LIKE 'invoices'");
 if ($tableExists && $tableExists->num_rows > 0) {
-    if ($isAdmin) {
-        $stats['total_invoices'] = safeQuery($conn, "SELECT COUNT(*) as count FROM invoices");
-        $stats['complete_invoices'] = safeQuery($conn, "SELECT COUNT(*) as count FROM invoices WHERE status = 'done'");
-        $stats['pending_invoices'] = safeQuery($conn, "SELECT COUNT(*) as count FROM invoices WHERE status = 'pending'");
-        $stats['cancel_invoices'] = safeQuery($conn, "SELECT COUNT(*) as count FROM invoices WHERE status = 'cancel'");
-    } else {
-        $stats['my_invoices'] = safeQuery($conn, "SELECT COUNT(*) as count FROM invoices WHERE created_by = $currentUserId");
-        $stats['complete_invoices'] = safeQuery($conn, "SELECT COUNT(*) as count FROM invoices WHERE created_by = $currentUserId AND status = 'done'");
-        $stats['pending_invoices'] = safeQuery($conn, "SELECT COUNT(*) as count FROM invoices WHERE created_by = $currentUserId AND status = 'pending'");
-        $stats['cancel_invoices'] = safeQuery($conn, "SELECT COUNT(*) as count FROM invoices WHERE created_by = $currentUserId AND status = 'cancel'");
-    }
+    $stats['total_invoices'] = safeQuery($conn, "SELECT COUNT(*) as count FROM invoices");
+    $stats['complete_invoices'] = safeQuery($conn, "SELECT COUNT(*) as count FROM invoices WHERE status = 'done'");
+    $stats['pending_invoices'] = safeQuery($conn, "SELECT COUNT(*) as count FROM invoices WHERE status = 'pending'");
+    $stats['cancel_invoices'] = safeQuery($conn, "SELECT COUNT(*) as count FROM invoices WHERE status = 'cancel'");
 }
 ?>
 
@@ -148,15 +129,19 @@ if ($tableExists && $tableExists->num_rows > 0) {
 
                 <!-- Quick Actions -->
                 <div class="dash-actions d-flex flex-wrap gap-2">
+                    <?php if (hasAccess('invoices')): ?>
                     <a href="<?= BASE_URL ?>modules/invoices/invoice_create.php" class="dash-action-btn">
                         <span class="dash-action-icon" style="background: #eef4ff; color: #3538cd;"><i class="fas fa-plus"></i></span>
                         New Invoice
                     </a>
-                    <?php if ($isAdmin || $isModerator): ?>
+                    <?php endif; ?>
+                    <?php if (hasAccess('customers.add')): ?>
                     <a href="<?= BASE_URL ?>modules/customers/add_customer.php" class="dash-action-btn">
                         <span class="dash-action-icon" style="background: #ecfdf3; color: #067647;"><i class="fas fa-user-plus"></i></span>
                         Add Customer
                     </a>
+                    <?php endif; ?>
+                    <?php if (hasAccess('products.add')): ?>
                     <a href="<?= BASE_URL ?>modules/products/add_product.php" class="dash-action-btn">
                         <span class="dash-action-icon" style="background: #eef4ff; color: #3538cd;"><i class="fas fa-box-open"></i></span>
                         Add Product
@@ -165,17 +150,18 @@ if ($tableExists && $tableExists->num_rows > 0) {
                 </div>
 
                 <!-- Invoices Section -->
+                <?php if (hasAccess('invoices')): ?>
                 <div class="dash-card">
                     <div class="dash-card-body">
-                        <h6 class="dash-card-title"><i class="fas fa-file-invoice"></i>Invoices <?php if (!$isAdmin): ?><small class="fw-normal text-muted" style="font-size: 12px;">(Your invoices)</small><?php endif; ?></h6>
+                        <h6 class="dash-card-title"><i class="fas fa-file-invoice"></i>Invoices</h6>
                         <div class="dash-stats">
                             <div class="row g-3">
                                 <div class="col-xl-3 col-md-6">
                                     <div class="stat-card stat-card-accent-indigo">
                                         <div class="stat-top">
                                             <div>
-                                                <p class="stat-label"><?= $isAdmin ? 'Total' : 'My Invoices' ?></p>
-                                                <div class="stat-value"><?= number_format($isAdmin ? $stats['total_invoices'] : $stats['my_invoices']) ?></div>
+                                                <p class="stat-label">Total</p>
+                                                <div class="stat-value"><?= number_format($stats['total_invoices']) ?></div>
                                             </div>
                                             <div class="stat-icon" style="background: #eef4ff; color: #3538cd;"><i class="fas fa-file-invoice"></i></div>
                                         </div>
@@ -184,6 +170,7 @@ if ($tableExists && $tableExists->num_rows > 0) {
                                         </div>
                                     </div>
                                 </div>
+                                <?php if (hasAccess('invoices.pending')): ?>
                                 <div class="col-xl-3 col-md-6">
                                     <div class="stat-card stat-card-accent-amber">
                                         <div class="stat-top">
@@ -193,13 +180,13 @@ if ($tableExists && $tableExists->num_rows > 0) {
                                             </div>
                                             <div class="stat-icon" style="background: #fffaeb; color: #b54708;"><i class="fas fa-clock"></i></div>
                                         </div>
-                                        <?php if ($isAdmin || $isModerator): ?>
                                         <div class="stat-footer">
                                             <a href="<?= BASE_URL ?>modules/invoices/pending_invoice_list.php" class="stat-link" style="color:#b54708;">Review <i class="fas fa-arrow-right"></i></a>
                                         </div>
-                                        <?php endif; ?>
                                     </div>
                                 </div>
+                                <?php endif; ?>
+                                <?php if (hasAccess('invoices.complete')): ?>
                                 <div class="col-xl-3 col-md-6">
                                     <div class="stat-card stat-card-accent-green">
                                         <div class="stat-top">
@@ -209,13 +196,13 @@ if ($tableExists && $tableExists->num_rows > 0) {
                                             </div>
                                             <div class="stat-icon" style="background: #ecfdf3; color: #067647;"><i class="fas fa-check-circle"></i></div>
                                         </div>
-                                        <?php if ($isAdmin || $isModerator): ?>
                                         <div class="stat-footer">
                                             <a href="<?= BASE_URL ?>modules/invoices/complete_invoice_list.php" class="stat-link" style="color:#067647;">View <i class="fas fa-arrow-right"></i></a>
                                         </div>
-                                        <?php endif; ?>
                                     </div>
                                 </div>
+                                <?php endif; ?>
+                                <?php if (hasAccess('invoices.cancel')): ?>
                                 <div class="col-xl-3 col-md-6">
                                     <div class="stat-card stat-card-accent-red">
                                         <div class="stat-top">
@@ -225,17 +212,17 @@ if ($tableExists && $tableExists->num_rows > 0) {
                                             </div>
                                             <div class="stat-icon" style="background: #fef3f2; color: #b42318;"><i class="fas fa-ban"></i></div>
                                         </div>
-                                        <?php if ($isAdmin || $isModerator): ?>
                                         <div class="stat-footer">
                                             <a href="<?= BASE_URL ?>modules/invoices/cancel_invoice_list.php" class="stat-link" style="color:#b42318;">View <i class="fas fa-arrow-right"></i></a>
                                         </div>
-                                        <?php endif; ?>
                                     </div>
                                 </div>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
                 </div>
+                <?php endif; ?>
 
                 <!-- Overview Section -->
                 <div class="dash-card">
@@ -243,7 +230,7 @@ if ($tableExists && $tableExists->num_rows > 0) {
                         <h6 class="dash-card-title"><i class="fas fa-chart-pie"></i>Overview</h6>
                         <div class="dash-stats">
                             <div class="row g-3">
-                                <?php if ($isAdmin): ?>
+                                <?php if (hasAccess('users')): ?>
                                 <div class="col-xl-3 col-md-6">
                                     <div class="stat-card stat-card-accent-indigo">
                                         <div class="stat-top">
@@ -259,6 +246,7 @@ if ($tableExists && $tableExists->num_rows > 0) {
                                     </div>
                                 </div>
                                 <?php endif; ?>
+                                <?php if (hasAccess('customers')): ?>
                                 <div class="col-xl-3 col-md-6">
                                     <div class="stat-card stat-card-accent-blue">
                                         <div class="stat-top">
@@ -273,6 +261,8 @@ if ($tableExists && $tableExists->num_rows > 0) {
                                         </div>
                                     </div>
                                 </div>
+                                <?php endif; ?>
+                                <?php if (hasAccess('products')): ?>
                                 <div class="col-xl-3 col-md-6">
                                     <div class="stat-card stat-card-accent-indigo">
                                         <div class="stat-top">
@@ -287,7 +277,8 @@ if ($tableExists && $tableExists->num_rows > 0) {
                                         </div>
                                     </div>
                                 </div>
-                                <?php if (!$isAdmin): ?>
+                                <?php endif; ?>
+                                <?php if (hasAccess('quotations')): ?>
                                 <div class="col-xl-3 col-md-6">
                                     <div class="stat-card stat-card-accent-indigo">
                                         <div class="stat-top">

@@ -64,22 +64,32 @@ $permissionGroups = [
     'Main' => [
         'dashboard' => 'Dashboard',
     ],
-    'Business' => [
+    'Invoices' => [
         'invoices'               => 'Invoices - Basic Access',
         'invoices.pending'       => 'Invoices - Pending',
         'invoices.complete'      => 'Invoices - Complete',
         'invoices.cancel'        => 'Invoices - Cancelled',
         'invoices.edit_requests' => 'Invoices - Edit Requests',
+    ],
+
+    'Quotations' => [
         'quotations'             => 'Quotations - Basic Access',
         'quotations.draft'       => 'Quotations - Draft',
         'quotations.accepted'    => 'Quotations - Accepted',
         'quotations.cancelled'   => 'Quotations - Cancelled',
         'quotations.revised'     => 'Quotations - Revised',
+    ],
+
+    'Price Lists' => [
         'price_lists'            => 'Price Lists - Basic Access',
         'price_lists.manage_assets' => 'Price Lists - Manage Assets',
+    ],
+
+    'Customers' => [
         'customers'              => 'Customers - Basic Access',
         'customers.add'          => 'Customers - Add/Edit',
     ],
+
     'Administration' => [
         'users'             => 'Users - View',
         'users.add'         => 'Users - Add/Edit',
@@ -108,17 +118,7 @@ $permissionGroups = [
     <?php require_once BASE_PATH . 'includes/header.php'; ?>
     <title>Edit Permissions - <?= htmlspecialchars($user['name']) ?></title>
     <link href="<?= BASE_URL ?>css/forms.css" rel="stylesheet" />
-    <style>
-        .select-all-bar {
-            background: #f9fafb;
-            border: 1px solid #eaecf0;
-            border-radius: 8px;
-            padding: 8px 16px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-    </style>
+    <style></style>
 </head>
 <body class="sb-nav-fixed">
     <?php require_once BASE_PATH . 'includes/navbar.php'; ?>
@@ -148,16 +148,13 @@ $permissionGroups = [
                             <input type="hidden" name="user_id" value="<?= $user_id ?>">
                             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
 
-                            <div class="premium-section-header">
-                                <i class="fas fa-lock"></i> Access Permissions
+                            <div class="premium-section-header d-flex justify-content-between align-items-center">
+                                <span><i class="fas fa-lock"></i> Access Permissions <span class="text-muted">(Select the navigation sections and actions this user can access.)   </span></span>
+                                <div class="d-flex align-items-center gap-2" style="font-size: 12px; font-weight: 400;">
+                                    <input class="form-check-input" type="checkbox" id="selectAll" style="margin-top: 0;">
+                                    <label class="form-check-label" for="selectAll" style="font-size: 12px;">Select / Deselect All</label>
+                                </div>
                             </div>
-                            <p class="text-muted small mb-3">Select the navigation sections and actions this user can access.</p>
-
-                            <div class="select-all-bar mb-4">
-                                <input class="form-check-input" type="checkbox" id="selectAll">
-                                <label class="form-check-label" for="selectAll" style="font-size: 13px; font-weight: 500;">Select / Deselect All</label>
-                            </div>
-
                             <?php foreach ($permissionGroups as $groupName => $perms): ?>
                             <div class="mb-4">
                                 <h6 class="text-muted text-uppercase small fw-semibold mb-2 pb-1 border-bottom"><?= htmlspecialchars($groupName) ?></h6>
