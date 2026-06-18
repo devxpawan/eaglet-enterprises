@@ -120,6 +120,18 @@ try {
     }
     $stmt->close();
 
+    // Check for duplicate NIC
+    if (!empty($nic)) {
+        $stmt = $conn->prepare("SELECT id FROM users WHERE nic = ?");
+        $stmt->bind_param("s", $nic);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if ($result->num_rows > 0) {
+            $errors[] = "NIC number already in use.";
+        }
+        $stmt->close();
+    }
+
     // If validation errors exist, handle and redirect
     if (!empty($errors)) {
         handleError($errors);

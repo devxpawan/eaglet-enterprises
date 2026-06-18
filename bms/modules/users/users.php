@@ -436,7 +436,6 @@ $result = $conn->query($sql);
                                             <th>Username</th>
                                             <th>Contact</th>
                                             <th>Position</th>
-                                            <th>Access</th>
                                             <th>Status</th>
                                             <th>Actions</th>
                                         </tr>
@@ -465,22 +464,6 @@ $result = $conn->query($sql);
                                                         <?php else: ?>
                                                             <span class="text-muted">—</span>
                                                         <?php endif; ?>
-                                                    </td>
-                                                    <td>
-                                                        <?php
-                                                        $permCount = 0;
-                                                        $userPerms = [];
-                                                        if (!empty($row['access'])) {
-                                                            $decoded = json_decode($row['access'], true);
-                                                            if (is_array($decoded)) {
-                                                                $permCount = count($decoded);
-                                                                $userPerms = $decoded;
-                                                            }
-                                                        }
-                                                        $summary = $permCount . ' permission' . ($permCount !== 1 ? 's' : '');
-                                                        $tooltip = !empty($userPerms) ? htmlspecialchars(implode(', ', $userPerms)) : 'none';
-                                                        ?>
-                                                        <span class="badge badge-soft badge-soft-secondary" title="<?= $tooltip ?>"><?= $summary ?></span>
                                                     </td>
                                                     <td>
                                                         <?php if ($row['status'] == 'active'): ?>

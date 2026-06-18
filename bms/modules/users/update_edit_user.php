@@ -111,6 +111,23 @@ if ($username_result->num_rows > 0) {
 }
 $username_stmt->close();
 
+// Check for duplicate NIC (excluding current user when editing)
+if (!empty($nic)) {
+    $nic_check_sql = "SELECT id FROM users WHERE nic = ? AND id != ?";
+    $nic_stmt = $conn->prepare($nic_check_sql);
+    $nic_stmt->bind_param("si", $nic, $user_id);
+    $nic_stmt->execute();
+    $nic_result = $nic_stmt->get_result();
+
+    if ($nic_result->num_rows > 0) {
+        $_SESSION['error_message'] = "NIC number is already in use by another user.";
+        header("Location: " . BASE_URL . "modules/users/users.php");
+        $nic_stmt->close();
+        exit();
+    }
+    $nic_stmt->close();
+}
+
 // Prepare database operation for updating user
 try {
     $conn->begin_transaction();

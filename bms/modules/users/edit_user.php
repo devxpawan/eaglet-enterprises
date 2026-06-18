@@ -637,9 +637,9 @@ mobileInput.addEventListener('input', function(e) {
 });
 
 // Real-time availability check via AJAX
-function checkFieldAvailability(endpoint, paramName, value, excludeId, callback) {
+function checkFieldAvailability(fieldName, paramName, value, excludeId, callback) {
     const xhr = new XMLHttpRequest();
-    let url = '<?= BASE_URL ?>modules/api/' + endpoint + '?' + paramName + '=' + encodeURIComponent(value);
+    let url = '<?= BASE_URL ?>modules/api/check_field.php?field=' + fieldName + '&' + paramName + '=' + encodeURIComponent(value);
     if (excludeId) {
         url += '&exclude_id=' + encodeURIComponent(excludeId);
     }
@@ -709,7 +709,7 @@ const validateUsernameField = function() {
             return;
         }
 
-        checkFieldAvailability('check_username.php', 'username', value, currentUserId, function(response) {
+        checkFieldAvailability('username', 'username', value, currentUserId, function(response) {
             usernameChecked = true;
             if (response.available) {
                 usernameInput.classList.add('is-valid');
@@ -780,7 +780,7 @@ const validateEmailFieldAsync = function() {
             return;
         }
 
-        checkFieldAvailability('check_email.php', 'email', value, currentUserId, function(response) {
+        checkFieldAvailability('email', 'email', value, currentUserId, function(response) {
             emailChecked = true;
             if (response.available) {
                 emailInput.classList.add('is-valid');
@@ -810,15 +810,163 @@ emailInput.addEventListener('blur', function() {
     validateEmailFieldAsync();
 });
 
+// Enhanced NIC validation with real-time availability check
+const nicInput = document.getElementById('nic');
+const nicError = document.getElementById('nic-error');
+let nicAvailable = true;
+let nicChecked = true;
+let nicCheckTimer;
+
+const validateNICFieldAsync = function() {
+    return new Promise((resolve) => {
+        const value = nicInput.value.trim();
+        const originalValue = nicInput.getAttribute('data-original');
+        nicInput.classList.remove('is-invalid');
+        nicInput.classList.remove('is-valid');
+        nicError.style.display = 'none';
+
+        // Empty check (NIC is optional)
+        if (value === '') {
+            nicInput.classList.remove('is-valid');
+            nicInput.classList.remove('is-invalid');
+            nicAvailable = true;
+            nicChecked = true;
+            resolve(true);
+            return;
+        }
+
+        // Format check (use existing validateNIC)
+        const formatResult = validateNIC(value);
+        if (!formatResult.valid) {
+            nicInput.classList.add('is-invalid');
+            nicError.textContent = formatResult.message;
+            nicError.style.display = 'block';
+            nicChecked = false;
+            resolve(false);
+            return;
+        }
+
+        if (value === originalValue) {
+            nicInput.classList.add('is-valid');
+            nicAvailable = true;
+            nicChecked = true;
+            resolve(true);
+            return;
+        }
+
+        checkFieldAvailability('nic', 'nic', value, currentUserId, function(response) {
+            nicChecked = true;
+            if (response.available) {
+                nicInput.classList.add('is-valid');
+                nicAvailable = true;
+                resolve(true);
+            } else {
+                nicInput.classList.add('is-invalid');
+                nicError.textContent = response.message || 'NIC number is already in use';
+                nicError.style.display = 'block';
+                nicAvailable = false;
+                resolve(false);
+            }
+        });
+    });
+};
+
+nicInput.addEventListener('input', function() {
+    clearTimeout(nicCheckTimer);
+    nicCheckTimer = setTimeout(() => {
+        validateNICFieldAsync();
+        checkForChanges();
+    }, 600);
+});
+
+nicInput.addEventListener('blur', function() {
+    clearTimeout(nicCheckTimer);
+    validateNICFieldAsync();
+});
+
+// Enhanced mobile validation with real-time availability check
+const mobileError = document.getElementById('mobile-error');
+let mobileAvailable = true;
+let mobileChecked = true;
+let mobileCheckTimer;
+
+const validateMobileFieldAsync = function() {
+    return new Promise((resolve) => {
+        const value = mobileInput.value.replace(/\D/g, ''); // Ensure digits only
+        const originalValue = mobileInput.getAttribute('data-original').replace(/\D/g, '');
+        mobileInput.classList.remove('is-invalid', 'is-valid');
+        mobileError.style.display = 'none';
+
+        // Empty check (mobile is optional)
+        if (value === '') {
+            mobileInput.classList.remove('is-valid', 'is-invalid');
+            mobileAvailable = true;
+            mobileChecked = true;
+            resolve(true);
+            return;
+        }
+
+        // Format check
+        const formatResult = validateMobile(mobileInput.value);
+        if (!formatResult.valid) {
+            mobileInput.classList.add('is-invalid');
+            mobileError.textContent = formatResult.message;
+            mobileError.style.display = 'block';
+            mobileChecked = false;
+            resolve(false);
+            return;
+        }
+
+        // Skip API call if value hasn't changed
+        if (value === originalValue) {
+            mobileInput.classList.add('is-valid');
+            mobileAvailable = true;
+            mobileChecked = true;
+            resolve(true);
+            return;
+        }
+
+        // Check availability via AJAX
+        checkFieldAvailability('mobile', 'mobile', value, currentUserId, function(response) {
+            mobileChecked = true;
+            if (response.available) {
+                mobileInput.classList.add('is-valid');
+                mobileAvailable = true;
+                resolve(true);
+            } else {
+                mobileInput.classList.add('is-invalid');
+                mobileError.textContent = response.message || 'Mobile number is already in use';
+                mobileError.style.display = 'block';
+                mobileAvailable = false;
+                resolve(false);
+            }
+        });
+    });
+};
+
+mobileInput.addEventListener('input', function() {
+    clearTimeout(mobileCheckTimer);
+    mobileCheckTimer = setTimeout(() => {
+        validateMobileFieldAsync();
+        checkForChanges();
+    }, 600);
+});
+
+mobileInput.addEventListener('blur', function() {
+    clearTimeout(mobileCheckTimer);
+    validateMobileFieldAsync();
+});
+
 // Client-side form validation
 document.getElementById('editUserForm').addEventListener('submit', function(event) {
     let isValid = true;
     
     if (!validateNameField()) isValid = false;
     if (!validatePasswordField()) isValid = false;
-    if (!validateMobileField()) isValid = false;
+    if (!validateMobileField()) isValid = false; // Synchronous check
     if (!validateNICField()) isValid = false;
     if (!validateAddressField()) isValid = false;
+    
     const usernameVal = usernameInput.value.trim();
     const usernameRegex = /^[a-zA-Z0-9_]{3,50}$/;
     if (!usernameVal || !usernameRegex.test(usernameVal)) {
@@ -843,12 +991,17 @@ document.getElementById('editUserForm').addEventListener('submit', function(even
 
     const needUsernameCheck = !usernameChecked || !usernameAvailable;
     const needEmailCheck = !emailChecked || !emailAvailable;
+    const needNICCheck = !nicChecked || !nicAvailable;
+    const needMobileCheck = !mobileChecked || !mobileAvailable;
 
-    if (needUsernameCheck || needEmailCheck) {
+    if (needUsernameCheck || needEmailCheck || needNICCheck || needMobileCheck) {
         event.preventDefault();
         const promises = [];
         if (needUsernameCheck) promises.push(validateUsernameField());
         if (needEmailCheck) promises.push(validateEmailFieldAsync());
+        if (needNICCheck) promises.push(validateNICFieldAsync());
+        if (needMobileCheck) promises.push(validateMobileFieldAsync());
+        
         Promise.all(promises).then(function(results) {
             if (results.every(r => r === true)) {
                 document.getElementById('editUserForm').submit();

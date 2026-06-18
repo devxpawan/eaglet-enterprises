@@ -114,6 +114,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt->close();
         }
 
+        // Check for duplicate NIC
+        if (!empty($nic)) {
+            $stmt = $conn->prepare("SELECT id FROM users WHERE nic = ?");
+            $stmt->bind_param("s", $nic);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            if ($result->num_rows > 0) {
+                $errors[] = "NIC number already in use.";
+            }
+            $stmt->close();
+        }
+
+        // Check for duplicate mobile
+        if (!empty($mobile)) {
+            $stmt = $conn->prepare("SELECT id FROM users WHERE mobile = ?");
+            $stmt->bind_param("s", $mobile);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            if ($result->num_rows > 0) {
+                $errors[] = "Mobile number already in use.";
+            }
+            $stmt->close();
+        }
+
         if (!empty($errors)) {
             $errorMsg = implode("<br>", $errors);
         } else {
@@ -609,9 +633,9 @@ function validatePassword(password) {
     }
 
     // Real-time availability check via AJAX
-    function checkFieldAvailability(endpoint, paramName, value, callback) {
+    function checkFieldAvailability(fieldName, paramName, value, callback) {
         const xhr = new XMLHttpRequest();
-        xhr.open('GET', '<?= BASE_URL ?>modules/api/' + endpoint + '?' + paramName + '=' + encodeURIComponent(value), true);
+        xhr.open('GET', '<?= BASE_URL ?>modules/api/check_field.php?field=' + fieldName + '&' + paramName + '=' + encodeURIComponent(value), true);
         xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
         xhr.onreadystatechange = function() {
             if (xhr.readyState === 4 && xhr.status === 200) {
@@ -745,7 +769,7 @@ function validatePassword(password) {
             }
 
             // Check availability via AJAX
-            checkFieldAvailability('check_username.php', 'username', value, function(response) {
+            checkFieldAvailability('username', 'username', value, function(response) {
                 usernameChecked = true;
                 if (response.available) {
                     usernameInput.classList.add('is-valid');
@@ -850,7 +874,7 @@ function validatePassword(password) {
             }
 
             // Check availability via AJAX
-            checkFieldAvailability('check_email.php', 'email', value, function(response) {
+            checkFieldAvailability('email', 'email', value, function(response) {
                 emailChecked = true;
                 if (response.available) {
                     emailInput.classList.add('is-valid');
@@ -881,6 +905,140 @@ function validatePassword(password) {
         validateEmailFieldAsync();
     });
 
+    // Enhanced NIC validation with real-time availability check
+    const nicInput = document.getElementById('nic');
+    const nicError = document.getElementById('nic-error');
+    let nicAvailable = false;
+    let nicChecked = false;
+    let nicCheckTimer;
+
+    const validateNICFieldAsync = function() {
+        return new Promise((resolve) => {
+            const value = nicInput.value.trim();
+            nicInput.classList.remove('is-invalid');
+            nicInput.classList.remove('is-valid');
+            nicError.style.display = 'none';
+
+            // Empty check (NIC is optional)
+            if (value === '') {
+                nicInput.classList.remove('is-valid');
+                nicInput.classList.remove('is-invalid');
+                nicAvailable = true;
+                nicChecked = true;
+                resolve(true);
+                return;
+            }
+
+            // Format check (use existing validateNIC)
+            const formatResult = validateNIC(value);
+            if (!formatResult.valid) {
+                nicInput.classList.add('is-invalid');
+                nicError.textContent = formatResult.message;
+                nicError.style.display = 'block';
+                nicChecked = false;
+                resolve(false);
+                return;
+            }
+
+            // Check availability via AJAX
+            checkFieldAvailability('nic', 'nic', value, function(response) {
+                nicChecked = true;
+                if (response.available) {
+                    nicInput.classList.add('is-valid');
+                    nicAvailable = true;
+                    resolve(true);
+                } else {
+                    nicInput.classList.add('is-invalid');
+                    nicError.textContent = response.message || 'NIC number is already in use';
+                    nicError.style.display = 'block';
+                    nicAvailable = false;
+                    resolve(false);
+                }
+            });
+        });
+    };
+
+    // Real-time NIC checking as user types (with debounce)
+    nicInput.addEventListener('input', function() {
+        clearTimeout(nicCheckTimer);
+        nicCheckTimer = setTimeout(() => {
+            validateNICFieldAsync();
+        }, 600);
+    });
+
+    // Check on blur
+    nicInput.addEventListener('blur', function() {
+        clearTimeout(nicCheckTimer);
+        validateNICFieldAsync();
+    });
+
+    // Enhanced mobile validation with real-time availability check
+    let mobileAvailable = false;
+    let mobileChecked = false;
+    let mobileCheckTimer;
+
+    const mobileError = document.getElementById('mobile-error');
+
+    const validateMobileFieldAsync = function() {
+        return new Promise((resolve) => {
+            const value = mobileInput.value.replace(/\D/g, ''); // Ensure digits only
+            mobileInput.classList.remove('is-invalid');
+            mobileInput.classList.remove('is-valid');
+            mobileError.style.display = 'none';
+
+            // Empty check (mobile is optional)
+            if (value === '') {
+                mobileInput.classList.remove('is-valid');
+                mobileInput.classList.remove('is-invalid');
+                mobileAvailable = true;
+                mobileChecked = true;
+                resolve(true);
+                return;
+            }
+
+            // Format check
+            const formatResult = validateMobile(mobileInput.value); // Use original input value
+            if (!formatResult.valid) {
+                mobileInput.classList.add('is-invalid');
+                mobileError.textContent = formatResult.message;
+                mobileError.style.display = 'block';
+                mobileChecked = false;
+                resolve(false);
+                return;
+            }
+
+            // Check availability via AJAX
+            checkFieldAvailability('mobile', 'mobile', value, function(response) {
+                mobileChecked = true;
+                if (response.available) {
+                    mobileInput.classList.add('is-valid');
+                    mobileAvailable = true;
+                    resolve(true);
+                } else {
+                    mobileInput.classList.add('is-invalid');
+                    mobileError.textContent = response.message || 'Mobile number is already in use';
+                    mobileError.style.display = 'block';
+                    mobileAvailable = false;
+                    resolve(false);
+                }
+            });
+        });
+    };
+
+    // Real-time mobile checking as user types (with debounce)
+    mobileInput.addEventListener('input', function() {
+        clearTimeout(mobileCheckTimer);
+        mobileCheckTimer = setTimeout(() => {
+            validateMobileFieldAsync();
+        }, 600);
+    });
+
+    // Check on blur
+    mobileInput.addEventListener('blur', function() {
+        clearTimeout(mobileCheckTimer);
+        validateMobileFieldAsync();
+    });
+
     // Client-side form validation
     document.getElementById('addUserForm').addEventListener('submit', function(event) {
         let isValid = true;
@@ -888,7 +1046,7 @@ function validatePassword(password) {
         // Validate all fields
         if (!validateNameField()) isValid = false;
         if (!validatePasswordField()) isValid = false;
-        if (!validateMobileField()) isValid = false;
+        if (!validateMobileField()) isValid = false; // Synchronous check
         if (!validateNICField()) isValid = false;
         if (!validateAddressField()) isValid = false;
         // Synchronous checks for email and username formats
@@ -917,16 +1075,20 @@ function validatePassword(password) {
             return;
         }
 
-        // Check async validations (username & email availability)
+        // Check async validations (username, email, NIC, & mobile availability)
         const needUsernameCheck = !usernameChecked || !usernameAvailable;
         const needEmailCheck = !emailChecked || !emailAvailable;
+        const needNICCheck = !nicChecked || !nicAvailable;
+        const needMobileCheck = !mobileChecked || !mobileAvailable;
 
-        if (needUsernameCheck || needEmailCheck) {
+        if (needUsernameCheck || needEmailCheck || needNICCheck || needMobileCheck) {
             event.preventDefault();
             
             const promises = [];
             if (needUsernameCheck) promises.push(validateUsernameField());
             if (needEmailCheck) promises.push(validateEmailFieldAsync());
+            if (needNICCheck) promises.push(validateNICFieldAsync());
+            if (needMobileCheck) promises.push(validateMobileFieldAsync());
             
             Promise.all(promises).then(function(results) {
                 const allValid = results.every(r => r === true);
