@@ -349,21 +349,21 @@ if ($result && $result->num_rows > 0) {
                                                             <?php if ($payStatus == 'paid'): ?>
 
                                                             <?php else: ?>
-                                                                <?php if (hasAccess('invoices.edit_requests')): ?>
-                                                                <?php if (in_array($row['invoice_id'], $pendingEditIds)): ?>
-                                                                    <button class="btn btn-edit disabled"
-                                                                        title="Edit request pending approval"
-                                                                        style="opacity:0.5;cursor:not-allowed;">
-                                                                        <i class="fas fa-edit"></i>
-                                                                    </button>
-                                                                <?php else: ?>
-                                                                    <a href="<?= BASE_URL ?>modules/invoices/invoice_edit.php?id=<?php echo isset($row['invoice_id']) ? $row['invoice_id'] : ''; ?>"
-                                                                        class="btn btn-edit"
-                                                                        title="Edit Invoice">
-                                                                        <i class="fas fa-edit"></i>
-                                                                    </a>
-                                                                <?php endif; ?>
-                                                                <?php endif; ?>
+                                                            <?php if (hasAccess('invoices.pending')): ?>
+                                                            <?php if (in_array($row['invoice_id'], $pendingEditIds)): ?>
+                                                                <button class="btn btn-edit disabled"
+                                                                    title="Edit request pending approval"
+                                                                    style="opacity:0.5;cursor:not-allowed;">
+                                                                    <i class="fas fa-edit"></i>
+                                                                </button>
+                                                            <?php else: ?>
+                                                                <a href="<?= BASE_URL ?>modules/invoices/invoice_edit.php?id=<?php echo isset($row['invoice_id']) ? $row['invoice_id'] : ''; ?>"
+                                                                    class="btn btn-edit"
+                                                                    title="Edit Invoice">
+                                                                    <i class="fas fa-edit"></i>
+                                                                </a>
+                                                            <?php endif; ?>
+                                                            <?php endif; ?>
                                                                 <?php if (hasAccess('invoices.pending')): ?>
                                                                 <a href="#" class="btn btn-view mark-paid"
                                                                     title="Mark as Paid"
