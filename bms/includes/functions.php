@@ -1,15 +1,6 @@
 <?php
 require_once __DIR__ . '/../config/paths.php';
 
-function showAlert($message, $type = 'success') {
-    $toastType = $type === 'danger' ? 'error' : $type;
-    echo "<script>document.addEventListener('DOMContentLoaded', function() { showToast('" . addslashes($toastType) . "', '" . addslashes($message) . "'); });</script>";
-}
-
-function sanitizeInput($data) {
-    return htmlspecialchars(trim($data));
-}
-
 // Permission check helper
 function hasAccess($permission) {
     $access = $_SESSION['user_access'] ?? [];
@@ -81,7 +72,7 @@ function buildQueryString($exclude = [], $extra = []) {
     return implode('&', $parts);
 }
 
-function renderPagination($page, $totalPages, $search = '') {
+function renderPagination($page, $totalPages) {
     if ($totalPages <= 1) return '';
     $html = '<nav aria-label="Page navigation"><ul class="pagination mb-0">';
     $prevDisabled = $page <= 1 ? 'disabled' : '';
@@ -167,21 +158,6 @@ function getQuotationRevisionChain($conn, $quotation_id) {
     }
     $stmt->close();
     return $chain;
-}
-
-function isLatestRevision($conn, $quotation_id) {
-    $sql = "SELECT revision_no, original_ref_no, ref_no FROM quotations WHERE quotation_id = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $quotation_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $row = $result->fetch_assoc();
-    $stmt->close();
-    if (!$row) return false;
-    if ($row['original_ref_no'] === null && $row['revision_no'] == 0) return true;
-    $original_ref_no = $row['original_ref_no'] ?? $row['ref_no'];
-    $maxRev = getNextRevisionNo($conn, $original_ref_no) - 1;
-    return $row['revision_no'] >= $maxRev;
 }
 
 // --- End Quotation Revision Functions ---

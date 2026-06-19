@@ -355,25 +355,6 @@ function getUserInitials($name) {
     min-width: 0;
 }
 
-.nav-dropdown-user-name {
-    font-size: 14px;
-    font-weight: 600;
-    color: #1e293b;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.nav-dropdown-user-role {
-    font-size: 11.5px;
-    color: #94a3b8;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    margin-top: 1px;
-}
-
 .nav-dropdown-user-role .role-dot {
     width: 6px;
     height: 6px;

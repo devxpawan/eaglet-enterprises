@@ -81,29 +81,6 @@
     -webkit-box-orient: vertical;
 }
 
-.sidebar-brand-badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 4px 8px;
-    border-radius: 6px;
-    background: rgba(99, 102, 241, 0.12);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border: 1px solid rgba(99, 102, 241, 0.18);
-    font-size: 9.5px;
-    font-weight: 700;
-    letter-spacing: 1.8px;
-    text-transform: uppercase;
-    color: rgba(165, 180, 252, 0.9);
-    transition: all 0.3s ease;
-}
-
-.sidebar-brand-badge:hover {
-    background: rgba(99, 102, 241, 0.18);
-    border-color: rgba(99, 102, 241, 0.3);
-    color: #a5b4fc;
-}
-
 /* ═══════════════════════════════════════════════════════════════
    SCROLLABLE NAVIGATION AREA
    ═══════════════════════════════════════════════════════════════ */
