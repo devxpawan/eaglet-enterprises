@@ -38,7 +38,7 @@ try {
         exit();
     }
 
-    $user = $result->fetch_assoc();
+    $editUser = $result->fetch_assoc();
     $stmt->close();
 } catch (Exception $e) {
     $_SESSION['error_message'] = "Database error: " . $e->getMessage();
@@ -47,8 +47,8 @@ try {
 }
 
 $userAccess = [];
-if (!empty($user['access'])) {
-    $decoded = json_decode($user['access'], true);
+if (!empty($editUser['access'])) {
+    $decoded = json_decode($editUser['access'], true);
     if (is_array($decoded)) {
         $userAccess = $decoded;
     }
@@ -126,7 +126,7 @@ $permissionGroups = [
 <html lang="en">
 <head>
     <?php require_once BASE_PATH . 'includes/header.php'; ?>
-    <title>Edit Permissions - <?= htmlspecialchars($user['name']) ?></title>
+    <title>Edit Permissions - <?= htmlspecialchars($editUser['name']) ?></title>
     <link href="<?= BASE_URL ?>css/forms.css" rel="stylesheet" />
     <style></style>
 </head>
@@ -148,7 +148,7 @@ $permissionGroups = [
                 <div class="page-header d-flex justify-content-between align-items-center">
                     <div>
                         <h5>Access Permissions</h5>
-                        <p class="text-muted">Manage permissions for <strong><?= htmlspecialchars($user['name']) ?></strong> (<?= htmlspecialchars($user['username']) ?>)</p>
+                        <p class="text-muted">Manage permissions for <strong><?= htmlspecialchars($editUser['name']) ?></strong> (<?= htmlspecialchars($editUser['username']) ?>)</p>
                     </div>
                 </div>
 

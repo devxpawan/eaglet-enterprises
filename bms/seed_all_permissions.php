@@ -17,21 +17,13 @@ $allPermissions = [
     'settings',
 ];
 
-$stmt = $conn->prepare("SELECT id FROM users");
-$stmt->execute();
-$result = $stmt->get_result();
-
-$updated = 0;
-while ($row = $result->fetch_assoc()) {
-    $newAccess = json_encode($allPermissions);
-    $updateStmt = $conn->prepare("UPDATE users SET access = ? WHERE id = ?");
-    $updateStmt->bind_param("si", $newAccess, $row['id']);
-    $updateStmt->execute();
-    $updateStmt->close();
-    $updated++;
-}
-
-$stmt->close();
+$newAccess = json_encode($allPermissions);
+$updateStmt = $conn->prepare("UPDATE users SET access = ? WHERE id = ?");
+$userId = 1;
+$updateStmt->bind_param("si", $newAccess, $userId);
+$updateStmt->execute();
+$updateStmt->close();
+$updated = 1;
 $conn->close();
 
 echo "Granted all permissions to $updated users.\n";
