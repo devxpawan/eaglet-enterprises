@@ -40,7 +40,7 @@ $baseFrom = "FROM invoices i
                  )
               ) p ON i.invoice_id = p.invoice_id
              LEFT JOIN (
-                 SELECT cm1.invoice_id, cm1.credit_memo_no, cm1.amount as cm_amount, cm1.status as cm_status
+                 SELECT cm1.invoice_id, cm1.credit_memo_id, cm1.credit_memo_no, cm1.amount as cm_amount, cm1.status as cm_status
                  FROM credit_memos cm1
                  WHERE cm1.credit_memo_id = (
                      SELECT MAX(cm2.credit_memo_id) FROM credit_memos cm2 WHERE cm2.invoice_id = cm1.invoice_id
@@ -50,7 +50,7 @@ $baseFrom = "FROM invoices i
 
 $selectCols = "i.*, c.name as customer_name, c.business_name as customer_business_name,
                p.payment_method, p.payment_date, p.pay_by, p.paid_by_name,
-               cm.credit_memo_no, cm.cm_amount, cm.cm_status,
+               cm.credit_memo_id, cm.credit_memo_no, cm.cm_amount, cm.cm_status,
                u2.name as creator_name";
 
 // Build WHERE conditions
@@ -222,7 +222,11 @@ $result = $conn->query($sql);
                                                     </td>
                                                     <td>
                                                         <?php if (!empty($row['credit_memo_no'])): ?>
-                                                            <div class="fw-semibold" style="color: #1B1C56;"><?php echo htmlspecialchars($row['credit_memo_no']); ?></div>
+                                                            <div class="fw-semibold">
+                                                                <a href="<?= BASE_URL ?>modules/credit_memos/download_credit_memo.php?id=<?php echo intval($row['credit_memo_id']); ?>" target="_blank" style="color: #1B1C56;">
+                                                                    <?php echo htmlspecialchars($row['credit_memo_no']); ?>
+                                                                </a>
+                                                            </div>
                                                             <div class="text-muted" style="font-size: 0.82rem;"><?php echo number_format(floatval($row['cm_amount']), 2); ?>
                                                                 <span class="badge-soft <?= $row['cm_status'] == 'refund' ? 'badge-soft-success' : 'badge-soft-danger' ?>" style="font-size: 9px; padding: 1px 5px;">
                                                                     <?php echo ucfirst(htmlspecialchars($row['cm_status'])); ?>

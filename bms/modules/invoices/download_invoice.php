@@ -351,6 +351,7 @@ $quotation_ref = !empty($invoice['quotation_ref_no']) ? $invoice['quotation_ref_
         .invoice-title-centered {
             text-align: center;
             margin-bottom: 10px;
+            position: relative;
         }
 
         .invoice-title-centered h2 {
@@ -361,6 +362,23 @@ $quotation_ref = !empty($invoice['quotation_ref_no']) ? $invoice['quotation_ref_
             margin: 0;
             text-transform: uppercase;
             letter-spacing: 1.5px;
+        }
+
+        .watermark {
+            position: absolute;
+            top: 20px;
+            left: 36%;
+            transform: rotate(-15deg);
+            border: 3px dashed #000;
+            color: #000;
+            font-size: 24px;
+            font-weight: 900;
+            padding: 4px 18px;
+            letter-spacing: 3px;
+            opacity: 0.75;
+            z-index: 10;
+            pointer-events: none;
+            text-transform: uppercase;
         }
 
         .info-table {
@@ -689,6 +707,11 @@ $quotation_ref = !empty($invoice['quotation_ref_no']) ? $invoice['quotation_ref_
         <!-- Title -->
         <div class="invoice-title-centered">
             <h2>INVOICE</h2>
+            <?php if (isset($invoice['status']) && $invoice['status'] === 'cancel'): ?>
+                <div class="watermark">CANCELLED</div>
+            <?php elseif (isset($invoicePayStatus) && $invoicePayStatus === 'paid'): ?>
+                <div class="watermark">PAID</div>
+            <?php endif; ?>
         </div>
 
         <!-- Client & Invoice Meta Info -->
@@ -712,9 +735,11 @@ $quotation_ref = !empty($invoice['quotation_ref_no']) ? $invoice['quotation_ref_
                     <?php if (!empty($quotation_ref)): ?>
                         <strong>From Quotation :</strong> <?php echo htmlspecialchars($quotation_ref); ?><br>
                     <?php endif; ?>
+                    <?php if ($invoicePayStatus == 'partial' || $invoice['status'] == 'pending'): ?>
                     <span class="payment-badge <?php echo getPaymentStatusBadge($invoicePayStatus); ?>">
                         <?php echo ucfirst($invoicePayStatus); ?>
                     </span>
+                    <?php endif; ?>
                 </td>
             </tr>
         </table>
@@ -821,7 +846,7 @@ $quotation_ref = !empty($invoice['quotation_ref_no']) ? $invoice['quotation_ref_
         <?php endif; ?>
 
         <!-- Payment History -->
-        <?php if (!empty($paymentHistory)): ?>
+        <?php if (!empty($paymentHistory) && $invoicePayStatus == 'partial'): ?>
         <div style="clear: both; margin-bottom: 12px;">
             <strong style="font-size: 11px;">Payment History</strong>
             <table class="product-table" style="margin-top: 4px; font-size: 9.5px;">
@@ -868,7 +893,11 @@ $quotation_ref = !empty($invoice['quotation_ref_no']) ? $invoice['quotation_ref_
                     <?php $c = 1; foreach ($creditMemos as $cm): ?>
                     <tr>
                         <td style="text-align: center;"><?php echo $c++; ?></td>
-                        <td class="fw-semibold"><?php echo htmlspecialchars($cm['credit_memo_no']); ?></td>
+                        <td class="fw-semibold">
+                            <a href="<?= BASE_URL ?>modules/credit_memos/download_credit_memo.php?id=<?php echo intval($cm['credit_memo_id']); ?>" target="_blank" style="color: #1B1C56;">
+                                <?php echo htmlspecialchars($cm['credit_memo_no']); ?>
+                            </a>
+                        </td>
                         <td style="text-align: right;"><?php echo number_format(floatval($cm['amount']), 2); ?></td>
                         <td><?php echo !empty($cm['reason']) ? htmlspecialchars($cm['reason']) : '<span class="text-muted">—</span>'; ?></td>
                         <td>

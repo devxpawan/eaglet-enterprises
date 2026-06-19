@@ -160,7 +160,11 @@ $result = $conn->query($sql);
                                         ?>
                                             <tr>
                                                 <td><?php echo intval($row['credit_memo_id']); ?></td>
-                                                <td class="fw-semibold"><?php echo htmlspecialchars($row['credit_memo_no']); ?></td>
+                                                <td class="fw-semibold">
+                                                    <a href="<?= BASE_URL ?>modules/credit_memos/download_credit_memo.php?id=<?php echo intval($row['credit_memo_id']); ?>" target="_blank" style="color: #1B1C56;">
+                                                        <?php echo htmlspecialchars($row['credit_memo_no']); ?>
+                                                    </a>
+                                                </td>
                                                 <td>
                                                     <?php if ($row['invoice_id']): ?>
                                                         <a href="<?= BASE_URL ?>modules/invoices/download_invoice.php?id=<?php echo intval($row['invoice_id']); ?>"
