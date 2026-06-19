@@ -61,28 +61,27 @@ while ($item = $itemsResult->fetch_assoc()) {
     $items[] = $item;
 }
 
-// Determine overall invoice payment status
-if (isset($invoice['invoice_pay_status']) && !empty($invoice['invoice_pay_status'])) {
-    $invoicePayStatus = strtolower($invoice['invoice_pay_status']);
+// Determine overall invoice payment status from amount_paid vs total_amount
+$total_amount = floatval($invoice['total_amount']);
+$amount_paid = floatval($invoice['amount_paid'] ?? 0);
+$balance_due = $total_amount - $amount_paid;
+
+if ($amount_paid <= 0) {
+    $invoicePayStatus = 'unpaid';
+} elseif ($amount_paid >= $total_amount) {
+    $invoicePayStatus = 'paid';
 } else {
-    $allItemsPaid = true;
-    $anyItemPaid = false;
+    $invoicePayStatus = 'partial';
+}
 
-    foreach ($items as $item) {
-        if (strtolower($item['pay_status']) == 'paid') {
-            $anyItemPaid = true;
-        } else {
-            $allItemsPaid = false;
-        }
-    }
-
-    if ($allItemsPaid && count($items) > 0) {
-        $invoicePayStatus = 'paid';
-    } elseif ($anyItemPaid) {
-        $invoicePayStatus = 'partial';
-    } else {
-        $invoicePayStatus = 'unpaid';
-    }
+// Get payment history
+$paymentHistory = [];
+$payStmt = $conn->prepare("SELECT p.*, u.name as processor_name FROM payments p LEFT JOIN users u ON p.pay_by = u.id WHERE p.invoice_id = ? ORDER BY p.payment_date ASC");
+$payStmt->bind_param("i", $invoice_id);
+$payStmt->execute();
+$payResult = $payStmt->get_result();
+while ($payRow = $payResult->fetch_assoc()) {
+    $paymentHistory[] = $payRow;
 }
 
 // Company information
@@ -729,6 +728,53 @@ $quotation_ref = !empty($invoice['quotation_ref_no']) ? $invoice['quotation_ref_
             <?php endif; ?>
         </div>
 
+        <!-- Payment Summary -->
+        <?php if ($amount_paid > 0): ?>
+        <div style="clear: both; margin-bottom: 10px; padding-top: 5px;">
+            <table class="totals-table" style="width: 300px; float: right;">
+                <tr>
+                    <td width="55%">Paid</td>
+                    <td width="45%" style="text-align: right;"><?php echo $currencySymbol . ' ' . number_format($amount_paid, 2); ?></td>
+                </tr>
+                <?php if ($balance_due > 0): ?>
+                <tr>
+                    <td style="color: #dc3545;">Balance Due</td>
+                    <td style="text-align: right; color: #dc3545; font-weight: bold;"><?php echo $currencySymbol . ' ' . number_format($balance_due, 2); ?></td>
+                </tr>
+                <?php endif; ?>
+            </table>
+        </div>
+        <?php endif; ?>
+
+        <!-- Payment History -->
+        <?php if (!empty($paymentHistory)): ?>
+        <div style="clear: both; margin-bottom: 12px;">
+            <strong style="font-size: 11px;">Payment History</strong>
+            <table class="product-table" style="margin-top: 4px; font-size: 9.5px;">
+                <thead>
+                    <tr>
+                        <th width="5%" style="text-align: center;">#</th>
+                        <th width="20%">Date</th>
+                        <th width="25%">Method</th>
+                        <th width="20%" style="text-align: right;">Amount</th>
+                        <th width="30%">Processed By</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php $p = 1; foreach ($paymentHistory as $pay): ?>
+                    <tr>
+                        <td style="text-align: center;"><?php echo $p++; ?></td>
+                        <td><?php echo date('d/m/Y H:i', strtotime($pay['payment_date'])); ?></td>
+                        <td><?php echo htmlspecialchars($pay['payment_method'] ?? 'N/A'); ?></td>
+                        <td style="text-align: right;"><?php echo number_format(floatval($pay['amount_paid']), 2); ?></td>
+                        <td><?php echo htmlspecialchars($pay['processor_name'] ?? 'N/A'); ?></td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+        <?php endif; ?>
+
         <!-- Notes if any -->
         <div style="margin-bottom: 25px;">
             <strong>Notes / Terms :</strong>
@@ -739,7 +785,7 @@ $quotation_ref = !empty($invoice['quotation_ref_no']) ? $invoice['quotation_ref_
         <div class="footer-group-container">
             <!-- Bank Details Section -->
             <?php 
-            // Bank details shown only if unpaid
+            // Bank details shown if unpaid or partial
             $hasBank = !empty($company['bank_name']) || !empty($company['account_name']) || !empty($company['account_number']);
             if ($hasBank && $invoicePayStatus != 'paid' && $invoice['status'] != 'cancel'):
             ?>
@@ -806,25 +852,33 @@ $quotation_ref = !empty($invoice['quotation_ref_no']) ? $invoice['quotation_ref_
             const markAsPaidBtn = document.getElementById('markAsPaidBtn');
             if (markAsPaidBtn) {
                 markAsPaidBtn.addEventListener('click', function () {
+                    var remaining = <?php echo json_encode(number_format($balance_due, 2, '.', '')); ?>;
+                    if (remaining <= 0) {
+                        showToast('info', 'Invoice is already fully paid.');
+                        return;
+                    }
+
                     const formData = new FormData();
                     formData.append('invoice_id', '<?php echo $invoice_id; ?>');
-                    formData.append('pay_status', 'paid');
+                    formData.append('amount', remaining);
+                    formData.append('payment_method', 'Cash');
 
-                    fetch('<?= BASE_URL ?>modules/invoices/update_invoice_status.php', {
+                    fetch('<?= BASE_URL ?>modules/invoices/mark_paid.php', {
                         method: 'POST',
                         body: formData
                     })
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            window.location.reload();
+                            showToast('success', 'Payment recorded successfully. Status: ' + data.pay_status);
+                            setTimeout(function() { window.location.reload(); }, 1500);
                         } else {
-                            showToast('error', 'Error updating payment status: ' + data.message);
+                            showToast('error', 'Error recording payment: ' + (data.error || 'Unknown error'));
                         }
                     })
                     .catch(error => {
                         console.error('Error:', error);
-                        showToast('error', 'An error occurred while updating the payment status.');
+                        showToast('error', 'An error occurred while recording the payment.');
                     });
                 });
             }

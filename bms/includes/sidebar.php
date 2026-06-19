@@ -528,6 +528,9 @@ require_once __DIR__ . '/../config/paths.php';
                         <?php if (hasAccess('invoices.edit_requests')): ?>
                         <a class="nav-link" href="<?= BASE_URL ?>modules/invoices/edit_requests_list.php" id="edit-requests-link"> Edit Requests</a>
                         <?php endif; ?>
+                        <?php if (hasAccess('payments.view_all')): ?>
+                        <a class="nav-link" href="<?= BASE_URL ?>modules/payments/payment_list.php" id="all-payments-link">All Payments</a>
+                        <?php endif; ?>
                     </nav>
                 </div>
                 <?php endif; ?>

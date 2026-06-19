@@ -31,13 +31,18 @@ $offset = ($page - 1) * $limit;
 // Build base SQL
 $baseFrom = "FROM invoices i 
              LEFT JOIN customers c ON i.customer_id = c.customer_id
-             LEFT JOIN payments p ON i.invoice_id = p.invoice_id
-             LEFT JOIN users u ON p.pay_by = u.id
+             LEFT JOIN (
+                 SELECT p1.invoice_id, p1.payment_method, p1.payment_date, p1.pay_by, u1.name as paid_by_name
+                 FROM payments p1
+                 LEFT JOIN users u1 ON p1.pay_by = u1.id
+                 WHERE p1.payment_id = (
+                     SELECT MAX(p2.payment_id) FROM payments p2 WHERE p2.invoice_id = p1.invoice_id
+                 )
+             ) p ON i.invoice_id = p.invoice_id
              LEFT JOIN users u2 ON i.created_by = u2.id";
 
 $selectCols = "i.*, c.name as customer_name, c.business_name as customer_business_name,
-               p.payment_id, p.amount_paid, p.payment_method, p.payment_date, p.pay_by,
-               u.name as paid_by_name,
+               p.payment_method, p.payment_date, p.pay_by, p.paid_by_name,
                u2.name as creator_name";
 
 // Build WHERE conditions

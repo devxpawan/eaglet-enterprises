@@ -32,13 +32,18 @@ $offset = ($page - 1) * $limit;
 // Build base SQL
 $baseFrom = "FROM invoices i 
              LEFT JOIN customers c ON i.customer_id = c.customer_id
-             LEFT JOIN payments p ON i.invoice_id = p.invoice_id
-             LEFT JOIN users u ON p.pay_by = u.id
+             LEFT JOIN (
+                 SELECT p1.invoice_id, p1.payment_method, p1.payment_date, p1.pay_by, u1.name as paid_by_name
+                 FROM payments p1
+                 LEFT JOIN users u1 ON p1.pay_by = u1.id
+                 WHERE p1.payment_id = (
+                     SELECT MAX(p2.payment_id) FROM payments p2 WHERE p2.invoice_id = p1.invoice_id
+                 )
+             ) p ON i.invoice_id = p.invoice_id
              LEFT JOIN users u2 ON i.created_by = u2.id";
 
 $selectCols = "i.*, c.name as customer_name, c.business_name as customer_business_name,
-               p.payment_id, p.amount_paid, p.payment_method, p.payment_date, p.pay_by,
-               u.name as paid_by_name,
+               p.payment_method, p.payment_date, p.pay_by, p.paid_by_name,
                u2.name as creator_name";
 
 // Build WHERE conditions
@@ -213,15 +218,18 @@ if ($pu) {
                                                     </td>
                                                     <td>
                                                         <?php
-                                                        $amount = isset($row['total_amount']) ? htmlspecialchars(number_format((float) $row['total_amount'], 2)) : '0.00';
+                                                        $totalAmt = isset($row['total_amount']) ? floatval($row['total_amount']) : 0;
+                                                        $paidAmt = isset($row['amount_paid']) ? floatval($row['amount_paid']) : 0;
                                                         $currency = isset($row['currency']) ? $row['currency'] : 'lkr';
                                                         $currencySymbol = ($currency == 'usd') ? '$' : 'Rs';
                                                         $payStatus = isset($row['pay_status']) ? $row['pay_status'] : 'unpaid';
 
-                                                        echo '<div class="amount-text">' . $amount . ' <span class="currency-symbol">(' . $currencySymbol . ')</span></div>';
+                                                        echo '<div class="amount-text">' . number_format($paidAmt, 2) . ' / ' . number_format($totalAmt, 2) . ' <span class="currency-symbol">(' . $currencySymbol . ')</span></div>';
 
                                                         if ($payStatus == 'paid'): ?>
                                                             <span class="badge-soft badge-soft-success mt-1">Paid</span>
+                                                        <?php elseif ($payStatus == 'partial'): ?>
+                                                            <span class="badge-soft badge-soft-warning mt-1">Partial</span>
                                                         <?php else: ?>
                                                             <span class="badge-soft badge-soft-danger mt-1">Unpaid</span>
                                                         <?php endif;

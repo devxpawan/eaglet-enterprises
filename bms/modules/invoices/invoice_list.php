@@ -33,13 +33,18 @@ $offset = ($page - 1) * $limit;
 // Build base SQL
 $baseFrom = "FROM invoices i 
              LEFT JOIN customers c ON i.customer_id = c.customer_id
-             LEFT JOIN payments p ON i.invoice_id = p.invoice_id
-             LEFT JOIN users u1 ON p.pay_by = u1.id
+             LEFT JOIN (
+                 SELECT p1.invoice_id, p1.payment_method, p1.payment_date, p1.pay_by, u1.name as paid_by_name
+                 FROM payments p1
+                 LEFT JOIN users u1 ON p1.pay_by = u1.id
+                 WHERE p1.payment_id = (
+                     SELECT MAX(p2.payment_id) FROM payments p2 WHERE p2.invoice_id = p1.invoice_id
+                 )
+             ) p ON i.invoice_id = p.invoice_id
              LEFT JOIN users u2 ON i.created_by = u2.id";
 
-$selectCols = "i.*, c.name as customer_name, c.business_name as customer_business_name, 
-               p.payment_id, p.amount_paid, p.payment_method, p.payment_date, p.pay_by,
-               u1.name as paid_by_name,
+$selectCols = "i.*, c.name as customer_name, c.business_name as customer_business_name,
+               p.payment_method, p.payment_date, p.pay_by, p.paid_by_name,
                u2.name as creator_name";
 
 // Build WHERE conditions
@@ -142,6 +147,7 @@ $result = $conn->query($sql);
                                             <select name="filter_pay_status" class="form-select">
                                                 <option value="">All</option>
                                                 <option value="paid" <?= $filter_pay_status === 'paid' ? 'selected' : '' ?>>Paid</option>
+                                                <option value="partial" <?= $filter_pay_status === 'partial' ? 'selected' : '' ?>>Partial</option>
                                                 <option value="unpaid" <?= $filter_pay_status === 'unpaid' ? 'selected' : '' ?>>Unpaid</option>
                                             </select>
                                         </div>
@@ -224,13 +230,16 @@ $result = $conn->query($sql);
                                                     </td>
                                                     <td>
                                                         <?php
-                                                        $amount = isset($row['total_amount']) ? htmlspecialchars(number_format((float) $row['total_amount'], 2)) : '0.00';
+                                                        $totalAmt = isset($row['total_amount']) ? floatval($row['total_amount']) : 0;
+                                                        $paidAmt = isset($row['amount_paid']) ? floatval($row['amount_paid']) : 0;
                                                         $payStatus = isset($row['pay_status']) ? $row['pay_status'] : 'unpaid';
 
-                                                        echo '<div class="amount-text">' . $amount . ' <span class="currency-symbol">(Rs)</span></div>';
+                                                        echo '<div class="amount-text">' . number_format($paidAmt, 2) . ' / ' . number_format($totalAmt, 2) . ' <span class="currency-symbol">(Rs)</span></div>';
 
                                                         if ($payStatus == 'paid'): ?>
                                                             <span class="badge-soft badge-soft-success mt-1">Paid</span>
+                                                        <?php elseif ($payStatus == 'partial'): ?>
+                                                            <span class="badge-soft badge-soft-warning mt-1">Partial</span>
                                                         <?php else: ?>
                                                             <span class="badge-soft badge-soft-danger mt-1">Unpaid</span>
                                                         <?php endif;
@@ -329,12 +338,12 @@ $result = $conn->query($sql);
         </div>
     </div>
 
-    <!-- Modal for Marking Invoice as Paid -->
+    <!-- Modal for Recording Payment -->
     <div class="modal fade" id="markPaidModal" tabindex="-1" aria-labelledby="markPaidModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-system">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="markPaidModalLabel"><i class="fas fa-money-bill-wave me-2"></i>Payment Sheet</h5>
+                    <h5 class="modal-title" id="markPaidModalLabel"><i class="fas fa-money-bill-wave me-2"></i>Record Payment</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form id="markPaidForm" enctype="multipart/form-data">
@@ -345,8 +354,31 @@ $result = $conn->query($sql);
                             <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-success bg-opacity-10 mb-3" style="width: 64px; height: 64px;">
                                 <i class="fas fa-money-bill-wave fa-2x text-success"></i>
                             </div>
-                            <h6 class="fw-bold mb-1">Confirm Payment</h6>
-                            <p class="text-muted small">Upload the payment slip to mark this invoice as paid.</p>
+                            <h6 class="fw-bold mb-1">Record Payment</h6>
+                            <p class="text-muted small">Enter the payment amount and details below.</p>
+                        </div>
+
+                        <div class="detail-card mb-3">
+                            <label class="detail-label mb-2"><i class="fas fa-money-bill"></i> Payment Amount</label>
+                            <div class="input-group">
+                                <span class="input-group-text">Rs</span>
+                                <input type="number" step="0.01" min="0.01" class="form-control" id="payment_amount" name="amount" placeholder="Enter amount" required>
+                            </div>
+                            <small class="form-text text-muted mt-1 d-block">Remaining balance: Rs <span id="remainingBalance">0.00</span></small>
+                        </div>
+
+                        <div class="detail-card mb-3">
+                            <label class="detail-label mb-2"><i class="fas fa-credit-card"></i> Payment Method</label>
+                            <div class="d-flex gap-4 mt-2">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="payment_method" id="payment_cash" value="Cash" checked>
+                                    <label class="form-check-label" for="payment_cash">Cash</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="payment_method" id="payment_bank" value="Bank Transfer">
+                                    <label class="form-check-label" for="payment_bank">Bank Transfer</label>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="detail-card">
@@ -358,7 +390,7 @@ $result = $conn->query($sql);
                     <div class="modal-footer">
                         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
                         <button type="submit" class="btn btn-success">
-                            <i class="fas fa-check-circle me-1"></i>Mark as Paid
+                            <i class="fas fa-check-circle me-1"></i>Record Payment
                         </button>
                     </div>
                 </form>
@@ -414,20 +446,55 @@ $result = $conn->query($sql);
             
             // Handle "Paid" button click
             $('.mark-paid').click(function (e) {
-                e.preventDefault(); // Prevent default link behavior
+                e.preventDefault();
 
-                var invoiceId = $(this).data('id'); // Get the invoice ID
+                var invoiceId = $(this).data('id');
 
-                // Directly set the invoice ID in the form without fetching other details
-                $('#invoice_id').val(invoiceId);
+                // Fetch invoice details to pre-fill remaining balance
+                $.ajax({
+                    url: 'get_payment_details.php',
+                    type: 'GET',
+                    data: { invoice_id: invoiceId },
+                    success: function (response) {
+                        if (response.success) {
+                            var totalAmount = parseFloat(response.total_amount.replace(/,/g, ''));
+                            var totalPaid = parseFloat(response.total_paid.replace(/,/g, ''));
+                            var remaining = totalAmount - totalPaid;
 
-                // Show the modal
-                $('#markPaidModal').modal('show');
+                            $('#invoice_id').val(invoiceId);
+                            $('#payment_amount').val(remaining > 0 ? remaining.toFixed(2) : '');
+                            $('#payment_amount').attr('max', remaining.toFixed(2));
+                            $('#remainingBalance').text(remaining.toFixed(2));
+                            $('#markPaidModalLabel').html('<i class="fas fa-money-bill-wave me-2"></i>Record Payment - Invoice #' + invoiceId);
+                            $('#markPaidModal').modal('show');
+                        } else {
+                            showToast('error', 'Failed to load invoice details.');
+                        }
+                    },
+                    error: function () {
+                        showToast('error', 'Failed to load invoice details.');
+                    }
+                });
+            });
+
+            // Validate amount doesn't exceed remaining
+            $('#payment_amount').on('input', function () {
+                var maxVal = parseFloat($(this).attr('max'));
+                var currentVal = parseFloat($(this).val()) || 0;
+                if (currentVal > maxVal) {
+                    $(this).val(maxVal.toFixed(2));
+                }
             });
 
             // Handle form submission
             $('#markPaidForm').submit(function (e) {
-                e.preventDefault(); // Prevent default form submission
+                e.preventDefault();
+
+                var amount = parseFloat($('#payment_amount').val()) || 0;
+                if (amount <= 0) {
+                    showToast('warning', 'Please enter a valid payment amount.');
+                    return false;
+                }
 
                 var formData = new FormData(this);
 
@@ -438,12 +505,17 @@ $result = $conn->query($sql);
                     processData: false,
                     contentType: false,
                     success: function (response) {
-                        showToast('success', 'Invoice marked as paid successfully.');
+                        showToast('success', 'Payment recorded successfully.');
                         $('#markPaidModal').modal('hide');
-                        location.reload(); // Reload the page to reflect changes
+                        location.reload();
                     },
-                    error: function () {
-                        showToast('error', 'Failed to mark invoice as paid.');
+                    error: function (xhr) {
+                        var errMsg = 'Failed to record payment.';
+                        try {
+                            var resp = JSON.parse(xhr.responseText);
+                            if (resp.error) errMsg = resp.error;
+                        } catch(e) {}
+                        showToast('error', errMsg);
                     }
                 });
             });

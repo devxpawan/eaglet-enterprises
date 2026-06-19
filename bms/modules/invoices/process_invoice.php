@@ -49,15 +49,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         // Find or create customer
         $customer_id = 0;
-        $checkCustomerSql = "SELECT customer_id FROM customers WHERE name = ? AND email = ?";
+        $checkCustomerSql = "SELECT customer_id, email, phone, address, business_name FROM customers WHERE name = ?";
         $stmt = $conn->prepare($checkCustomerSql);
-        $stmt->bind_param("ss", $customer_name, $customer_email);
+        $stmt->bind_param("s", $customer_name);
         $stmt->execute();
         $result = $stmt->get_result();
         
         if ($result->num_rows > 0) {
             $customer = $result->fetch_assoc();
             $customer_id = $customer['customer_id'];
+            // Update existing customer details with latest info from form
+            $updateSql = "UPDATE customers SET email = ?, phone = ?, address = ?, business_name = ? WHERE customer_id = ?";
+            $updateStmt = $conn->prepare($updateSql);
+            $updateStmt->bind_param("ssssi", $customer_email, $customer_phone, $customer_address, $customer_business_name, $customer_id);
+            $updateStmt->execute();
+            $updateStmt->close();
         } else {
             // Insert new customer
             $insertCustomerSql = "INSERT INTO customers (name, email, phone, address, business_name, status) 
@@ -142,18 +148,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             throw new Exception("Invoice total amount must be greater than 0. Please ensure the products selected have a valid price.");
         }
         
-        // Insert invoice - UPDATED to include created_by column
+        $amount_paid = $invoice_status === 'Paid' ? $total_amount : 0;
+
+        // Insert invoice
         $insertInvoiceSql = "INSERT INTO invoices (
             customer_id, user_id, issue_date, due_date, 
-            subtotal, discount, vat, total_amount, 
+            subtotal, discount, vat, total_amount, amount_paid,
             notes, currency, status, pay_status, pay_date, created_by
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         $stmt = $conn->prepare($insertInvoiceSql);
         $stmt->bind_param(
-            "iissddddsssssi", 
+            "iissdddddsssssi", 
             $customer_id, $user_id, $invoice_date, $due_date, 
-            $subtotal, $total_discount, $vat_amount, $total_amount, 
+            $subtotal, $total_discount, $vat_amount, $total_amount, $amount_paid,
             $notes, $currency, $status, $pay_status, $pay_date, $user_id
         );
         $stmt->execute();

@@ -6,7 +6,7 @@ require_once BASE_PATH . 'includes/db_connection.php';
 $allPermissions = [
     'dashboard',
     'invoices', 'invoices.create', 'invoices.view_all', 'invoices.pending',
-    'invoices.complete', 'invoices.cancel', 'invoices.edit_requests',
+    'invoices.complete', 'invoices.cancel', 'invoices.edit_requests', 'payments.view_all',
     'quotations', 'quotations.create', 'quotations.view_all', 'quotations.draft',
     'quotations.accepted', 'quotations.cancelled', 'quotations.revised',
     'price_lists', 'price_lists.create', 'price_lists.view_all', 'price_lists.manage_assets',

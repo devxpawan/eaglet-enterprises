@@ -72,6 +72,7 @@ $permissionGroups = [
         'invoices.complete'      => 'Invoices - Complete',
         'invoices.cancel'        => 'Invoices - Cancelled',
         'invoices.edit_requests' => 'Invoices - Edit Requests',
+        'payments.view_all'      => 'Payments - View All',
     ],
 
     'Quotations' => [

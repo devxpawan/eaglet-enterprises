@@ -305,15 +305,18 @@ if ($result && $result->num_rows > 0) {
                                                     </td>
                                                     <td>
                                                         <?php
-                                                        $amount = isset($row['total_amount']) ? htmlspecialchars(number_format((float) $row['total_amount'], 2)) : '0.00';
+                                                        $totalAmt = isset($row['total_amount']) ? floatval($row['total_amount']) : 0;
+                                                        $paidAmt = isset($row['amount_paid']) ? floatval($row['amount_paid']) : 0;
                                                         $currency = isset($row['currency']) ? $row['currency'] : 'lkr';
                                                         $currencySymbol = ($currency == 'usd') ? '$' : 'Rs';
                                                         $payStatus = isset($row['pay_status']) ? $row['pay_status'] : 'unpaid';
 
-                                                        echo '<div class="amount-text">' . $amount . ' <span class="currency-symbol">(' . $currencySymbol . ')</span></div>';
+                                                        echo '<div class="amount-text">' . number_format($paidAmt, 2) . ' / ' . number_format($totalAmt, 2) . ' <span class="currency-symbol">(' . $currencySymbol . ')</span></div>';
 
                                                         if ($payStatus == 'paid'): ?>
                                                             <span class="badge-soft badge-soft-success mt-1">Paid</span>
+                                                        <?php elseif ($payStatus == 'partial'): ?>
+                                                            <span class="badge-soft badge-soft-warning mt-1">Partial</span>
                                                         <?php else: ?>
                                                             <span class="badge-soft badge-soft-danger mt-1">Unpaid</span>
                                                         <?php endif;
@@ -349,7 +352,7 @@ if ($result && $result->num_rows > 0) {
                                                             <?php if ($payStatus == 'paid'): ?>
 
                                                             <?php else: ?>
-                                                            <?php if (hasAccess('invoices.pending')): ?>
+                                                            <?php if ($payStatus == 'unpaid' && hasAccess('invoices.pending')): ?>
                                                             <?php if (in_array($row['invoice_id'], $pendingEditIds)): ?>
                                                                 <button class="btn btn-edit disabled"
                                                                     title="Edit request pending approval"
@@ -366,12 +369,12 @@ if ($result && $result->num_rows > 0) {
                                                             <?php endif; ?>
                                                                 <?php if (hasAccess('invoices.pending')): ?>
                                                                 <a href="#" class="btn btn-view mark-paid"
-                                                                    title="Mark as Paid"
+                                                                    title="Record Payment"
                                                                     data-id="<?php echo isset($row['invoice_id']) ? $row['invoice_id'] : ''; ?>">
                                                                     <i class="fas fa-check"></i>
                                                                 </a>
                                                                 <?php endif; ?>
-                                                                <?php if (hasAccess('invoices.cancel')): ?>
+                                                                <?php if ($payStatus == 'unpaid' && hasAccess('invoices.cancel')): ?>
                                                                 <button type="button" class="btn btn-cancel cancel-invoice"
                                                                     title="Cancel Invoice"
                                                                     data-id="<?php echo isset($row['invoice_id']) ? $row['invoice_id'] : ''; ?>"
@@ -428,12 +431,12 @@ if ($result && $result->num_rows > 0) {
         </div>
     </div>
 
-    <!-- Modal for Marking Invoice as Paid -->
+    <!-- Modal for Recording Payment -->
     <div class="modal fade" id="markPaidModal" tabindex="-1" aria-labelledby="markPaidModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-system">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="markPaidModalLabel"><i class="fas fa-money-bill-wave me-2"></i>Payment Sheet</h5>
+                    <h5 class="modal-title" id="markPaidModalLabel"><i class="fas fa-money-bill-wave me-2"></i>Record Payment</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form id="markPaidForm" enctype="multipart/form-data">
@@ -444,11 +447,20 @@ if ($result && $result->num_rows > 0) {
                             <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-success bg-opacity-10 mb-3" style="width: 64px; height: 64px;">
                                 <i class="fas fa-money-bill-wave fa-2x text-success"></i>
                             </div>
-                            <h6 class="fw-bold mb-1">Confirm Payment</h6>
-                            <p class="text-muted small">Upload the payment slip to mark this invoice as paid.</p>
+                            <h6 class="fw-bold mb-1">Record Payment</h6>
+                            <p class="text-muted small">Enter the payment amount and details below.</p>
                         </div>
 
-                        <div class="detail-card">
+                        <div class="detail-card mb-3">
+                            <label class="detail-label mb-2"><i class="fas fa-money-bill"></i> Payment Amount</label>
+                            <div class="input-group">
+                                <span class="input-group-text">Rs</span>
+                                <input type="number" step="0.01" min="0.01" class="form-control" id="payment_amount" name="amount" placeholder="Enter amount" required>
+                            </div>
+                            <small class="form-text text-muted mt-1 d-block">Remaining balance: Rs <span id="remainingBalance">0.00</span></small>
+                        </div>
+
+                        <div class="detail-card mb-3">
                             <label class="detail-label mb-2"><i class="fas fa-credit-card"></i> Payment Method</label>
                             <div class="d-flex gap-4 mt-2">
                                 <div class="form-check">
@@ -471,7 +483,7 @@ if ($result && $result->num_rows > 0) {
                     <div class="modal-footer">
                         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
                         <button type="submit" class="btn btn-success">
-                            <i class="fas fa-check-circle me-1"></i>Mark as Paid
+                            <i class="fas fa-check-circle me-1"></i>Record Payment
                         </button>
                     </div>
                 </form>
@@ -582,34 +594,60 @@ if ($result && $result->num_rows > 0) {
         $(document).ready(function () {
             // Handle "Paid" button click
             $('.mark-paid').click(function (e) {
-                e.preventDefault(); // Prevent default link behavior
+                e.preventDefault();
 
-                var invoiceId = $(this).data('id'); // Get the invoice ID
+                var invoiceId = $(this).data('id');
 
-                // Get additional information about the invoice
-                var invoiceRow = $(this).closest('tr');
-                var invoiceAmount = invoiceRow.find('td:eq(4)').text().trim();
-                var customerName = invoiceRow.find('td:eq(1)').text().trim();
+                // Fetch invoice details to pre-fill remaining balance
+                $.ajax({
+                    url: 'get_payment_details.php',
+                    type: 'GET',
+                    data: { invoice_id: invoiceId },
+                    success: function (response) {
+                        if (response.success) {
+                            var totalAmount = parseFloat(response.total_amount.replace(/,/g, ''));
+                            var totalPaid = parseFloat(response.total_paid.replace(/,/g, ''));
+                            var remaining = totalAmount - totalPaid;
 
-                // Directly set the invoice ID in the form
-                $('#invoice_id').val(invoiceId);
+                            $('#invoice_id').val(invoiceId);
+                            $('#payment_amount').val(remaining > 0 ? remaining.toFixed(2) : '');
+                            $('#payment_amount').attr('max', remaining.toFixed(2));
+                            $('#remainingBalance').text(remaining.toFixed(2));
+                            $('#markPaidModalLabel').html('<i class="fas fa-money-bill-wave me-2"></i>Record Payment - Invoice #' + invoiceId);
+                            $('#markPaidModal').modal('show');
+                        } else {
+                            showToast('error', 'Failed to load invoice details.');
+                        }
+                    },
+                    error: function () {
+                        showToast('error', 'Failed to load invoice details.');
+                    }
+                });
+            });
 
-                // Optionally, you could update the modal with invoice details
-                $('#markPaidModalLabel').html('<i class="fas fa-money-bill-wave me-2"></i>Payment Sheet - Invoice #' + invoiceId);
-
-                // Show the modal
-                $('#markPaidModal').modal('show');
+            // Validate amount doesn't exceed remaining
+            $('#payment_amount').on('input', function () {
+                var maxVal = parseFloat($(this).attr('max'));
+                var currentVal = parseFloat($(this).val()) || 0;
+                if (currentVal > maxVal) {
+                    $(this).val(maxVal.toFixed(2));
+                }
             });
 
             // Handle form submission with validation
             $('#markPaidForm').submit(function (e) {
-                e.preventDefault(); // Prevent default form submission
+                e.preventDefault();
 
-                // Simple validation
+                var amount = parseFloat($('#payment_amount').val()) || 0;
+                if (amount <= 0) {
+                    showToast('warning', 'Please enter a valid payment amount.');
+                    return false;
+                }
+
                 var fileInput = $('#payment_slip')[0];
 
                 if (fileInput.files.length > 0) {
-                    var fileSize = fileInput.files[0].size / 1024 / 1024; // in MB
+                    var fileSize = fileInput.files[0].size / 1024 / 1024;
                     if (fileSize > 2) {
                         showToast('warning', 'File size exceeds 2MB. Please choose a smaller file.');
                         return false;
@@ -631,21 +669,23 @@ if ($result && $result->num_rows > 0) {
                     processData: false,
                     contentType: false,
                     success: function (response) {
-                        // Show success message with showToast
-                        showToast('success', 'Invoice has been marked as paid successfully.');
-                        
+                        showToast('success', 'Payment recorded successfully.');
+
                         setTimeout(() => {
                             $('#markPaidModal').modal('hide');
-                            location.reload(); // Reload the page to reflect changes
+                            location.reload();
                         }, 2000);
                     },
-                    error: function (xhr, status, error) {
-                        // Reset button state
+                    error: function (xhr) {
                         submitBtn.html(originalText);
                         submitBtn.prop('disabled', false);
 
-                        // Show error message with showToast
-                        showToast('error', 'Failed to mark invoice as paid. Please try again.');
+                        var errMsg = 'Failed to record payment. Please try again.';
+                        try {
+                            var resp = JSON.parse(xhr.responseText);
+                            if (resp.error) errMsg = resp.error;
+                        } catch(e) {}
+                        showToast('error', errMsg);
                     }
                 });
             });
