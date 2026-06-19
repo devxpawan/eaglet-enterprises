@@ -89,24 +89,27 @@ $pendingCount = $conn->query("SELECT COUNT(*) as c FROM invoice_edit_requests WH
 
                 <div class="card invoice-card">
                     <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <div class="d-flex gap-2">
-                                <a href="?status=pending" class="btn btn-sm <?= $filter_status === 'pending' ? 'btn-warning' : 'btn-outline-secondary' ?>">
-                                    Pending <?php if ($pendingCount > 0): ?><span class="badge bg-light text-dark ms-1"><?= $pendingCount ?></span><?php endif; ?>
-                                </a>
-                                <a href="?status=approved" class="btn btn-sm <?= $filter_status === 'approved' ? 'btn-success' : 'btn-outline-secondary' ?>">Approved</a>
-                                <a href="?status=rejected" class="btn btn-sm <?= $filter_status === 'rejected' ? 'btn-danger' : 'btn-outline-secondary' ?>">Rejected</a>
-                                <a href="?status=all" class="btn btn-sm <?= $filter_status === 'all' ? 'btn-secondary' : 'btn-outline-secondary' ?>">All</a>
+                        <!-- Filter Bar -->
+                        <div class="invoice-filter-bar mb-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-flex gap-2">
+                                    <a href="?status=pending" class="btn btn-sm <?= $filter_status === 'pending' ? 'btn-warning' : 'btn-outline-secondary' ?>">
+                                        Pending <?php if ($pendingCount > 0): ?><span class="badge bg-light text-dark ms-1"><?= $pendingCount ?></span><?php endif; ?>
+                                    </a>
+                                    <a href="?status=approved" class="btn btn-sm <?= $filter_status === 'approved' ? 'btn-success' : 'btn-outline-secondary' ?>">Approved</a>
+                                    <a href="?status=rejected" class="btn btn-sm <?= $filter_status === 'rejected' ? 'btn-danger' : 'btn-outline-secondary' ?>">Rejected</a>
+                                    <a href="?status=all" class="btn btn-sm <?= $filter_status === 'all' ? 'btn-secondary' : 'btn-outline-secondary' ?>">All</a>
+                                </div>
+                                <span class="search-count"><?= $totalRows ?> Request<?= $totalRows !== 1 ? 's' : '' ?></span>
                             </div>
-                            <span class="search-count"><?= $totalRows ?> Request<?= $totalRows !== 1 ? 's' : '' ?></span>
                         </div>
 
                         <div class="table-responsive">
                             <table class="table table-invoice">
-                                <thead class="table-light">
+                                <thead>
                                     <tr>
-                                        <th>ID</th>
                                         <th>Invoice</th>
+                                        <th>Ref No</th>
                                         <th>Customer</th>
                                         <th>Amount</th>
                                         <th>Requested By</th>
@@ -121,12 +124,8 @@ $pendingCount = $conn->query("SELECT COUNT(*) as c FROM invoice_edit_requests WH
                                     <?php if ($result && $result->num_rows > 0): ?>
                                         <?php while ($row = $result->fetch_assoc()): ?>
                                             <tr>
-                                                <td><?= $row['id'] ?></td>
-                                                <td>
-                                                    <a href="<?= BASE_URL ?>modules/invoices/view_invoice.php?id=<?= $row['invoice_id'] ?>" target="_blank">
-                                                        #<?= $row['invoice_id'] ?>
-                                                    </a>
-                                                </td>
+                                                <td><?= $row['invoice_id'] ?></td>
+                                                <td><?= htmlspecialchars($row['invoice_ref_no'] ?? 'N/A') ?></td>
                                                 <td><?= htmlspecialchars($row['customer_name'] ?? 'N/A') ?></td>
                                                 <td>Rs. <?= htmlspecialchars(number_format((float)$row['total_amount'], 2)) ?></td>
                                                 <td><?= htmlspecialchars($row['requester_name'] ?? $row['requester_username'] ?? 'N/A') ?></td>
@@ -159,8 +158,14 @@ $pendingCount = $conn->query("SELECT COUNT(*) as c FROM invoice_edit_requests WH
                                                     <?php endif; ?>
                                                 </td>
                                                 <td>
-                                                    <?php if ($row['status'] === 'pending' && hasAccess('invoices.edit_requests')): ?>
-                                                        <div class="d-flex gap-1">
+                                                    <div class="action-btn-group d-flex gap-1">
+                                                        <a href="#" class="btn btn-view view-invoice" data-id="<?= $row['invoice_id'] ?>" title="View Invoice">
+                                                            <i class="fas fa-eye"></i>
+                                                        </a>
+                                                        <a href="<?= BASE_URL ?>modules/invoices/download_invoice.php?id=<?= $row['invoice_id'] ?>" class="btn btn-download" title="Download Invoice" target="_blank">
+                                                            <i class="fas fa-download"></i>
+                                                        </a>
+                                                        <?php if ($row['status'] === 'pending' && hasAccess('invoices.edit_requests')): ?>
                                                             <form method="post" action="<?= BASE_URL ?>modules/invoices/process_approve_request.php" style="display:inline;">
                                                                 <input type="hidden" name="request_id" value="<?= $row['id'] ?>">
                                                                 <input type="hidden" name="action" value="approve">
@@ -173,8 +178,10 @@ $pendingCount = $conn->query("SELECT COUNT(*) as c FROM invoice_edit_requests WH
                                                             <button type="button" class="btn btn-danger btn-sm action-btn" data-bs-toggle="modal" data-bs-target="#rejectModal<?= $row['id'] ?>">
                                                                 <i class="fas fa-times"></i> Reject
                                                             </button>
-                                                        </div>
+                                                        <?php endif; ?>
+                                                    </div>
 
+                                                    <?php if ($row['status'] === 'pending' && hasAccess('invoices.edit_requests')): ?>
                                                         <div class="modal fade" id="rejectModal<?= $row['id'] ?>" tabindex="-1">
                                                             <div class="modal-dialog modal-dialog-centered">
                                                                 <div class="modal-content">
@@ -201,8 +208,6 @@ $pendingCount = $conn->query("SELECT COUNT(*) as c FROM invoice_edit_requests WH
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    <?php else: ?>
-                                                        <span class="text-muted">—</span>
                                                     <?php endif; ?>
                                                 </td>
                                             </tr>
@@ -229,9 +234,50 @@ $pendingCount = $conn->query("SELECT COUNT(*) as c FROM invoice_edit_requests WH
         </div>
     </div>
 
+    <!-- Modal for Viewing Invoice -->
+    <div class="modal fade" id="viewInvoiceModal" tabindex="-1" aria-labelledby="viewInvoiceModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg modal-system">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewInvoiceModalLabel"><i class="fas fa-file-invoice"></i>Invoice Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="invoiceDetails">
+                    Loading...
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="<?= BASE_URL ?>js/scripts.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Handle "View" button click
+            $('.view-invoice').click(function (e) {
+                e.preventDefault(); 
+                var invoiceId = $(this).data('id'); 
+                $('#invoiceDetails').html('Loading...');
+                $.ajax({
+                    url: '<?= BASE_URL ?>modules/invoices/download_invoice.php',
+                    type: 'GET',
+                    data: { 
+                        id: invoiceId,
+                        format: 'html'
+                    },
+                    success: function (response) {
+                        $('#invoiceDetails').html(response);
+                        $('#viewInvoiceModal').modal('show');
+                    },
+                    error: function () {
+                        $('#invoiceDetails').html('Failed to load invoice details.');
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>

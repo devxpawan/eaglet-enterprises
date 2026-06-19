@@ -548,6 +548,9 @@ if (!empty($quotation['ref_no'])) {
 <?php endif; ?>
     <div class="quotation-container">
         <?php if ($showButtons): ?>
+            <div class="control-buttons">
+                <button onclick="window.print()" class="btn btn-primary">Print</button>
+            </div>
         <?php endif; ?>
 
         <!-- Header -->

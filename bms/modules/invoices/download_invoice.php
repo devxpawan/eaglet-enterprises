@@ -648,6 +648,7 @@ $quotation_ref = !empty($invoice['quotation_ref_no']) ? $invoice['quotation_ref_
                 <?php if ($show_payment_details && $invoicePayStatus != 'paid'): ?>
                     <button id="markAsPaidBtn" class="btn btn-success">Mark as Paid</button>
                 <?php endif; ?>
+                <button onclick="window.print()" class="btn btn-primary">Print</button>
             </div>
         <?php endif; ?>
 
