@@ -38,11 +38,19 @@ $baseFrom = "FROM invoices i
                  WHERE p1.payment_id = (
                      SELECT MAX(p2.payment_id) FROM payments p2 WHERE p2.invoice_id = p1.invoice_id
                  )
-             ) p ON i.invoice_id = p.invoice_id
+              ) p ON i.invoice_id = p.invoice_id
+             LEFT JOIN (
+                 SELECT cm1.invoice_id, cm1.credit_memo_no, cm1.amount as cm_amount, cm1.status as cm_status
+                 FROM credit_memos cm1
+                 WHERE cm1.credit_memo_id = (
+                     SELECT MAX(cm2.credit_memo_id) FROM credit_memos cm2 WHERE cm2.invoice_id = cm1.invoice_id
+                 )
+             ) cm ON i.invoice_id = cm.invoice_id
              LEFT JOIN users u2 ON i.created_by = u2.id";
 
 $selectCols = "i.*, c.name as customer_name, c.business_name as customer_business_name,
                p.payment_method, p.payment_date, p.pay_by, p.paid_by_name,
+               cm.credit_memo_no, cm.cm_amount, cm.cm_status,
                u2.name as creator_name";
 
 // Build WHERE conditions
@@ -153,6 +161,7 @@ $result = $conn->query($sql);
                                                 <th>Issue Date</th>
                                                 <th>Due Date</th>
                                                 <th>Amount</th>
+                                                <th>Credit Memo</th>
                                                 <th>Cancel Reason</th>
                                                 <th>Created By</th>
                                                 <th>Actions</th>
@@ -204,10 +213,24 @@ $result = $conn->query($sql);
 
                                                         if ($payStatus == 'paid'): ?>
                                                             <span class="badge-soft badge-soft-success mt-1">Paid</span>
+                                                        <?php elseif ($payStatus == 'partial'): ?>
+                                                            <span class="badge-soft badge-soft-warning mt-1">Partial</span>
                                                         <?php else: ?>
                                                             <span class="badge-soft badge-soft-danger mt-1">Unpaid</span>
                                                         <?php endif;
                                                         ?>
+                                                    </td>
+                                                    <td>
+                                                        <?php if (!empty($row['credit_memo_no'])): ?>
+                                                            <div class="fw-semibold" style="color: #1B1C56;"><?php echo htmlspecialchars($row['credit_memo_no']); ?></div>
+                                                            <div class="text-muted" style="font-size: 0.82rem;"><?php echo number_format(floatval($row['cm_amount']), 2); ?>
+                                                                <span class="badge-soft <?= $row['cm_status'] == 'refund' ? 'badge-soft-success' : 'badge-soft-danger' ?>" style="font-size: 9px; padding: 1px 5px;">
+                                                                    <?php echo ucfirst(htmlspecialchars($row['cm_status'])); ?>
+                                                                </span>
+                                                            </div>
+                                                        <?php else: ?>
+                                                            <span class="text-muted">—</span>
+                                                        <?php endif; ?>
                                                     </td>
                                                     <td><?php echo !empty($row['cancel_reason']) ? htmlspecialchars($row['cancel_reason']) : '<span class="text-muted">-</span>'; ?></td>
                                                     <td>

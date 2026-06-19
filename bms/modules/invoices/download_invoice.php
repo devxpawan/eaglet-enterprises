@@ -100,6 +100,16 @@ while ($payRow = $payResult->fetch_assoc()) {
     $paymentHistory[] = $payRow;
 }
 
+// Get credit memos for this invoice
+$creditMemos = [];
+$cmStmt = $conn->prepare("SELECT cm.*, u.name as creator_name FROM credit_memos cm LEFT JOIN users u ON cm.created_by = u.id WHERE cm.invoice_id = ? ORDER BY cm.created_at DESC");
+$cmStmt->bind_param("i", $invoice_id);
+$cmStmt->execute();
+$cmResult = $cmStmt->get_result();
+while ($cmRow = $cmResult->fetch_assoc()) {
+    $creditMemos[] = $cmRow;
+}
+
 // Company information
 $company = getCompanyInfo($conn);
 
@@ -832,6 +842,41 @@ $quotation_ref = !empty($invoice['quotation_ref_no']) ? $invoice['quotation_ref_
                         <td><?php echo htmlspecialchars($pay['payment_method'] ?? 'N/A'); ?></td>
                         <td style="text-align: right;"><?php echo number_format(floatval($pay['amount_paid']), 2); ?></td>
                         <td><?php echo htmlspecialchars($pay['processor_name'] ?? 'N/A'); ?></td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+        <?php endif; ?>
+
+        <!-- Credit Memos -->
+        <?php if (!empty($creditMemos)): ?>
+        <div style="clear: both; margin-bottom: 12px;">
+            <strong style="font-size: 11px;">Credit Memos</strong>
+            <table class="product-table" style="margin-top: 4px; font-size: 9.5px;">
+                <thead>
+                    <tr>
+                        <th width="5%" style="text-align: center;">#</th>
+                        <th width="22%">Memo No</th>
+                        <th width="18%" style="text-align: right;">Amount</th>
+                        <th width="25%">Reason</th>
+                        <th width="15%">Status</th>
+                        <th width="15%">Created By</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php $c = 1; foreach ($creditMemos as $cm): ?>
+                    <tr>
+                        <td style="text-align: center;"><?php echo $c++; ?></td>
+                        <td class="fw-semibold"><?php echo htmlspecialchars($cm['credit_memo_no']); ?></td>
+                        <td style="text-align: right;"><?php echo number_format(floatval($cm['amount']), 2); ?></td>
+                        <td><?php echo !empty($cm['reason']) ? htmlspecialchars($cm['reason']) : '<span class="text-muted">—</span>'; ?></td>
+                        <td>
+                            <span class="payment-badge <?php echo $cm['status'] == 'refund' ? 'bg-success' : 'bg-danger'; ?>">
+                                <?php echo ucfirst(htmlspecialchars($cm['status'])); ?>
+                            </span>
+                        </td>
+                        <td><?php echo htmlspecialchars($cm['creator_name'] ?? 'N/A'); ?></td>
                     </tr>
                     <?php endforeach; ?>
                 </tbody>

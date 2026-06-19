@@ -531,6 +531,9 @@ require_once __DIR__ . '/../config/paths.php';
                         <?php if (hasAccess('payments.view_all')): ?>
                         <a class="nav-link" href="<?= BASE_URL ?>modules/payments/payment_list.php" id="all-payments-link">All Payments</a>
                         <?php endif; ?>
+                        <?php if (hasAccess('credit_memos.view_all')): ?>
+                        <a class="nav-link" href="<?= BASE_URL ?>modules/credit_memos/credit_memo_list.php" id="credit-memos-link">Credit Memos</a>
+                        <?php endif; ?>
                     </nav>
                 </div>
                 <?php endif; ?>

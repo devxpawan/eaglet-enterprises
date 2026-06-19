@@ -53,7 +53,40 @@ if (isset($_POST['cancel_invoice']) && isset($_POST['invoice_id'])) {
         $stmt_items->bind_param("s", $invoice_id);
         $stmt_items->execute();
         
-        // 3. Log the action in user_logs table
+        // 3. Create credit memo if requested
+        if (isset($_POST['create_credit_memo']) && $_POST['create_credit_memo'] === '1') {
+            $cm_amount = isset($_POST['credit_memo_amount']) ? floatval($_POST['credit_memo_amount']) : 0;
+            $cm_reason = isset($_POST['credit_memo_reason']) ? trim($_POST['credit_memo_reason']) : $cancel_reason;
+            
+            // Get customer_id and currency from invoice
+            $cm_info_sql = "SELECT customer_id, currency FROM invoices WHERE invoice_id = ?";
+            $cm_stmt = $conn->prepare($cm_info_sql);
+            $cm_stmt->bind_param("s", $invoice_id);
+            $cm_stmt->execute();
+            $cm_info = $cm_stmt->get_result()->fetch_assoc();
+            $cm_stmt->close();
+            
+            if ($cm_amount > 0 && $cm_info) {
+                // Generate credit memo number: CM-YYYY-NNNN
+                $year = date('Y');
+                $cm_count_sql = "SELECT COUNT(*) as cnt FROM credit_memos WHERE YEAR(created_at) = ?";
+                $cm_count_stmt = $conn->prepare($cm_count_sql);
+                $cm_count_stmt->bind_param("s", $year);
+                $cm_count_stmt->execute();
+                $cm_count = $cm_count_stmt->get_result()->fetch_assoc()['cnt'] + 1;
+                $cm_count_stmt->close();
+                $cm_no = 'CM-' . $year . '-' . str_pad($cm_count, 4, '0', STR_PAD_LEFT);
+                
+                $insert_cm_sql = "INSERT INTO credit_memos (credit_memo_no, invoice_id, customer_id, amount, reason, status, created_by, created_at)
+                                  VALUES (?, ?, ?, ?, ?, 'refund', ?, NOW())";
+                $insert_cm_stmt = $conn->prepare($insert_cm_sql);
+                $insert_cm_stmt->bind_param("ssidsi", $cm_no, $invoice_id, $cm_info['customer_id'], $cm_amount, $cm_reason, $user_id);
+                $insert_cm_stmt->execute();
+                $insert_cm_stmt->close();
+            }
+        }
+        
+        // 4. Log the action in user_logs table
         $action_type = "cancel_invoice";
         $details = "Invoice ID #$invoice_id for customer ($customer_name) was canceled by user ID #$user_id";
         if (!empty($cancel_reason)) {
@@ -374,11 +407,13 @@ if ($result && $result->num_rows > 0) {
                                                                     <i class="fas fa-check"></i>
                                                                 </a>
                                                                 <?php endif; ?>
-                                                                <?php if ($payStatus == 'unpaid' && hasAccess('invoices.cancel')): ?>
+                                                                <?php if (($payStatus == 'unpaid' || $payStatus == 'partial') && hasAccess('invoices.cancel')): ?>
                                                                 <button type="button" class="btn btn-cancel cancel-invoice"
                                                                     title="Cancel Invoice"
                                                                     data-id="<?php echo isset($row['invoice_id']) ? $row['invoice_id'] : ''; ?>"
-                                                                    data-customer="<?php echo htmlspecialchars($customerName); ?>">
+                                                                    data-customer="<?php echo htmlspecialchars($customerName); ?>"
+                                                                    data-amount="<?php echo $paidAmt; ?>"
+                                                                    data-currency="<?php echo $currency; ?>">
                                                                     <i class="fas fa-times-circle"></i>
                                                                 </button>
                                                                 <?php endif; ?>
@@ -527,6 +562,30 @@ if ($result && $result->num_rows > 0) {
                             <label for="cancel_reason" class="form-label fw-semibold">Cancel Reason <span class="text-muted">(Optional)</span></label>
                             <textarea class="form-control" id="cancel_reason" name="cancel_reason" rows="3" placeholder="Enter the reason for cancellation..."></textarea>
                         </div>
+
+                        <!-- Credit Memo Section (hidden when no payment) -->
+                        <div class="col-12 d-none" id="creditMemoSection">
+                            <hr>
+                            <div class="p-3 bg-info-soft rounded-3 border-start border-info border-4" style="background-color: rgba(13, 202, 240, 0.08);">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="create_credit_memo" name="create_credit_memo" value="1" checked>
+                                    <label class="form-check-label fw-semibold" for="create_credit_memo">
+                                        Create Credit Memo
+                                    </label>
+                                </div>
+                                <p class="text-muted small mb-2">This invoice has <strong id="cm_paid_amount">Rs 0.00</strong> paid. Create a credit memo to record the amount owed back to the customer.</p>
+                                <div class="row g-2">
+                                    <div class="col-md-4">
+                                        <label class="form-label small fw-semibold">Credit Amount</label>
+                                        <input type="number" step="0.01" min="0.01" class="form-control form-control-sm" id="credit_memo_amount" name="credit_memo_amount" placeholder="0.00">
+                                    </div>
+                                    <div class="col-md-8">
+                                        <label class="form-label small fw-semibold">Reason <span class="text-muted">(Optional)</span></label>
+                                        <input type="text" class="form-control form-control-sm" id="credit_memo_reason" name="credit_memo_reason" placeholder="Reason for credit memo">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer bg-light border-top-0 py-3">
@@ -535,6 +594,9 @@ if ($result && $result->num_rows > 0) {
                         <input type="hidden" name="invoice_id" id="confirm_cancel_invoice_id">
                         <input type="hidden" name="cancel_invoice" value="1">
                         <input type="hidden" name="cancel_reason" id="confirm_cancel_reason">
+                        <input type="hidden" name="create_credit_memo" id="confirm_create_credit_memo" value="0">
+                        <input type="hidden" name="credit_memo_amount" id="confirm_credit_memo_amount" value="0">
+                        <input type="hidden" name="credit_memo_reason" id="confirm_credit_memo_reason" value="">
                             <?php foreach (['search','filter_from_date','filter_to_date','filter_customer'] as $f):
                                     if (!empty($$f)): ?>
                                     <input type="hidden" name="<?= $f ?>" value="<?= htmlspecialchars($$f) ?>">
@@ -698,15 +760,57 @@ if ($result && $result->num_rows > 0) {
             $('.cancel-invoice').click(function() {
                 var invoiceId = $(this).data('id');
                 var customerName = $(this).data('customer');
+                var amountPaid = parseFloat($(this).data('amount')) || 0;
+                var currency = $(this).data('currency') || 'lkr';
+                var currencySymbol = (currency === 'usd') ? '$' : 'Rs';
+
                 $('#cancel_invoice_id').text(invoiceId);
                 $('#cancel_customer_name').text(customerName);
                 $('#confirm_cancel_invoice_id').val(invoiceId);
                 $('#cancel_reason').val('');
+                $('#credit_memo_reason').val('');
+
+                // Reset credit memo fields
+                $('#confirm_create_credit_memo').val('0');
+                $('#confirm_credit_memo_amount').val('0');
+                $('#confirm_credit_memo_reason').val('');
+
+                // Show/hide credit memo section based on paid amount
+                if (amountPaid > 0) {
+                    $('#cm_paid_amount').text(currencySymbol + ' ' + amountPaid.toFixed(2));
+                    $('#credit_memo_amount').val(amountPaid.toFixed(2));
+                    $('#create_credit_memo').prop('checked', true);
+                    $('#creditMemoSection').removeClass('d-none');
+                } else {
+                    $('#creditMemoSection').addClass('d-none');
+                }
+
                 $('#cancelInvoiceModal').modal('show');
+            });
+
+            // Toggle credit memo fields visibility
+            $('#create_credit_memo').on('change', function() {
+                if ($(this).is(':checked')) {
+                    $('#credit_memo_amount').prop('disabled', false);
+                    $('#credit_memo_reason').prop('disabled', false);
+                } else {
+                    $('#credit_memo_amount').prop('disabled', true);
+                    $('#credit_memo_reason').prop('disabled', true);
+                }
             });
 
             $('#cancelInvoiceForm').on('submit', function() {
                 $('#confirm_cancel_reason').val($('#cancel_reason').val());
+
+                var createCm = $('#create_credit_memo').is(':checked') ? '1' : '0';
+                $('#confirm_create_credit_memo').val(createCm);
+                if (createCm === '1') {
+                    $('#confirm_credit_memo_amount').val($('#credit_memo_amount').val());
+                    $('#confirm_credit_memo_reason').val($('#credit_memo_reason').val());
+                } else {
+                    $('#confirm_credit_memo_amount').val('0');
+                    $('#confirm_credit_memo_reason').val('');
+                }
             });
             
 
