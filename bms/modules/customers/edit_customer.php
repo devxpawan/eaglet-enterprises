@@ -909,10 +909,34 @@ console.log(validatePhone('+947296668'));   // Should be invalid (international 
         };
     }
 
+    // Real-time availability check via AJAX
+    function checkFieldAvailability(fieldName, paramName, value, excludeId, callback) {
+        const xhr = new XMLHttpRequest();
+        let url = '<?= BASE_URL ?>modules/api/check_field.php?field=' + fieldName + '&' + paramName + '=' + encodeURIComponent(value);
+        if (excludeId) {
+            url += '&exclude_id=' + encodeURIComponent(excludeId);
+        }
+        xhr.open('GET', url, true);
+        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                try {
+                    const response = JSON.parse(xhr.responseText);
+                    callback(response);
+                } catch(e) {
+                    callback({ available: true });
+                }
+            }
+        };
+        xhr.send();
+    }
+
     // Setup validation for input fields with real-time feedback
     function setupValidation(inputId, validationFunction, errorId) {
         const inputElement = document.getElementById(inputId);
         const errorElement = document.getElementById(errorId);
+        
+        if (!inputElement || !errorElement) return () => true;
         
         // Real-time validation as user types (with a small delay for better UX)
         let typingTimer;
@@ -948,7 +972,7 @@ console.log(validatePhone('+947296668'));   // Should be invalid (international 
         // Empty check for required fields
         if (inputElement.hasAttribute('required') && value === '') {
             inputElement.classList.add('is-invalid');
-            errorElement.textContent = `${inputElement.previousElementSibling.textContent.trim()} is required`;
+            errorElement.textContent = `${inputElement.previousElementSibling ? inputElement.previousElementSibling.textContent.trim() : 'This field'} is required`;
             errorElement.style.display = 'block';
             return false;
         }
@@ -965,7 +989,6 @@ console.log(validatePhone('+947296668'));   // Should be invalid (international 
             errorElement.textContent = validationResult.message;
             errorElement.style.display = 'block';
             
-            
             return false;
         } else {
             // Show valid feedback
@@ -975,48 +998,108 @@ console.log(validatePhone('+947296668'));   // Should be invalid (international 
     }
 
     // Initialize validation functions for each field
-    const validateEmailField = setupValidation('email', validateEmail, 'email-error');
-    const validatePhoneField = setupValidation('phone', validatePhone, 'phone-error');
     const validateNameField = setupValidation('name', validateName, 'name-error');
     const validateAddressField = setupValidation('address', validateAddress, 'address-error');
 
-    // Auto-convert email to lowercase
+    const currentCustomerId = <?php echo $customer_id; ?>;
+
+    // Enhanced email validation with real-time availability check
     const emailInput = document.getElementById('email');
+    const emailError = document.getElementById('email-error');
+    let emailAvailable = true;
+    let emailChecked = true;
+    let emailCheckTimer;
+
+    // Auto-convert email to lowercase in real-time
     emailInput.addEventListener('input', function() {
-        // Get cursor position before change
         const start = this.selectionStart;
         const end = this.selectionEnd;
-        
-        // Convert to lowercase
         this.value = this.value.toLowerCase();
-        
-        // Restore cursor position
         this.setSelectionRange(start, end);
     });
 
-    // Phone handling - strip non-digits as user types
+    const validateEmailFieldAsync = function() {
+        return new Promise((resolve) => {
+            const value = emailInput.value.trim().toLowerCase();
+            const originalValue = emailInput.getAttribute('data-original');
+            emailInput.classList.remove('is-invalid', 'is-valid');
+            emailError.style.display = 'none';
+
+            if (value === '') {
+                emailInput.classList.add('is-invalid');
+                emailError.textContent = 'Email address cannot be empty';
+                emailError.style.display = 'block';
+                emailChecked = false;
+                resolve(false);
+                return;
+            }
+
+            const formatResult = validateEmail(value);
+            if (!formatResult.valid) {
+                emailInput.classList.add('is-invalid');
+                emailError.textContent = formatResult.message;
+                emailError.style.display = 'block';
+                emailChecked = false;
+                resolve(false);
+                return;
+            }
+
+            if (value === originalValue) {
+                emailInput.classList.add('is-valid');
+                emailAvailable = true;
+                emailChecked = true;
+                resolve(true);
+                return;
+            }
+
+            checkFieldAvailability('customer_email', 'email', value, currentCustomerId, function(response) {
+                emailChecked = true;
+                if (response.available) {
+                    emailInput.classList.add('is-valid');
+                    emailAvailable = true;
+                    resolve(true);
+                } else {
+                    emailInput.classList.add('is-invalid');
+                    emailError.textContent = response.message || 'Email is already in use';
+                    emailError.style.display = 'block';
+                    emailAvailable = false;
+                    resolve(false);
+                }
+            });
+        });
+    };
+
+    emailInput.addEventListener('input', function() {
+        clearTimeout(emailCheckTimer);
+        emailCheckTimer = setTimeout(() => {
+            validateEmailFieldAsync();
+            checkForChanges();
+        }, 600);
+    });
+
+    emailInput.addEventListener('blur', function() {
+        clearTimeout(emailCheckTimer);
+        validateEmailFieldAsync();
+    });
+
+    // Enhanced phone validation with real-time availability check
     const phoneInput = document.getElementById('phone');
+    const phoneError = document.getElementById('phone-error');
+    let phoneAvailable = true;
+    let phoneChecked = true;
+    let phoneCheckTimer;
+
+    // Phone handling - strip non-digits as user types
     phoneInput.addEventListener('input', function(e) {
-        // Get only digits from the input
         let digits = this.value.replace(/\D/g, '');
-        
-        // Store cursor position
         const cursorPos = this.selectionStart;
         const oldLength = this.value.length;
-        
-        // Limit to 10 digits
         if (digits.length > 10) {
             digits = digits.substring(0, 10);
         }
-        
-        // Update the input value with only digits
         this.value = digits;
-        
-        // Adjust cursor position if text changed
         const newLength = this.value.length;
         const cursorAdjust = newLength - oldLength;
-        
-        // Only set selection range if the element is focused
         if (document.activeElement === this) {
             let newPos = cursorPos + cursorAdjust;
             if (newPos < 0) newPos = 0;
@@ -1025,25 +1108,113 @@ console.log(validatePhone('+947296668'));   // Should be invalid (international 
         }
     });
 
+    const validatePhoneFieldAsync = function() {
+        return new Promise((resolve) => {
+            const value = phoneInput.value.replace(/\D/g, '');
+            const originalValue = phoneInput.getAttribute('data-original').replace(/\D/g, '');
+            phoneInput.classList.remove('is-invalid', 'is-valid');
+            phoneError.style.display = 'none';
+
+            if (value === '') {
+                phoneInput.classList.add('is-invalid');
+                phoneError.textContent = 'Phone number cannot be empty';
+                phoneError.style.display = 'block';
+                phoneChecked = false;
+                resolve(false);
+                return;
+            }
+
+            const formatResult = validatePhone(phoneInput.value);
+            if (!formatResult.valid) {
+                phoneInput.classList.add('is-invalid');
+                phoneError.textContent = formatResult.message;
+                phoneError.style.display = 'block';
+                phoneChecked = false;
+                resolve(false);
+                return;
+            }
+
+            if (value === originalValue) {
+                phoneInput.classList.add('is-valid');
+                phoneAvailable = true;
+                phoneChecked = true;
+                resolve(true);
+                return;
+            }
+
+            checkFieldAvailability('customer_phone', 'phone', value, currentCustomerId, function(response) {
+                phoneChecked = true;
+                if (response.available) {
+                    phoneInput.classList.add('is-valid');
+                    phoneAvailable = true;
+                    resolve(true);
+                } else {
+                    phoneInput.classList.add('is-invalid');
+                    phoneError.textContent = response.message || 'Phone number is already in use';
+                    phoneError.style.display = 'block';
+                    phoneAvailable = false;
+                    resolve(false);
+                }
+            });
+        });
+    };
+
+    phoneInput.addEventListener('input', function() {
+        clearTimeout(phoneCheckTimer);
+        phoneCheckTimer = setTimeout(() => {
+            validatePhoneFieldAsync();
+            checkForChanges();
+        }, 600);
+    });
+
+    phoneInput.addEventListener('blur', function() {
+        clearTimeout(phoneCheckTimer);
+        validatePhoneFieldAsync();
+    });
+
     // Client-side form validation
     document.getElementById('editCustomerForm').addEventListener('submit', function(event) {
         let isValid = true;
-        
-        // Validate all fields
+
         if (!validateNameField()) isValid = false;
-        if (!validateEmailField()) isValid = false;
-        if (!validatePhoneField()) isValid = false;
         if (!validateAddressField()) isValid = false;
-        
+
+        const emailVal = emailInput.value.trim().toLowerCase();
+        const emailFormatResult = validateEmail(emailVal);
+        if (!emailVal || !emailFormatResult.valid) {
+            isValid = false;
+        }
+
+        const phoneVal = phoneInput.value.replace(/\D/g, '');
+        const phoneFormatResult = validatePhone(phoneInput.value);
+        if (!phoneVal || !phoneFormatResult.valid) {
+            isValid = false;
+        }
+
         if (!isValid) {
             event.preventDefault();
-            
-            // Scroll to the first error
             const firstError = document.querySelector('.is-invalid');
             if (firstError) {
                 firstError.focus();
                 firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
+            return;
+        }
+
+        const needEmailCheck = !emailChecked || !emailAvailable;
+        const needPhoneCheck = !phoneChecked || !phoneAvailable;
+
+        if (needEmailCheck || needPhoneCheck) {
+            event.preventDefault();
+            const promises = [];
+            if (needEmailCheck) promises.push(validateEmailFieldAsync());
+            if (needPhoneCheck) promises.push(validatePhoneFieldAsync());
+
+            Promise.all(promises).then(function(results) {
+                if (results.every(r => r === true)) {
+                    document.getElementById('editCustomerForm').submit();
+                }
+            });
             return;
         }
 

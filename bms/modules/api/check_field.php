@@ -162,6 +162,74 @@ switch ($field) {
         }
         break;
 
+    case 'customer_email':
+        if (isset($_GET['email']) && !empty(trim($_GET['email']))) {
+            $email = strtolower(trim($_GET['email']));
+
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $response['available'] = false;
+                $response['message'] = 'Invalid email format.';
+            } else {
+                if ($exclude_id > 0) {
+                    $stmt = $conn->prepare("SELECT COUNT(*) FROM customers WHERE email = ? AND customer_id != ?");
+                    $stmt->bind_param("si", $email, $exclude_id);
+                } else {
+                    $stmt = $conn->prepare("SELECT COUNT(*) FROM customers WHERE email = ?");
+                    $stmt->bind_param("s", $email);
+                }
+                $stmt->execute();
+                $stmt->bind_result($count);
+                $stmt->fetch();
+                $stmt->close();
+
+                if ($count > 0) {
+                    $response['available'] = false;
+                    $response['message'] = 'This email address is already registered. Please use a different email.';
+                } else {
+                    $response['available'] = true;
+                    $response['message'] = 'Email is available.';
+                }
+            }
+        } else {
+            $response['available'] = false;
+            $response['message'] = 'Email cannot be empty.';
+        }
+        break;
+
+    case 'customer_phone':
+        if (isset($_GET['phone']) && !empty(trim($_GET['phone']))) {
+            $phone = preg_replace('/\D/', '', trim($_GET['phone']));
+
+            if (strlen($phone) !== 10) {
+                $response['available'] = false;
+                $response['message'] = 'Phone number must be exactly 10 digits.';
+            } else {
+                if ($exclude_id > 0) {
+                    $stmt = $conn->prepare("SELECT COUNT(*) FROM customers WHERE phone = ? AND customer_id != ?");
+                    $stmt->bind_param("si", $phone, $exclude_id);
+                } else {
+                    $stmt = $conn->prepare("SELECT COUNT(*) FROM customers WHERE phone = ?");
+                    $stmt->bind_param("s", $phone);
+                }
+                $stmt->execute();
+                $stmt->bind_result($count);
+                $stmt->fetch();
+                $stmt->close();
+
+                if ($count > 0) {
+                    $response['available'] = false;
+                    $response['message'] = 'This phone number is already in use by another customer.';
+                } else {
+                    $response['available'] = true;
+                    $response['message'] = 'Phone number is available.';
+                }
+            }
+        } else {
+            $response['available'] = false;
+            $response['message'] = 'Phone number cannot be empty.';
+        }
+        break;
+
     default:
         $response['available'] = false;
         $response['message'] = 'Invalid field specified.';
