@@ -458,7 +458,7 @@ $conn->close();
             <?php if (!empty($signin_logo)): ?>
             <img src="<?= htmlspecialchars($signin_logo) ?>" alt="Logo" class="hero-image">
             <?php endif; ?>
-            <h1>Welcome Back</h1>
+            <h1>Welcome Welcome BackKKK</h1>
             <p>Sign in to access your dashboard and manage your business.</p>
             <div class="brand-footer">© <?= date('Y') ?> BMS</div>
         </div>
