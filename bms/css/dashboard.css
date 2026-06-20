@@ -280,20 +280,44 @@ body {
   }
 }
 
-@media (max-width: 400px) {
-  .dash-stats .row {
-    margin: 0 -4px;
-  }
-  .dash-stats .row > [class*="col-"] {
-    padding: 0 4px;
-  }
-  .stat-card {
-    padding: 12px 14px;
-  }
-  .stat-card .stat-value {
-    font-size: 20px;
-  }
-  .dash-card .dash-card-body {
-    padding: 10px 12px;
-  }
+/* ===== Welcome Section ===== */
+.welcome-container {
+    background: white;
+    border-radius: 16px;
+    padding: 60px 40px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    margin-bottom: 30px;
+    position: relative;
+    overflow: hidden;
+}
+
+.welcome-container::after {
+    content: '';
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(11, 51, 84, 0.05) 0%, rgba(255,255,255,0) 70%);
+    border-radius: 50%;
+}
+
+.welcome-illustration {
+    width: 250px;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+.welcome-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #101828;
+    margin-bottom: 1rem;
+}
+
+.welcome-subtitle {
+    font-size: 1.1rem;
+    color: #667085;
+    margin-bottom: 2rem;
 }

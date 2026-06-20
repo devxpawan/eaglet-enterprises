@@ -84,14 +84,6 @@ if ($conn->query("SHOW TABLES LIKE 'invoices'")->num_rows > 0) {
         }
     }
 }
-
-$tableExists = $conn->query("SHOW TABLES LIKE 'invoices'");
-if ($tableExists && $tableExists->num_rows > 0) {
-    $stats['total_invoices'] = safeQuery($conn, "SELECT COUNT(*) as count FROM invoices");
-    $stats['complete_invoices'] = safeQuery($conn, "SELECT COUNT(*) as count FROM invoices WHERE status = 'done'");
-    $stats['pending_invoices'] = safeQuery($conn, "SELECT COUNT(*) as count FROM invoices WHERE status = 'pending'");
-    $stats['cancel_invoices'] = safeQuery($conn, "SELECT COUNT(*) as count FROM invoices WHERE status = 'cancel'");
-}
 ?>
 
 <!DOCTYPE html>
@@ -114,191 +106,32 @@ if ($tableExists && $tableExists->num_rows > 0) {
     <div id="layoutSidenav_content">
         <main>
             <div class="container-fluid px-4">
-
-                <!-- Page Header -->
-                <div class="dash-header d-flex flex-wrap justify-content-between align-items-center">
-                    <div>
-                        <h4>Dashboard</h4>
-                        <p class="dash-subtitle">Welcome back, <strong><?= htmlspecialchars($_SESSION['name'] ?? 'User') ?></strong>. Here's what's happening today.</p>
-                    </div>
-                    <div class="date-badge">
-                        <i class="fas fa-calendar-alt"></i>
-                        <?= date('l, d M Y') ?>
-                    </div>
+                
+                <!-- Welcome Section -->
+                <div class="welcome-container mt-4">
+                    <svg class="welcome-illustration" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Abstract Background Shapes -->
+                        <circle cx="250" cy="50" r="40" fill="#eef4ff" opacity="0.6" />
+                        <rect x="20" y="150" width="100" height="40" rx="10" fill="#ecfdf3" opacity="0.5" transform="rotate(-15)" />
+                        
+                        <!-- Main Illustration -->
+                        <path d="M50,180 C50,120 250,120 250,180" fill="#eef4ff" />
+                        
+                        <!-- Main Box -->
+                        <rect x="100" y="60" width="100" height="100" rx="12" fill="#0b3354" />
+                        
+                        <!-- Details inside Main Box -->
+                        <rect x="115" y="75" width="70" height="15" rx="4" fill="#ffffff" opacity="0.2" />
+                        <rect x="115" y="100" width="70" height="15" rx="4" fill="#ffffff" opacity="0.1" />
+                        <rect x="115" y="125" width="40" height="15" rx="4" fill="#ffffff" opacity="0.1" />
+                        
+                        <!-- Accent Elements -->
+                        <circle cx="210" cy="40" r="15" fill="#f59e0b" />
+                        <path d="M80,120 L110,120 L95,150 Z" fill="#10b981" />
+                    </svg>
+                    <h1 class="welcome-title">Welcome back, <?= htmlspecialchars($_SESSION['name'] ?? 'User') ?>!</h1>
+                    <p class="welcome-subtitle">Everything is running smoothly. Hope you have a productive day.</p>
                 </div>
-
-                <!-- Quick Actions -->
-                <div class="dash-actions d-flex flex-wrap gap-2">
-                    <?php if (hasAccess('invoices')): ?>
-                    <a href="<?= BASE_URL ?>modules/invoices/invoice_create.php" class="dash-action-btn">
-                        <span class="dash-action-icon" style="background: #eef4ff; color: #3538cd;"><i class="fas fa-plus"></i></span>
-                        New Invoice
-                    </a>
-                    <?php endif; ?>
-                    <?php if (hasAccess('customers.add')): ?>
-                    <a href="<?= BASE_URL ?>modules/customers/add_customer.php" class="dash-action-btn">
-                        <span class="dash-action-icon" style="background: #ecfdf3; color: #067647;"><i class="fas fa-user-plus"></i></span>
-                        Add Customer
-                    </a>
-                    <?php endif; ?>
-                    <?php if (hasAccess('products.add')): ?>
-                    <a href="<?= BASE_URL ?>modules/products/add_product.php" class="dash-action-btn">
-                        <span class="dash-action-icon" style="background: #eef4ff; color: #3538cd;"><i class="fas fa-box-open"></i></span>
-                        Add Product
-                    </a>
-                    <?php endif; ?>
-                </div>
-
-                <!-- Invoices Section -->
-                <?php if (hasAccess('invoices')): ?>
-                <div class="dash-card">
-                    <div class="dash-card-body">
-                        <h6 class="dash-card-title"><i class="fas fa-file-invoice"></i>Invoices</h6>
-                        <div class="dash-stats">
-                            <div class="row g-3">
-                                <div class="col-xl-3 col-md-6">
-                                    <div class="stat-card stat-card-accent-indigo">
-                                        <div class="stat-top">
-                                            <div>
-                                                <p class="stat-label">Total</p>
-                                                <div class="stat-value"><?= number_format($stats['total_invoices']) ?></div>
-                                            </div>
-                                            <div class="stat-icon" style="background: #eef4ff; color: #3538cd;"><i class="fas fa-file-invoice"></i></div>
-                                        </div>
-                                        <div class="stat-footer">
-                                            <a href="<?= BASE_URL ?>modules/invoices/invoice_list.php" class="stat-link" style="color:#3538cd;">View all <i class="fas fa-arrow-right"></i></a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <?php if (hasAccess('invoices.pending')): ?>
-                                <div class="col-xl-3 col-md-6">
-                                    <div class="stat-card stat-card-accent-amber">
-                                        <div class="stat-top">
-                                            <div>
-                                                <p class="stat-label">Pending</p>
-                                                <div class="stat-value"><?= number_format($stats['pending_invoices']) ?></div>
-                                            </div>
-                                            <div class="stat-icon" style="background: #fffaeb; color: #b54708;"><i class="fas fa-clock"></i></div>
-                                        </div>
-                                        <div class="stat-footer">
-                                            <a href="<?= BASE_URL ?>modules/invoices/pending_invoice_list.php" class="stat-link" style="color:#b54708;">Review <i class="fas fa-arrow-right"></i></a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <?php endif; ?>
-                                <?php if (hasAccess('invoices.complete')): ?>
-                                <div class="col-xl-3 col-md-6">
-                                    <div class="stat-card stat-card-accent-green">
-                                        <div class="stat-top">
-                                            <div>
-                                                <p class="stat-label">Completed</p>
-                                                <div class="stat-value"><?= number_format($stats['complete_invoices']) ?></div>
-                                            </div>
-                                            <div class="stat-icon" style="background: #ecfdf3; color: #067647;"><i class="fas fa-check-circle"></i></div>
-                                        </div>
-                                        <div class="stat-footer">
-                                            <a href="<?= BASE_URL ?>modules/invoices/complete_invoice_list.php" class="stat-link" style="color:#067647;">View <i class="fas fa-arrow-right"></i></a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <?php endif; ?>
-                                <?php if (hasAccess('invoices.cancel')): ?>
-                                <div class="col-xl-3 col-md-6">
-                                    <div class="stat-card stat-card-accent-red">
-                                        <div class="stat-top">
-                                            <div>
-                                                <p class="stat-label">Cancelled</p>
-                                                <div class="stat-value"><?= number_format($stats['cancel_invoices']) ?></div>
-                                            </div>
-                                            <div class="stat-icon" style="background: #fef3f2; color: #b42318;"><i class="fas fa-ban"></i></div>
-                                        </div>
-                                        <div class="stat-footer">
-                                            <a href="<?= BASE_URL ?>modules/invoices/cancel_invoice_list.php" class="stat-link" style="color:#b42318;">View <i class="fas fa-arrow-right"></i></a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <?php endif; ?>
-
-                <!-- Overview Section -->
-                <div class="dash-card">
-                    <div class="dash-card-body">
-                        <h6 class="dash-card-title"><i class="fas fa-chart-pie"></i>Overview</h6>
-                        <div class="dash-stats">
-                            <div class="row g-3">
-                                <?php if (hasAccess('users')): ?>
-                                <div class="col-xl-3 col-md-6">
-                                    <div class="stat-card stat-card-accent-indigo">
-                                        <div class="stat-top">
-                                            <div>
-                                                <p class="stat-label">Total Users</p>
-                                                <div class="stat-value"><?= number_format($stats['total_users']) ?></div>
-                                            </div>
-                                            <div class="stat-icon" style="background: #eef4ff; color: #3538cd;"><i class="fas fa-users-cog"></i></div>
-                                        </div>
-                                        <div class="stat-footer">
-                                            <a href="<?= BASE_URL ?>modules/users/users.php" class="stat-link" style="color:#3538cd;">Manage <i class="fas fa-arrow-right"></i></a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <?php endif; ?>
-                                <?php if (hasAccess('customers')): ?>
-                                <div class="col-xl-3 col-md-6">
-                                    <div class="stat-card stat-card-accent-blue">
-                                        <div class="stat-top">
-                                            <div>
-                                                <p class="stat-label">Customers</p>
-                                                <div class="stat-value"><?= number_format($stats['total_customers']) ?></div>
-                                            </div>
-                                            <div class="stat-icon" style="background: #f2f4f7; color: #344054;"><i class="fas fa-users"></i></div>
-                                        </div>
-                                        <div class="stat-footer">
-                                            <a href="<?= BASE_URL ?>modules/customers/customer_list.php" class="stat-link" style="color:#344054;">View all <i class="fas fa-arrow-right"></i></a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <?php endif; ?>
-                                <?php if (hasAccess('products')): ?>
-                                <div class="col-xl-3 col-md-6">
-                                    <div class="stat-card stat-card-accent-indigo">
-                                        <div class="stat-top">
-                                            <div>
-                                                <p class="stat-label">Products</p>
-                                                <div class="stat-value"><?= number_format($stats['total_products']) ?></div>
-                                            </div>
-                                            <div class="stat-icon" style="background: #eef4ff; color: #3538cd;"><i class="fas fa-boxes-stacked"></i></div>
-                                        </div>
-                                        <div class="stat-footer">
-                                            <a href="<?= BASE_URL ?>modules/products/product_list.php" class="stat-link" style="color:#3538cd;">View all <i class="fas fa-arrow-right"></i></a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <?php endif; ?>
-                                <?php if (hasAccess('quotations')): ?>
-                                <div class="col-xl-3 col-md-6">
-                                    <div class="stat-card stat-card-accent-indigo">
-                                        <div class="stat-top">
-                                            <div>
-                                                <p class="stat-label">Total Quotations</p>
-                                                <div class="stat-value"><?= number_format($stats['total_quotations']) ?></div>
-                                            </div>
-                                            <div class="stat-icon" style="background: #eef4ff; color: #3538cd;"><i class="fas fa-file-alt"></i></div>
-                                        </div>
-                                        <div class="stat-footer">
-                                            <a href="<?= BASE_URL ?>modules/quotations/quotation_list.php" class="stat-link" style="color:#3538cd;">View all <i class="fas fa-arrow-right"></i></a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
 
             </div>
         </main>
