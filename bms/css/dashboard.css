@@ -13,11 +13,36 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 40px 24px;
 }
 
 /* ===== Welcome Section ===== */
 .welcome-section {
   text-align: center;
+  position: relative;
+}
+
+.bg-circle {
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.bg-circle--blue {
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(11, 51, 84, 0.08) 0%, transparent 70%);
+  top: -200px;
+  left: -200px;
+}
+
+.bg-circle--amber {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.07) 0%, transparent 70%);
+  bottom: -200px;
+  right: -200px;
 }
 
 .welcome-illustration {
@@ -45,10 +70,40 @@ body {
 
 /* ===== Responsive ===== */
 @media (max-width: 768px) {
-  .welcome-title {
-    font-size: 1.5rem;
+  #layoutSidenav_content main {
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 60px 20px;
   }
+
+  .welcome-section {
+    width: 100%;
+    padding: 20px 0;
+  }
+
+  .welcome-title {
+    font-size: 1.75rem;
+  }
+
+  .welcome-subtitle {
+    font-size: 1rem;
+  }
+
   .welcome-illustration {
-    width: 150px;
+    width: 140px;
+  }
+
+  .bg-circle--blue {
+    width: 400px;
+    height: 400px;
+    top: -100px;
+    left: -150px;
+  }
+
+  .bg-circle--amber {
+    width: 350px;
+    height: 350px;
+    bottom: -100px;
+    right: -150px;
   }
 }
