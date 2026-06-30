@@ -453,7 +453,7 @@ $result = $conn->query($sql);
                                                     </td>
                                                     <td><?= htmlspecialchars($row['username']) ?></td>
                                                     <td>
-                                                        <div><i class="fas fa-phone me-1 text-muted"></i><?= isset($row['mobile']) ? htmlspecialchars($row['mobile']) : 'N/A' ?></div>
+                                                        <div><i class="fas fa-phone me-1 text-muted"></i><?= isset($row['mobile']) ? htmlspecialchars($row['mobile']) : '-' ?></div>
                                                         <?php if (!empty($row['email'])): ?>
                                                             <div class="text-muted" style="font-size: 0.82rem;"><i class="fas fa-envelope me-1"></i><?= htmlspecialchars($row['email']) ?></div>
                                                         <?php endif; ?>
@@ -496,10 +496,10 @@ $result = $conn->query($sql);
                                                                 data-user-name="<?= htmlspecialchars($row['name']) ?>"
                                                                 data-user-username="<?= htmlspecialchars($row['username']) ?>"
                                                                 data-user-email="<?= htmlspecialchars($row['email']) ?>"
-                                                                data-user-mobile="<?= isset($row['mobile']) ? htmlspecialchars($row['mobile']) : 'N/A' ?>"
-                                                                data-user-nic="<?= isset($row['nic']) ? htmlspecialchars($row['nic']) : 'N/A' ?>"
+                                                                data-user-mobile="<?= isset($row['mobile']) ? htmlspecialchars($row['mobile']) : '-' ?>"
+                                                                data-user-nic="<?= isset($row['nic']) ? htmlspecialchars($row['nic']) : '-' ?>"
                                                                 data-user-status="<?= htmlspecialchars($row['status']) ?>"
-                                                                 data-user-position="<?= isset($row['position_name']) ? htmlspecialchars($row['position_name']) : 'N/A' ?>"
+                                                                 data-user-position="<?= isset($row['position_name']) ? htmlspecialchars($row['position_name']) : '-' ?>"
                                                                 data-user-created="<?= htmlspecialchars($row['created_at']) ?>">
                                                                 <i class="fas fa-eye"></i>
                                                             </button>

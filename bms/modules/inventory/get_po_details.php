@@ -88,7 +88,7 @@ if ($mode === 'receive') {
             <?php endif; ?>
         </div>
         <div class="col-md-6 text-md-end">
-            <h6 class="fw-bold"><?= htmlspecialchars($po['supplier_name'] ?? 'N/A') ?></h6>
+            <h6 class="fw-bold"><?= htmlspecialchars($po['supplier_name'] ?? '-') ?></h6>
             <p class="text-muted small"><?= nl2br(htmlspecialchars($po['supplier_address'] ?? '')) ?></p>
             <p class="text-muted small"><?= htmlspecialchars($po['supplier_email'] ?? '') ?> | <?= htmlspecialchars($po['supplier_phone'] ?? '') ?></p>
         </div>

@@ -306,7 +306,7 @@ $result = $conn->query($sql);
                         </div>
                         <div class="detail-card">
                             <span class="detail-label"><i class="fas fa-building"></i>Business Name</span>
-                            <p class="detail-value">${customerData.business || '<em class="text-muted">N/A</em>'}</p>
+                            <p class="detail-value">${customerData.business || '<em class="text-muted">-</em>'}</p>
                         </div>
                         <div class="detail-card">
                             <span class="detail-label"><i class="fas fa-user"></i>Name</span>
@@ -314,7 +314,7 @@ $result = $conn->query($sql);
                         </div>
                         <div class="detail-card full-width">
                             <span class="detail-label"><i class="fas fa-envelope"></i>Email</span>
-                            <p class="detail-value">${customerData.email || '<em class="text-muted">N/A</em>'}</p>
+                            <p class="detail-value">${customerData.email || '<em class="text-muted">-</em>'}</p>
                         </div>
                         <div class="detail-card">
                             <span class="detail-label"><i class="fas fa-phone"></i>Phone</span>

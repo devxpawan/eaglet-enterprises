@@ -343,7 +343,7 @@ $products = $conn->query("SELECT id, name, sku, lkr_price, stock_quantity, unit 
                                             ?>
                                             <tr>
                                                 <td><span class="fw-semibold"><?= htmlspecialchars($po['po_number']) ?></span></td>
-                                                <td><?= htmlspecialchars($po['supplier_name'] ?? 'N/A') ?></td>
+                                                <td><?= htmlspecialchars($po['supplier_name'] ?? '-') ?></td>
                                                 <td><?= date('d/m/Y', strtotime($po['order_date'])) ?></td>
                                                 <td><?= $po['expected_date'] ? date('d/m/Y', strtotime($po['expected_date'])) : '—' ?></td>
                                                 <td><span class="badge bg-secondary bg-opacity-10 text-dark"><?= $itemsCount ?></span></td>

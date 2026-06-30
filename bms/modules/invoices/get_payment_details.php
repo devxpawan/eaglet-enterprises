@@ -39,7 +39,7 @@ if (isset($_GET['invoice_id'])) {
     $balance = $total_amount - $amount_paid;
 
     // Get all payment records for this invoice
-    $sql = "SELECT p.*, u.name as processor_name
+    $sql = "SELECT p.*, u.name as paid_by_name
             FROM payments p
             LEFT JOIN users u ON p.pay_by = u.id
             WHERE p.invoice_id = ?
@@ -59,7 +59,7 @@ if (isset($_GET['invoice_id'])) {
                 'amount_paid' => number_format($payment['amount_paid'], 2),
                 'payment_method' => $payment['payment_method'],
                 'payment_date' => date('d/m/Y H:i', strtotime($payment['payment_date'])),
-                'processed_by' => isset($payment['processor_name']) ? $payment['processor_name'] : 'N/A',
+                'processed_by' => isset($payment['paid_by_name']) ? $payment['paid_by_name'] : '-',
                 'pay_by' => $payment['pay_by'],
                 'slip' => $payment['slip'] ?? null
             ];

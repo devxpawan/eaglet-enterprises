@@ -261,7 +261,7 @@ function hasMultipleChanges($details) {
                                                         <span class="user-id-text"><?php echo htmlspecialchars($row['id']); ?></span>
                                                     </td>
                                                     <td>
-                                                        <div class="user-name"><?php echo !empty($row['user_name']) ? htmlspecialchars($row['user_name']) : 'N/A'; ?></div>
+                                                        <div class="user-name"><?php echo !empty($row['user_name']) ? htmlspecialchars($row['user_name']) : '-'; ?></div>
                                                         <div class="user-role">ID: <?php echo htmlspecialchars($row['user_id']); ?></div>
                                                     </td>
                                                     <td>

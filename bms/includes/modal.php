@@ -36,7 +36,7 @@ $modal_body_id = $modal_body_id ?? '';
                     <div class="col-md-6">
                         <div class="view-detail-box">
                             <span class="detail-label">Company</span>
-                            <p class="detail-value"><?= htmlspecialchars($row['company']) ?: '<em class="text-muted">N/A</em>' ?></p>
+                            <p class="detail-value"><?= htmlspecialchars($row['company']) ?: '<em class="text-muted">-</em>' ?></p>
                         </div>
                     </div>
                     <div class="col-md-6">

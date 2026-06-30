@@ -125,10 +125,10 @@ $pendingCount = $conn->query("SELECT COUNT(*) as c FROM invoice_edit_requests WH
                                         <?php while ($row = $result->fetch_assoc()): ?>
                                             <tr>
                                                 <td><?= $row['invoice_id'] ?></td>
-                                                <td><?= htmlspecialchars($row['invoice_ref_no'] ?? 'N/A') ?></td>
-                                                <td><?= htmlspecialchars($row['customer_name'] ?? 'N/A') ?></td>
+                                                <td><?= htmlspecialchars($row['invoice_ref_no'] ?? '-') ?></td>
+                                                <td><?= htmlspecialchars($row['customer_name'] ?? '-') ?></td>
                                                 <td>Rs. <?= htmlspecialchars(number_format((float)$row['total_amount'], 2)) ?></td>
-                                                <td><?= htmlspecialchars($row['requester_name'] ?? $row['requester_username'] ?? 'N/A') ?></td>
+                                                <td><?= htmlspecialchars($row['requester_name'] ?? $row['requester_username'] ?? '-') ?></td>
                                                 <td><?= htmlspecialchars(date('d/m/Y H:i', strtotime($row['created_at']))) ?></td>
                                                 <td style="max-width:250px;">
                                                     <?php if (!empty($row['reason'])): ?>
@@ -148,10 +148,10 @@ $pendingCount = $conn->query("SELECT COUNT(*) as c FROM invoice_edit_requests WH
                                                 </td>
                                                 <td>
                                                     <?php if ($row['status'] === 'approved'): ?>
-                                                        <?= htmlspecialchars($row['approver_name'] ?? 'N/A') ?>
+                                                        <?= htmlspecialchars($row['approver_name'] ?? '-') ?>
                                                         <small class="text-muted d-block"><?= $row['approved_at'] ? date('d/m/Y H:i', strtotime($row['approved_at'])) : '' ?></small>
                                                     <?php elseif ($row['status'] === 'rejected'): ?>
-                                                        <?= htmlspecialchars($row['rejector_name'] ?? 'N/A') ?>
+                                                        <?= htmlspecialchars($row['rejector_name'] ?? '-') ?>
                                                         <small class="text-muted d-block"><?= $row['rejected_at'] ? date('d/m/Y H:i', strtotime($row['rejected_at'])) : '' ?></small>
                                                     <?php else: ?>
                                                         <span class="text-muted">—</span>

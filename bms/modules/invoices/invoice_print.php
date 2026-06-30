@@ -329,10 +329,10 @@ if ($invoice_id > 0) {
                                                         Recipient Details :
                                                     </p>
                                                     <p class="fw-bold mb-1">
-                                                        <?= htmlspecialchars($invoice['customer_name'] ?? 'N/A') ?>
+                                                        <?= htmlspecialchars($invoice['customer_name'] ?? '-') ?>
                                                     </p>
                                                     <p class="text-muted mb-1">
-                                                        <?= nl2br(htmlspecialchars($invoice['customer_address'] ?? 'N/A')) ?>
+                                                        <?= nl2br(htmlspecialchars($invoice['customer_address'] ?? '-')) ?>
                                                     </p>
                                                     <p class="text-muted mb-1">
                                                         <?= htmlspecialchars($invoice['customer_email'] ?? '') ?>

@@ -188,7 +188,7 @@ $result = $conn->query($sql);
                                                 <th>Due Date</th>
                                                 <th>Amount</th>
                                                 <th>Status</th>
-                                                <th>Processed By</th>
+                                                <th>Paid By</th>
                                                 <th>Created By</th>
                                                 <th>Actions</th>
                                             </tr>
@@ -210,7 +210,7 @@ $result = $conn->query($sql);
                                                     <td>
                                                         <?php
                                                         $businessName = isset($row['customer_business_name']) ? htmlspecialchars($row['customer_business_name']) : '';
-                                                        $customerName = isset($row['customer_name']) ? htmlspecialchars($row['customer_name']) : 'N/A';
+                                                        $customerName = isset($row['customer_name']) ? htmlspecialchars($row['customer_name']) : '-';
                                                         $customerId = isset($row['customer_id']) ? htmlspecialchars($row['customer_id']) : '';
 
                                                         if ($businessName) {
@@ -261,7 +261,7 @@ $result = $conn->query($sql);
                                                         if (isset($row['pay_by']) && isset($row['paid_by_name'])) {
                                                             echo htmlspecialchars($row['paid_by_name']);
                                                         } else {
-                                                            echo 'N/A';
+                                                            echo '-';
                                                         }
                                                         ?>
                                                     </td>
@@ -270,7 +270,7 @@ $result = $conn->query($sql);
                                                         if (isset($row['created_by']) && isset($row['creator_name'])) {
                                                             echo htmlspecialchars($row['creator_name']);
                                                         } else {
-                                                            echo 'N/A';
+                                                            echo '-';
                                                         }
                                                         ?>
                                                     </td>

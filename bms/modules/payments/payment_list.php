@@ -28,7 +28,7 @@ $baseFrom = "FROM payments p
 
 $selectCols = "p.*, i.invoice_ref_no, i.total_amount, i.pay_status, i.currency,
                c.name as customer_name, c.business_name as customer_business_name,
-               u.name as processor_name";
+               u.name as paid_by_name";
 
 $conditions = [];
 
@@ -134,7 +134,7 @@ if ($pu) {
                                             value="<?= htmlspecialchars($filter_to_date) ?>">
                                     </div>
                                     <div class="col-md-2 col-lg-1">
-                                        <label class="form-label mb-1" style="font-size:11px;font-weight:600;color:#667085;">Processed By</label>
+                                        <label class="form-label mb-1" style="font-size:11px;font-weight:600;color:#667085;">Paid By</label>
                                         <select name="filter_processed_by" class="form-select">
                                             <option value="0">All</option>
                                             <?php foreach ($processedUsers as $u): ?>
@@ -169,7 +169,7 @@ if ($pu) {
                                         <th>Amount</th>
                                         <th>Method</th>
                                         <th>Date</th>
-                                        <th>Processed By</th>
+                                        <th>Paid By</th>
                                         <th>Slip</th>
                                     </tr>
                                 </thead>
@@ -190,7 +190,7 @@ if ($pu) {
                                                 <td>
                                                     <?php 
                                                     $biz = $row['customer_business_name'] ?? '';
-                                                    $name = $row['customer_name'] ?? 'N/A';
+                                                    $name = $row['customer_name'] ?? '-';
                                                     if ($biz) {
                                                         echo '<div class="fw-semibold">' . htmlspecialchars($biz) . '</div>';
                                                         echo '<div class="text-muted" style="font-size: 0.82rem;">' . htmlspecialchars($name) . '</div>';
@@ -202,9 +202,9 @@ if ($pu) {
                                                 <td>
                                                     <div class="amount-text"><?php echo number_format(floatval($row['amount_paid']), 2); ?> <span class="currency-symbol">(<?= $currencySymbol ?>)</span></div>
                                                 </td>
-                                                <td><?php echo htmlspecialchars($row['payment_method'] ?? 'N/A'); ?></td>
+                                                <td><?php echo htmlspecialchars($row['payment_method'] ?? '-'); ?></td>
                                                 <td><?php echo date('d/m/Y H:i', strtotime($row['payment_date'])); ?></td>
-                                                <td><?php echo htmlspecialchars($row['processor_name'] ?? 'N/A'); ?></td>
+                                                <td><?php echo htmlspecialchars($row['paid_by_name'] ?? '-'); ?></td>
                                                 <td>
                                                     <?php 
                                                     $slip = $row['slip'] ?? '';

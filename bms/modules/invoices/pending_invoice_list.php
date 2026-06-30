@@ -318,7 +318,7 @@ if ($result && $result->num_rows > 0) {
                                                     <td>
                                                         <?php
                                                         $businessName = isset($row['customer_business_name']) ? htmlspecialchars($row['customer_business_name']) : '';
-                                                        $customerName = isset($row['customer_name']) ? htmlspecialchars($row['customer_name']) : 'N/A';
+                                                        $customerName = isset($row['customer_name']) ? htmlspecialchars($row['customer_name']) : '-';
                                                         $customerId = isset($row['customer_id']) ? htmlspecialchars($row['customer_id']) : '';
 
                                                         if ($businessName) {
@@ -363,7 +363,7 @@ if ($result && $result->num_rows > 0) {
                                                         if (isset($row['created_by']) && isset($row['creator_name'])) {
                                                             echo htmlspecialchars($row['creator_name']);
                                                         } else {
-                                                            echo 'N/A';
+                                                            echo '-';
                                                         }
                                                         ?>
                                                     </td>

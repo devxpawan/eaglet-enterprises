@@ -141,7 +141,7 @@ if ($pu) {
                                                 value="<?= htmlspecialchars($filter_to_date) ?>">
                                         </div>
                                         <div class="col-md-2 col-lg-1">
-                                            <label class="form-label mb-1" style="font-size:11px;font-weight:600;color:#667085;">Processed By</label>
+                                            <label class="form-label mb-1" style="font-size:11px;font-weight:600;color:#667085;">Paid By</label>
                                             <select name="filter_processed_by" class="form-select">
                                                 <option value="0">All</option>
                                                 <?php foreach ($processedUsers as $u): ?>
@@ -176,7 +176,7 @@ if ($pu) {
                                                 <th>Due Date</th>
                                                 <th>Amount</th>
                                                 <th>Payment Method</th>
-                                                <th>Processed By</th>
+                                                <th>Paid By</th>
                                                 <th>Created By</th>
                                                 <th>Actions</th>
                                             </tr>
@@ -198,7 +198,7 @@ if ($pu) {
                                                     <td>
                                                         <?php
                                                         $businessName = isset($row['customer_business_name']) ? htmlspecialchars($row['customer_business_name']) : '';
-                                                        $customerName = isset($row['customer_name']) ? htmlspecialchars($row['customer_name']) : 'N/A';
+                                                        $customerName = isset($row['customer_name']) ? htmlspecialchars($row['customer_name']) : '-';
                                                         $customerId = isset($row['customer_id']) ? htmlspecialchars($row['customer_id']) : '';
 
                                                         if ($businessName) {
@@ -236,14 +236,14 @@ if ($pu) {
                                                         ?>
                                                     </td>
                                                     <td>
-                                                        <?= htmlspecialchars($row['payment_method'] ?? 'N/A') ?>
+                                                        <?= htmlspecialchars($row['payment_method'] ?? '-') ?>
                                                     </td>
                                                     <td>
                                                         <?php 
                                                         if (isset($row['pay_by']) && isset($row['paid_by_name'])) {
                                                             echo htmlspecialchars($row['paid_by_name']);
                                                         } else {
-                                                            echo 'N/A';
+                                                            echo '-';
                                                         }
                                                         ?>
                                                     </td>
@@ -252,7 +252,7 @@ if ($pu) {
                                                         if (isset($row['created_by']) && isset($row['creator_name'])) {
                                                             echo htmlspecialchars($row['creator_name']);
                                                         } else {
-                                                            echo 'N/A';
+                                                            echo '-';
                                                         }
                                                         ?>
                                                     </td>

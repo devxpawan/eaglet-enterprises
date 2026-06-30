@@ -93,7 +93,7 @@ if ($amount_paid <= 0) {
 
 // Get payment history
 $paymentHistory = [];
-$payStmt = $conn->prepare("SELECT p.*, u.name as processor_name FROM payments p LEFT JOIN users u ON p.pay_by = u.id WHERE p.invoice_id = ? ORDER BY p.payment_date ASC");
+$payStmt = $conn->prepare("SELECT p.*, u.name as paid_by_name FROM payments p LEFT JOIN users u ON p.pay_by = u.id WHERE p.invoice_id = ? ORDER BY p.payment_date ASC");
 $payStmt->bind_param("i", $invoice_id);
 $payStmt->execute();
 $payResult = $payStmt->get_result();
@@ -888,7 +888,7 @@ $quotation_ref = !empty($invoice['quotation_ref_no']) ? $invoice['quotation_ref_
                         <th width="20%">Date</th>
                         <th width="25%">Method</th>
                         <th width="20%" style="text-align: right;">Amount</th>
-                        <th width="30%">Processed By</th>
+                        <th width="30%">Paid By</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -896,9 +896,9 @@ $quotation_ref = !empty($invoice['quotation_ref_no']) ? $invoice['quotation_ref_
                     <tr>
                         <td style="text-align: center;"><?php echo $p++; ?></td>
                         <td><?php echo date('d/m/Y H:i', strtotime($pay['payment_date'])); ?></td>
-                        <td><?php echo htmlspecialchars($pay['payment_method'] ?? 'N/A'); ?></td>
+                        <td><?php echo htmlspecialchars($pay['payment_method'] ?? '-'); ?></td>
                         <td style="text-align: right;"><?php echo number_format(floatval($pay['amount_paid']), 2); ?></td>
-                        <td><?php echo htmlspecialchars($pay['processor_name'] ?? 'N/A'); ?></td>
+                        <td><?php echo htmlspecialchars($pay['paid_by_name'] ?? '-'); ?></td>
                     </tr>
                     <?php endforeach; ?>
                 </tbody>
@@ -937,7 +937,7 @@ $quotation_ref = !empty($invoice['quotation_ref_no']) ? $invoice['quotation_ref_
                                 <?php echo ucfirst(htmlspecialchars($cm['status'])); ?>
                             </span>
                         </td>
-                        <td><?php echo htmlspecialchars($cm['creator_name'] ?? 'N/A'); ?></td>
+                        <td><?php echo htmlspecialchars($cm['creator_name'] ?? '-'); ?></td>
                     </tr>
                     <?php endforeach; ?>
                 </tbody>

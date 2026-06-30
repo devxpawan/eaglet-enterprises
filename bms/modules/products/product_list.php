@@ -218,7 +218,7 @@ $result = $conn->query($sql);
                                                         } elseif (isset($row['price']) && isset($row['currency']) && $row['currency'] == 'LKR') {
                                                             echo '<span class="product-price">' . number_format($row['price'], 2) . '</span><span class="product-currency"> LKR</span>';
                                                         } else {
-                                                            echo '<span class="product-currency">N/A</span>';
+                                                            echo '<span class="product-currency">-</span>';
                                                         }
                                                         ?>
                                                     </td>
@@ -310,7 +310,7 @@ $result = $conn->query($sql);
                                                                             } elseif (isset($row['price']) && isset($row['currency']) && $row['currency'] == 'LKR') {
                                                                                 echo number_format($row['price'], 2) . ' LKR';
                                                                             } else {
-                                                                                echo '<em class="text-muted">N/A</em>';
+                                                                                echo '<em class="text-muted">-</em>';
                                                                             }
                                                                             ?>
                                                                         </p>

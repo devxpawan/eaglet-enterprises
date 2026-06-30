@@ -114,7 +114,7 @@ if ($hasApprovedRequest) {
                                 </div>
                                 <div>
                                     <div class="label">Customer</div>
-                                    <div class="value"><?= htmlspecialchars($invoice['customer_name'] ?? 'N/A') ?></div>
+                                    <div class="value"><?= htmlspecialchars($invoice['customer_name'] ?? '-') ?></div>
                                 </div>
                                 <div>
                                     <div class="label">Issue Date</div>

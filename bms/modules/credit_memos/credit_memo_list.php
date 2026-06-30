@@ -164,7 +164,7 @@ $result = $conn->query($sql);
                                                 <td>
                                                     <?php
                                                     $biz = $row['customer_business_name'] ?? '';
-                                                    $name = $row['customer_name'] ?? 'N/A';
+                                                    $name = $row['customer_name'] ?? '-';
                                                     if ($biz) {
                                                         echo '<div class="fw-semibold">' . htmlspecialchars($biz) . '</div>';
                                                         echo '<div class="text-muted" style="font-size: 0.82rem;">' . htmlspecialchars($name) . '</div>';
@@ -179,7 +179,7 @@ $result = $conn->query($sql);
                                                 <td><?php echo !empty($row['reason']) ? htmlspecialchars($row['reason']) : '<span class="text-muted">—</span>'; ?></td>
                                                 <td><span class="badge-soft <?= $statusBadge ?>"><?php echo ucfirst(htmlspecialchars($row['status'])); ?></span></td>
                                                 <td><?php echo date('d/m/Y', strtotime($row['created_at'])); ?></td>
-                                                <td><?php echo htmlspecialchars($row['creator_name'] ?? 'N/A'); ?></td>
+                                                <td><?php echo htmlspecialchars($row['creator_name'] ?? '-'); ?></td>
                                             </tr>
                                         <?php endwhile; ?>
                                     <?php else: ?>

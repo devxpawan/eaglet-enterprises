@@ -156,7 +156,7 @@ $result = $conn->query($sql);
                                                         <div class="text-muted small"><?php echo htmlspecialchars($row['customer_name']); ?></div>
                                                     </td>
                                                     <td><?php echo date('d/m/Y', strtotime($row['quotation_date'])); ?></td>
-                                                    <td><?php echo $row['expiry_date'] ? date('d/m/Y', strtotime($row['expiry_date'])) : 'N/A'; ?></td>
+                                                    <td><?php echo $row['expiry_date'] ? date('d/m/Y', strtotime($row['expiry_date'])) : '-'; ?></td>
                                                     <td>
                                                         <div class="amount-text"><?php echo number_format($row['total_amount'], 2); ?> <span class="currency-symbol">(<?php echo $row['currency'] == 'usd' ? '$' : 'Rs'; ?>)</span></div>
                                                     </td>
