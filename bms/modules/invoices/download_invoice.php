@@ -23,6 +23,7 @@ $invoice_id = $_GET['id'];
 $show_payment_details = isset($_GET['show_payment']) && $_GET['show_payment'] === 'true';
 $format = isset($_GET['format']) ? $_GET['format'] : 'view'; // 'view' or 'html' (for modal)
 $download = isset($_GET['download']) && $_GET['download'] === 'true'; // Trigger actual download
+$view_mode = isset($_GET['view_mode']) ? $_GET['view_mode'] : 'statement';
 
 // Fetch invoice details from database with individual item discounts
 $invoice_query = "SELECT i.*, i.pay_status AS invoice_pay_status, c.name as customer_name, 
@@ -112,6 +113,7 @@ while ($cmRow = $cmResult->fetch_assoc()) {
 
 // Company information
 $company = getCompanyInfo($conn);
+$isStatementApplicable = ($invoicePayStatus === 'partial' || count($paymentHistory) > 1);
 
 // Function to get badge class for payment status
 function getPaymentStatusBadge($status)
@@ -310,36 +312,35 @@ $quotation_ref = !empty($invoice['quotation_ref_no']) ? $invoice['quotation_ref_
             margin-bottom: 5px;
         }
 
-        .header-spacer-cell {
-            width: 33%;
-            vertical-align: middle;
-        }
-
         .header-logo-cell {
-            width: 33%;
+            width: 25%;
             vertical-align: middle;
-            text-align: right;
+            text-align: left;
         }
 
         .header-logo-cell img {
-            max-height: 60px;
-            max-width: 120px;
+            max-height: 70px;
+            max-width: 140px;
         }
 
         .header-title-cell {
-            width: 34%;
+            width: 50%;
             text-align: center;
             vertical-align: middle;
         }
 
         .header-title-cell h1 {
             color: #1B1C56;
-            font-size: 18px;
-            font-weight: 800;
+            font-size: 22px;
+            font-weight: 900;
             margin: 0;
-            text-decoration: underline;
             letter-spacing: 0.5px;
             text-transform: uppercase;
+        }
+
+        .header-spacer-cell {
+            width: 25%;
+            vertical-align: middle;
         }
 
         .header-divider {
@@ -358,7 +359,6 @@ $quotation_ref = !empty($invoice['quotation_ref_no']) ? $invoice['quotation_ref_
             font-size: 15px;
             font-weight: bold;
             color: #1B1C56;
-            text-decoration: underline;
             margin: 0;
             text-transform: uppercase;
             letter-spacing: 1.5px;
@@ -402,6 +402,13 @@ $quotation_ref = !empty($invoice['quotation_ref_no']) ? $invoice['quotation_ref_
             line-height: 1.4;
         }
 
+        .subject-line {
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #1B1C56;
+        }
+
         .product-table {
             width: 100%;
             border-collapse: collapse;
@@ -425,7 +432,7 @@ $quotation_ref = !empty($invoice['quotation_ref_no']) ? $invoice['quotation_ref_
 
         .totals-table-wrapper {
             float: right;
-            width: 300px;
+            width: 40%;
             margin-bottom: 8px;
         }
 
@@ -474,11 +481,21 @@ $quotation_ref = !empty($invoice['quotation_ref_no']) ? $invoice['quotation_ref_
         }
 
         .signature-section {
-            margin-top: 15px;
-            margin-bottom: 20px;
+            margin-top: 10px;
+            margin-bottom: 10px;
             width: 100%;
             display: flex;
             justify-content: space-between;
+            align-items: center;
+        }
+
+        .company-footer {
+            border-top: 1px solid #1B1C56;
+            padding: 3px 0;
+            font-size: 8.5px;
+            text-align: center;
+            clear: both;
+            color: #555;
         }
 
         .signature-col-left {
@@ -487,37 +504,25 @@ $quotation_ref = !empty($invoice['quotation_ref_no']) ? $invoice['quotation_ref_
 
         .signature-col-right {
             width: 45%;
-            text-align: right;
+            padding-top: 18px;
+            text-align: center;
         }
 
         .signature-placeholder {
-            margin-top: 20px;
+            margin-top: 50px;
             border-top: 1px dashed #333;
             width: 180px;
             padding-top: 3px;
             font-size: 10px;
+            text-align:center;
         }
 
         .signature-placeholder-right {
-            margin-top: 20px;
+            margin-top: 50px;
+            border-top: 1px dashed #333;
             width: 180px;
             padding-top: 3px;
             font-size: 10px;
-            display: inline-block;
-            text-align: left;
-        }
-
-        .footer-line {
-            border-bottom: 1.5px solid #1B1C56;
-            margin-top: 10px;
-            margin-bottom: 5px;
-        }
-
-        .footer-text {
-            text-align: center;
-            font-size: 9px;
-            color: #555;
-            line-height: 1.3;
         }
 
         .control-buttons {
@@ -554,10 +559,6 @@ $quotation_ref = !empty($invoice['quotation_ref_no']) ? $invoice['quotation_ref_
             background-color: #dc3545;
         }
 
-        .print-footer {
-            /* normal screen: just flows in place */
-        }
-
         @media print {
             @page {
                 size: A4;
@@ -572,8 +573,7 @@ $quotation_ref = !empty($invoice['quotation_ref_no']) ? $invoice['quotation_ref_
 
             .invoice-container {
                 box-shadow: none;
-                padding: 0;
-                padding-bottom: 60px; /* space for the fixed footer */
+                padding: 0 0 35px 0;
                 margin: 0;
                 width: 100%;
                 max-width: 100%;
@@ -581,6 +581,19 @@ $quotation_ref = !empty($invoice['quotation_ref_no']) ? $invoice['quotation_ref_
 
             .control-buttons {
                 display: none !important;
+            }
+
+            .company-footer {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                width: 100%;
+                font-size: 8px;
+                background: #fff;
+                z-index: 1000;
+                padding: 3px 0.3in;
+                box-sizing: border-box;
             }
 
             .header-table, .info-table {
@@ -605,11 +618,6 @@ $quotation_ref = !empty($invoice['quotation_ref_no']) ? $invoice['quotation_ref_
             .product-table tbody tr {
                 page-break-inside: auto;
                 break-inside: auto;
-            }
-
-            .product-table tr {
-                page-break-inside: avoid;
-                break-inside: avoid;
             }
 
             .totals-table-wrapper {
@@ -642,15 +650,6 @@ $quotation_ref = !empty($invoice['quotation_ref_no']) ? $invoice['quotation_ref_
                 break-inside: avoid;
             }
 
-            .print-footer {
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                background: white;
-                padding: 0 0.3in;
-            }
-
             .payment-badge {
                 background-color: #e0e0e0 !important;
                 color: #000 !important;
@@ -665,9 +664,12 @@ $quotation_ref = !empty($invoice['quotation_ref_no']) ? $invoice['quotation_ref_
             }
         }
 
-        .footer-group-container {
-            page-break-inside: avoid;
-            break-inside: avoid;
+
+        .original-invoice-mode .statement-section {
+            display: none !important;
+        }
+        .original-invoice-mode .original-section {
+            display: inline-block !important;
         }
     </style>
 <?php if (!$isModalView): ?>
@@ -675,23 +677,29 @@ $quotation_ref = !empty($invoice['quotation_ref_no']) ? $invoice['quotation_ref_
 
 <body>
 <?php endif; ?>
-    <div class="invoice-container">
-        <?php if ($showButtons): ?>
-            <div class="control-buttons">
-                <?php if ($show_payment_details && $invoicePayStatus != 'paid'): ?>
-                    <button id="markAsPaidBtn" class="btn btn-success">Mark as Paid</button>
+    <div class="invoice-container <?php echo $view_mode === 'original' ? 'original-invoice-mode' : ''; ?>">
+        <?php if ($showButtons || $isModalView): ?>
+            <div class="control-buttons d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <?php if ($showButtons && $show_payment_details && $invoicePayStatus != 'paid'): ?>
+                        <button id="markAsPaidBtn" class="btn btn-success">Mark as Paid</button>
+                    <?php endif; ?>
+                    <?php if ($showButtons): ?>
+                        <button onclick="window.print()" class="btn btn-primary">Print</button>
+                    <?php endif; ?>
+                </div>
+                <?php if ($isStatementApplicable): ?>
+                <div class="btn-group" role="group" aria-label="Invoice view mode">
+                    <button type="button" class="btn btn-outline-primary btn-sm <?php echo $view_mode !== 'original' ? 'active' : ''; ?>" id="btn-view-statement-dl" onclick="setViewModeDL('statement')">Statement View</button>
+                    <button type="button" class="btn btn-outline-primary btn-sm <?php echo $view_mode === 'original' ? 'active' : ''; ?>" id="btn-view-original-dl" onclick="setViewModeDL('original')">Original Invoice View</button>
+                </div>
                 <?php endif; ?>
-                <button onclick="window.print()" class="btn btn-primary">Print</button>
             </div>
         <?php endif; ?>
 
         <!-- Header -->
         <table class="header-table">
             <tr>
-                <td class="header-spacer-cell"></td>
-                <td class="header-title-cell">
-                    <h1 style="white-space: nowrap;"><?php echo htmlspecialchars($company['company_name']); ?></h1>
-                </td>
                 <td class="header-logo-cell">
                     <?php if (!empty($company['logo_path']) && file_exists(BASE_PATH . $company['logo_path'])): ?>
                         <img src="<?= BASE_URL . htmlspecialchars($company['logo_path']) ?>" alt="Logo">
@@ -699,6 +707,10 @@ $quotation_ref = !empty($invoice['quotation_ref_no']) ? $invoice['quotation_ref_
                         <img src="<?= BASE_URL ?>assets/img/logo.png" onerror="this.style.display='none';" alt="">
                     <?php endif; ?>
                 </td>
+                <td class="header-title-cell">
+                    <h1 style="white-space: nowrap;"><?php echo htmlspecialchars($company['company_name']); ?></h1>
+                </td>
+                <td class="header-spacer-cell"></td>
             </tr>
         </table>
         
@@ -706,7 +718,14 @@ $quotation_ref = !empty($invoice['quotation_ref_no']) ? $invoice['quotation_ref_
 
         <!-- Title -->
         <div class="invoice-title-centered">
-            <h2>INVOICE</h2>
+            <h2>
+                <?php if ($isStatementApplicable): ?>
+                    <span class="original-section" style="display: none;">INVOICE</span>
+                    <span class="statement-section">STATEMENT</span>
+                <?php else: ?>
+                    <span>INVOICE</span>
+                <?php endif; ?>
+            </h2>
             <?php if (isset($invoice['status']) && $invoice['status'] === 'cancel'): ?>
                 <div class="watermark">CANCELLED</div>
             <?php elseif (isset($invoicePayStatus) && $invoicePayStatus === 'paid'): ?>
@@ -735,14 +754,24 @@ $quotation_ref = !empty($invoice['quotation_ref_no']) ? $invoice['quotation_ref_
                     <?php if (!empty($quotation_ref)): ?>
                         <strong>From Quotation :</strong> <?php echo htmlspecialchars($quotation_ref); ?><br>
                     <?php endif; ?>
-                    <?php if ($invoicePayStatus == 'partial' || $invoice['status'] == 'pending'): ?>
-                    <span class="payment-badge <?php echo getPaymentStatusBadge($invoicePayStatus); ?>">
+                    <!-- <?php if ($invoicePayStatus == 'partial' || $invoice['status'] == 'pending'): ?>
+                    <span class="payment-badge <?php echo getPaymentStatusBadge($invoicePayStatus); ?> statement-section">
                         <?php echo ucfirst($invoicePayStatus); ?>
                     </span>
-                    <?php endif; ?>
+                    <span class="payment-badge bg-danger original-section" style="display: none;">
+                        Unpaid
+                    </span>
+                    <?php endif; ?> -->
                 </td>
             </tr>
         </table>
+
+        <!-- Subject Line -->
+        <?php if (!empty($invoice['subject'])): ?>
+            <div class="subject-line">
+                Subject : <?php echo htmlspecialchars($invoice['subject']); ?>
+            </div>
+        <?php endif; ?>
 
         <!-- Table of Products -->
         <table class="product-table">
@@ -827,10 +856,13 @@ $quotation_ref = !empty($invoice['quotation_ref_no']) ? $invoice['quotation_ref_
             <?php endif; ?>
         </div>
 
+        <!-- Footer Group (Payment Summary, History, Notes, Bank, Signatures) stays together -->
+        <div class="footer-group-container">
+
         <!-- Payment Summary -->
-        <?php if ($amount_paid > 0): ?>
-        <div style="clear: both; margin-bottom: 10px; padding-top: 5px;">
-            <table class="totals-table" style="width: 300px; float: right;">
+        <?php if ($amount_paid > 0 && $isStatementApplicable): ?>
+        <div class="statement-section" style="clear: both; margin-bottom: 10px; padding-top: 5px;">
+            <table class="totals-table" style="width: 40%; float: right;">
                 <tr>
                     <td width="55%">Paid</td>
                     <td width="45%" style="text-align: right;"><?php echo $currencySymbol . ' ' . number_format($amount_paid, 2); ?></td>
@@ -846,8 +878,8 @@ $quotation_ref = !empty($invoice['quotation_ref_no']) ? $invoice['quotation_ref_
         <?php endif; ?>
 
         <!-- Payment History -->
-        <?php if (!empty($paymentHistory) && $invoicePayStatus == 'partial'): ?>
-        <div style="clear: both; margin-bottom: 12px;">
+        <?php if (!empty($paymentHistory) && $isStatementApplicable): ?>
+        <div class="statement-section" style="clear: both; margin-bottom: 12px;">
             <strong style="font-size: 11px;">Payment History</strong>
             <table class="product-table" style="margin-top: 4px; font-size: 9.5px;">
                 <thead>
@@ -876,7 +908,7 @@ $quotation_ref = !empty($invoice['quotation_ref_no']) ? $invoice['quotation_ref_
 
         <!-- Credit Memos -->
         <?php if (!empty($creditMemos)): ?>
-        <div style="clear: both; margin-bottom: 12px;">
+        <div class="statement-section" style="clear: both; margin-bottom: 12px;">
             <strong style="font-size: 11px;">Credit Memos</strong>
             <table class="product-table" style="margin-top: 4px; font-size: 9.5px;">
                 <thead>
@@ -918,9 +950,6 @@ $quotation_ref = !empty($invoice['quotation_ref_no']) ? $invoice['quotation_ref_
             <strong>Notes / Terms :</strong>
             <p style="margin-top: 5px; line-height: 1.5; white-space: pre-line;"><?php echo !empty($invoice['notes']) ? htmlspecialchars($invoice['notes']) : 'Thank you for choosing our services. Please review the invoice details and ensure payment is completed by the due date. If there are any discrepancies, kindly inform us immediately.'; ?></p>
         </div>
-
-        <!-- Footer Group (Bank, Signatures, Footer Address) to prevent middle-page split -->
-        <div class="footer-group-container">
             <!-- Bank Details Section -->
             <?php 
             // Bank details shown if unpaid or partial
@@ -951,31 +980,47 @@ $quotation_ref = !empty($invoice['quotation_ref_no']) ? $invoice['quotation_ref_
                 </div>
                 <div class="signature-col-right">
                     <div class="signature-placeholder-right">
-                        Accepted By - ........................................
+                        Accepted By
                     </div>
-                    <div class="signature-placeholder-right" style="margin-top: 15px;">
-                        Signature & Date - ................................
+                    <div class="signature-placeholder-right">
+                        Signature & Date
                     </div>
                 </div>
             </div>
 
         </div>
 
-        <!-- Footer (fixed to bottom of paper when printing) -->
-        <div class="print-footer">
-            <div class="footer-line"></div>
-            <div class="footer-text">
-                <?php 
-                $footer_addr = $company['address'] ? htmlspecialchars(str_replace("\n", ", ", $company['address'])) : '';
-                echo $footer_addr;
-                if (!empty($company['phone']) || !empty($company['email'])):
-                    echo "<br>";
-                    if ($company['phone']) echo "Hot line / Tel: " . htmlspecialchars($company['phone']) . " ";
-                    if ($company['email']) echo "| E-Mail: " . htmlspecialchars($company['email']) . " ";
-                endif;
-                ?>
-            </div>
-        </div>
+        <script>
+            function setViewModeDL(mode) {
+                const container = document.querySelector('#viewInvoiceModal .invoice-container') || document.querySelector('.invoice-container');
+                const btnStatement = document.getElementById('btn-view-statement-dl');
+                const btnOriginal = document.getElementById('btn-view-original-dl');
+                
+                if (mode === 'original') {
+                    container.classList.add('original-invoice-mode');
+                    if (btnStatement) btnStatement.classList.remove('active');
+                    if (btnOriginal) btnOriginal.classList.add('active');
+                } else {
+                    container.classList.remove('original-invoice-mode');
+                    if (btnStatement) btnStatement.classList.add('active');
+                    if (btnOriginal) btnOriginal.classList.remove('active');
+                }
+            }
+        </script>
+    </div>
+
+    <!-- One-line Company Footer (repeats at bottom of every printed page) -->
+    <div class="company-footer">
+        <?php echo htmlspecialchars($company['company_name']); ?>
+        <?php if (!empty($company['address'])): ?>
+            &nbsp;|&nbsp; <?php echo htmlspecialchars($company['address']); ?>
+        <?php endif; ?>
+        <?php if (!empty($company['phone'])): ?>
+            &nbsp;|&nbsp; Tel: <?php echo htmlspecialchars($company['phone']); ?>
+        <?php endif; ?>
+        <?php if (!empty($company['email'])): ?>
+            &nbsp;|&nbsp; Email: <?php echo htmlspecialchars($company['email']); ?>
+        <?php endif; ?>
     </div>
 
     <?php if (!$isModalView): ?>

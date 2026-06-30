@@ -512,7 +512,7 @@ $rev_label = ($quotation['revision_no'] == 0) ? 'Original' : 'R' . $quotation['r
                                     <div class="col-12">
                                         <div>
                                             <label class="form-label">Subject</label>
-                                            <input type="text" class="form-control" name="subject" placeholder="e.g. Repair of passenger elevator"
+                                            <input type="text" class="form-control" name="subject" placeholder="Enter quotation subject or title"
                                                 value="<?php echo htmlspecialchars($quotation['subject'] ?? ''); ?>">
                                         </div>
                                     </div>

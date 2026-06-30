@@ -475,9 +475,23 @@ $isModalView = ($format === 'html');
         <?php endif; ?>
 
         <!-- Company Header -->
-        <div class="company-header-centered">
-            <h1><?php echo htmlspecialchars($company['company_name']); ?></h1>
-        </div>
+        <table class="header-table" style="width: 100%; border-collapse: collapse; margin-bottom: 5px;">
+            <tr>
+                <td style="width: 25%; vertical-align: middle; text-align: left;">
+                    <?php if (!empty($company['logo_path']) && file_exists(BASE_PATH . $company['logo_path'])): ?>
+                        <img src="<?= BASE_URL . htmlspecialchars($company['logo_path']) ?>" alt="Logo" style="max-height: 70px; max-width: 140px;">
+                    <?php else: ?>
+                        <img src="<?= BASE_URL ?>assets/img/logo.png" onerror="this.style.display='none';" alt="" style="max-height: 70px; max-width: 140px;">
+                    <?php endif; ?>
+                </td>
+                <td style="width: 50%; text-align: center; vertical-align: middle;">
+                    <h1 style="color: #1B1C56; font-size: 22px; font-weight: 900; margin: 0; letter-spacing: 0.5px; text-transform: uppercase; white-space: nowrap;">
+                        <?php echo htmlspecialchars($company['company_name']); ?>
+                    </h1>
+                </td>
+                <td style="width: 25%;"></td>
+            </tr>
+        </table>
         <div class="header-divider-blue"></div>
 
         <!-- Title and Watermark -->
@@ -585,21 +599,21 @@ $isModalView = ($format === 'html');
                     <td colspan="2" class="table-words-cell">
                         <?php echo htmlspecialchars($grand_total_words); ?>
                     </td>
-                    <td colspan="2" style="padding: 0; border: none; vertical-align: top;">
+                    <td colspan="2" style="padding: 0; border: 1.5px solid #333; vertical-align: top;">
                         <table class="totals-sidebar-table">
                             <tr>
-                                <td width="43%" style="border-top: none; border-left: none;">Subtotal</td>
-                                <td width="57%" style="text-align: right; border-top: none; border-right: none;"><?php echo $currencySymbol . ' -' . number_format($cm_subtotal, 2); ?></td>
+                                <td width="43%">Subtotal</td>
+                                <td width="57%" style="text-align: right;"><?php echo $currencySymbol . ' -' . number_format($cm_subtotal, 2); ?></td>
                             </tr>
                             <?php if ($cm_vat > 0): ?>
                                 <tr>
-                                    <td style="border-left: none;">Sales Tax (<?php echo number_format($vat_pct, 1); ?>%)</td>
-                                    <td style="text-align: right; border-right: none;"><?php echo $currencySymbol . ' -' . number_format($cm_vat, 2); ?></td>
+                                    <td>Sales Tax (<?php echo number_format($vat_pct, 1); ?>%)</td>
+                                    <td style="text-align: right;"><?php echo $currencySymbol . ' -' . number_format($cm_vat, 2); ?></td>
                                 </tr>
                             <?php endif; ?>
                             <tr>
-                                <td style="border-left: none; border-bottom: none;">Total</td>
-                                <td style="text-align: right; border-right: none; border-bottom: none;"><?php echo $currencySymbol . ' -' . number_format($credit_memo_amount, 2); ?></td>
+                                <td>Total</td>
+                                <td style="text-align: right;"><?php echo $currencySymbol . ' -' . number_format($credit_memo_amount, 2); ?></td>
                             </tr>
                         </table>
                     </td>

@@ -563,9 +563,6 @@ require_once __DIR__ . '/../config/paths.php';
                         <?php if (hasAccess('price_lists.view_all')): ?>
                         <a class="nav-link" href="<?= BASE_URL ?>modules/price-lists/price_list.php" id="all-price-lists-link">All Price Lists</a>
                         <?php endif; ?>
-                        <?php if (hasAccess('price_lists.manage_assets')): ?>
-                        <a class="nav-link" href="<?= BASE_URL ?>modules/price-lists/manage_assets.php" id="manage-assets-link">Manage Assets</a>
-                        <?php endif; ?>
                     </nav>
                 </div>
                 <?php endif; ?>

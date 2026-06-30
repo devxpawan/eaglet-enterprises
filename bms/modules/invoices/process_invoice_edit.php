@@ -140,6 +140,7 @@ try {
 
     $invoice_date = $_POST['invoice_date'] ?? date('Y-m-d');
     $due_date = !empty($_POST['due_date']) ? $_POST['due_date'] : date('Y-m-d', strtotime('+30 days'));
+    $subject = !empty($_POST['subject']) ? trim($_POST['subject']) : null;
     $notes = $_POST['notes'] ?? '';
     $currency = 'lkr';
 
@@ -203,6 +204,7 @@ try {
         customer_id = ?,
         issue_date = ?,
         due_date = ?,
+        subject = ?,
         subtotal = ?,
         discount = ?,
         vat = ?,
@@ -213,10 +215,11 @@ try {
 
     $stmt = $conn->prepare($updateInvoiceSql);
     $stmt->bind_param(
-        "issddddssi",
+        "isssddddssi",
         $customer_id,
         $invoice_date,
         $due_date,
+        $subject,
         $subtotal,
         $total_discount,
         $vat_amount,

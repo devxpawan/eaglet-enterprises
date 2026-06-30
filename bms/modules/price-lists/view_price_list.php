@@ -24,17 +24,17 @@ if (!$price_list) {
     die("Price list not found.");
 }
 
-// Fetch Items Grouped by Asset
-$itemSql = "SELECT pli.*, d.name as asset_name 
+// Fetch Items Grouped by Asset Name
+$itemSql = "SELECT pli.* 
             FROM price_list_items pli 
-            LEFT JOIN assets d ON pli.asset_id = d.id 
             WHERE pli.price_list_id = $id 
-            ORDER BY d.name, pli.id";
+            ORDER BY pli.asset_name, pli.id";
 $itemResult = $conn->query($itemSql);
 
 $itemsByAsset = [];
 while ($row = $itemResult->fetch_assoc()) {
-    $itemsByAsset[$row['asset_name']][] = $row;
+    $assetName = $row['asset_name'] ?? '';
+    $itemsByAsset[$assetName][] = $row;
 }
 
 // Fetch customer info if associated
@@ -95,36 +95,35 @@ $isModalView = ($format === 'html');
             margin-bottom: 5px;
         }
 
-        .header-spacer-cell {
-            width: 33%;
-            vertical-align: middle;
-        }
-
         .header-logo-cell {
-            width: 33%;
+            width: 25%;
             vertical-align: middle;
-            text-align: right;
+            text-align: left;
         }
 
         .header-logo-cell img {
-            max-height: 60px;
-            max-width: 120px;
+            max-height: 70px;
+            max-width: 140px;
         }
 
         .header-title-cell {
-            width: 34%;
+            width: 50%;
             text-align: center;
             vertical-align: middle;
         }
 
         .header-title-cell h1 {
             color: #1B1C56;
-            font-size: 18px;
-            font-weight: 800;
+            font-size: 22px;
+            font-weight: 900;
             margin: 0;
-            text-decoration: underline;
             letter-spacing: 0.5px;
             text-transform: uppercase;
+        }
+
+        .header-spacer-cell {
+            width: 25%;
+            vertical-align: middle;
         }
 
         .header-divider {
@@ -142,7 +141,6 @@ $isModalView = ($format === 'html');
             font-size: 15px;
             font-weight: bold;
             color: #1B1C56;
-            text-decoration: underline;
             margin: 0;
             text-transform: uppercase;
             letter-spacing: 1.5px;
@@ -191,15 +189,15 @@ $isModalView = ($format === 'html');
         }
 
         .asset-header {
-            background: #f8fafc;
-            padding: 5px 8px;
-            border-left: 3px solid #1B1C56;
-            margin-top: 10px;
-            margin-bottom: 5px;
-            font-weight: bold;
-            font-size: 11px;
-            color: #1B1C56;
-        }
+    background: #f8fafc;
+    padding: 3px 6px;
+    border-left: 2px solid #1B1C56;
+    margin: 6px 0 3px;
+    font-weight: 600;
+    font-size: 10px;
+    color: #1B1C56;
+    line-height: 1.2;
+}
 
         .notes-section {
             margin-bottom: 10px;
@@ -209,19 +207,6 @@ $isModalView = ($format === 'html');
         .notes-section strong {
             display: block;
             margin-bottom: 3px;
-        }
-
-        .footer-line {
-            border-bottom: 1.5px solid #1B1C56;
-            margin-top: 10px;
-            margin-bottom: 5px;
-        }
-
-        .footer-text {
-            text-align: center;
-            font-size: 9px;
-            color: #555;
-            line-height: 1.3;
         }
 
         .control-buttons {
@@ -235,13 +220,18 @@ $isModalView = ($format === 'html');
             cursor: pointer;
         }
 
+        .company-footer {
+            border-top: 1px solid #1B1C56;
+            padding: 3px 0;
+            font-size: 8.5px;
+            text-align: center;
+            clear: both;
+            color: #555;
+        }
+
         .footer-group-container {
             page-break-inside: avoid;
             break-inside: avoid;
-        }
-
-        .print-footer {
-            /* normal screen: just flows in place */
         }
 
         @media print {
@@ -258,8 +248,7 @@ $isModalView = ($format === 'html');
 
             .price-list-container {
                 box-shadow: none;
-                padding: 0;
-                padding-bottom: 60px;
+                padding: 0 0 35px 0;
                 margin: 0;
                 width: 100%;
                 max-width: 100%;
@@ -269,15 +258,28 @@ $isModalView = ($format === 'html');
                 display: none !important;
             }
 
-            .header-table, .info-table, .product-table, .notes-section,
-            .signature-section {
+            .header-table, .info-table, .asset-header {
                 page-break-inside: avoid;
                 break-inside: avoid;
             }
 
-            .product-table tr {
-                page-break-inside: avoid;
-                break-inside: avoid;
+            .product-table {
+                font-size: 11px;
+            }
+
+            .product-table thead {
+                display: table-header-group;
+            }
+
+            .product-table thead tr {
+                background-color: #f8f9fa !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .product-table tbody tr {
+                page-break-inside: auto;
+                break-inside: auto;
             }
 
             .footer-group-container {
@@ -285,13 +287,17 @@ $isModalView = ($format === 'html');
                 break-inside: avoid;
             }
 
-            .print-footer {
+            .company-footer {
                 position: fixed;
                 bottom: 0;
                 left: 0;
                 right: 0;
-                background: white;
-                padding: 0 0.3in;
+                width: 100%;
+                font-size: 8px;
+                background: #fff;
+                z-index: 1000;
+                padding: 3px 0.3in;
+                box-sizing: border-box;
             }
         }
     </style>
@@ -309,10 +315,6 @@ $isModalView = ($format === 'html');
 
         <table class="header-table">
             <tr>
-                <td class="header-spacer-cell"></td>
-                <td class="header-title-cell">
-                    <h1 style="white-space: nowrap;"><?= htmlspecialchars($company['company_name']) ?></h1>
-                </td>
                 <td class="header-logo-cell">
                     <?php if (!empty($company['logo_path']) && file_exists(BASE_PATH . $company['logo_path'])): ?>
                         <img src="<?= BASE_URL . htmlspecialchars($company['logo_path']) ?>" alt="Logo">
@@ -320,6 +322,10 @@ $isModalView = ($format === 'html');
                         <img src="<?= BASE_URL ?>assets/img/logo.png" onerror="this.style.display='none';" alt="">
                     <?php endif; ?>
                 </td>
+                <td class="header-title-cell">
+                    <h1 style="white-space: nowrap;"><?= htmlspecialchars($company['company_name']) ?></h1>
+                </td>
+                <td class="header-spacer-cell"></td>
             </tr>
         </table>
 
@@ -356,7 +362,9 @@ $isModalView = ($format === 'html');
         </table>
 
         <?php foreach ($itemsByAsset as $assetName => $items): ?>
+            <?php if (!empty($assetName)): ?>
             <div class="asset-header"><?= htmlspecialchars($assetName) ?></div>
+            <?php endif; ?>
             <table class="product-table">
                 <thead>
                     <tr>
@@ -380,8 +388,9 @@ $isModalView = ($format === 'html');
             </table>
         <?php endforeach; ?>
 
+        <div class="footer-group-container">
         <?php if (!empty($price_list['payment_terms']) || !empty($price_list['terms_conditions']) || !empty($price_list['notes'])): ?>
-            <div class="notes-section">
+            <div class="notes-section" style="margin-bottom: 25px;">
                 <strong>Notes / Terms :</strong>
                 <?php if (!empty($price_list['payment_terms'])): ?>
                     <p style="margin-top: 5px; line-height: 1.5; white-space: pre-line;"><strong>Payment Terms:</strong> <?= nl2br(htmlspecialchars($price_list['payment_terms'])) ?></p>
@@ -394,28 +403,32 @@ $isModalView = ($format === 'html');
                 <?php endif; ?>
             </div>
         <?php endif; ?>
-
-        <div class="footer-group-container">
-            <div class="print-footer">
-                <div class="footer-line"></div>
-                <div class="footer-text">
-                    <?php
-                    $footer_addr = $company['address'] ? htmlspecialchars(str_replace("\n", ", ", $company['address'])) : '';
-                    echo $footer_addr;
-                    if (!empty($company['phone']) || !empty($company['email'])):
-                        echo "<br>";
-                        if ($company['phone']) echo "Hot line / Tel: " . htmlspecialchars($company['phone']) . " ";
-                        if ($company['email']) echo "| E-Mail: " . htmlspecialchars($company['email']) . " ";
-                    endif;
-                    ?>
-                </div>
-            </div>
         </div>
+    </div>
+
+    <!-- One-line Company Footer (repeats at bottom of every printed page) -->
+    <div class="company-footer">
+        <?php echo htmlspecialchars($company['company_name']); ?>
+        <?php if (!empty($company['address'])): ?>
+            &nbsp;|&nbsp; <?php echo htmlspecialchars($company['address']); ?>
+        <?php endif; ?>
+        <?php if (!empty($company['phone'])): ?>
+            &nbsp;|&nbsp; Tel: <?php echo htmlspecialchars($company['phone']); ?>
+        <?php endif; ?>
+        <?php if (!empty($company['email'])): ?>
+            &nbsp;|&nbsp; Email: <?php echo htmlspecialchars($company['email']); ?>
+        <?php endif; ?>
     </div>
 
 <?php if (!$isModalView): ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
+<script>
+    window.onload = function () {
+        window.print();
+    };
+</script>
 
 </html>
 <?php endif; ?>

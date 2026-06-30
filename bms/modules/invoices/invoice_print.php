@@ -218,14 +218,18 @@ if ($invoice_id > 0) {
         display: table-header-group;
     }
 
-    .table tr {
-        page-break-inside: avoid;
-        break-inside: avoid;
+    .table tbody tr {
+        page-break-inside: auto;
+        break-inside: auto;
     }
 
     .table thead tr {
         background: #4a4a4a !important;
         color: white !important;
+    }
+
+    .card {
+        margin-bottom: 35px;
     }
 
     .btn {
@@ -236,7 +240,38 @@ if ($invoice_id > 0) {
     .d-md-flex {
         display: flex !important;
     }
+
 }
+
+    .company-footer {
+        border-top: 1px solid #1B1C56;
+        padding: 3px 0;
+        font-size: 8.5px;
+        text-align: center;
+        clear: both;
+        color: #555;
+    }
+
+    @media print {
+        .company-footer {
+            display: block;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            font-size: 8px;
+            background: #fff;
+            z-index: 1000;
+            padding: 3px 0.4in;
+            box-sizing: border-box;
+        }
+
+        .table-container,
+        .card {
+            margin-bottom: 20px;
+        }
+    }
 
     </style>
 </head>
@@ -244,23 +279,18 @@ if ($invoice_id > 0) {
     <div class="row">
     <div class="col-12 col-md-12 col-lg-12 col-xl-12">
                             <div class="card">
-                                <div class="card-header d-md-flex d-block">
-                                    <div class="h5 mb-0 d-sm-flex d-bllock align-items-center">
-                                        <div class="avatar avatar-sm">
-                                            <?php if (!empty($company['logo_path'])): ?>
-                                            <img src="<?= BASE_URL . htmlspecialchars($company['logo_path']) ?>" alt="<?= htmlspecialchars($company['company_name']) ?> Logo" style="width: 200px;">
-                                            <?php endif; ?>
-                                        </div>
+                                <div class="card-header d-md-flex d-block align-items-center">
+                                    <div class="d-flex align-items-center" style="width: 25%;">
+                                        <?php if (!empty($company['logo_path'])): ?>
+                                        <img src="<?= BASE_URL . htmlspecialchars($company['logo_path']) ?>" alt="<?= htmlspecialchars($company['company_name']) ?> Logo" style="max-height: 70px; max-width: 140px;">
+                                        <?php endif; ?>
                                     </div>
-                                    <div class="ms-auto mt-md-0 mt-2">
-                                    <div class="avatar avatar-sm">
-                                            <div class="h6 fw-semibold mb-0">INVOICE : <span class="text-primary"># <?= htmlspecialchars($invoice['invoice_no'] ?? $invoice_id) ?></span></div>
-                                        </div>
-
-                                        <div class="avatar avatar-sm">
-                                            <p class="fw-semibold text-muted mb-1">Date Issued :</p>
-                                            <p class="fs-15 mb-1"><?php echo date('Y-m-d');?> - <span class="text-muted fs-12"><?php echo date('H:i:s');?></span></p>
-                                        </div>
+                                    <div class="text-center" style="width: 50%;">
+                                        <h1 style="color: #1B1C56; font-size: 22px; font-weight: 900; margin: 0; text-transform: uppercase; letter-spacing: 0.5px;"><?= htmlspecialchars($company['company_name']) ?></h1>
+                                    </div>
+                                    <div class="ms-auto mt-md-0 mt-2 text-end" style="width: 25%;">
+                                        <div class="fw-semibold" style="font-size: 14px;">INVOICE : <span class="text-primary"># <?= htmlspecialchars($invoice['invoice_no'] ?? $invoice_id) ?></span></div>
+                                        <div class="text-muted" style="font-size: 12px;">Date: <?php echo date('Y-m-d');?> - <?php echo date('H:i:s');?></div>
                                     </div>
                                 </div>
                                 <div class="card-body">
@@ -399,6 +429,20 @@ if ($invoice_id > 0) {
                                 </div>
                             </div>
                         </div>
+    </div>
+
+    <!-- One-line Company Footer -->
+    <div class="company-footer">
+        <?php echo htmlspecialchars($company['company_name']); ?>
+        <?php if (!empty($company['address'])): ?>
+            &nbsp;|&nbsp; <?php echo htmlspecialchars($company['address']); ?>
+        <?php endif; ?>
+        <?php if (!empty($company['phone'])): ?>
+            &nbsp;|&nbsp; Tel: <?php echo htmlspecialchars($company['phone']); ?>
+        <?php endif; ?>
+        <?php if (!empty($company['email'])): ?>
+            &nbsp;|&nbsp; Email: <?php echo htmlspecialchars($company['email']); ?>
+        <?php endif; ?>
     </div>
 
     <script>

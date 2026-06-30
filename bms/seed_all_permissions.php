@@ -9,7 +9,7 @@ $allPermissions = [
     'invoices.complete', 'invoices.cancel', 'invoices.edit_requests', 'payments.view_all', 'credit_memos.view_all', 'credit_memos.create',
     'quotations', 'quotations.create', 'quotations.view_all', 'quotations.draft',
     'quotations.accepted', 'quotations.cancelled', 'quotations.revised',
-    'price_lists', 'price_lists.create', 'price_lists.view_all', 'price_lists.manage_assets',
+    'price_lists', 'price_lists.create', 'price_lists.view_all',
     'customers', 'customers.view_all', 'customers.add',
     'users', 'users.view_all', 'users.add', 'users.permissions', 'users.logs',
     'products', 'products.view_all', 'products.categories', 'products.add',

@@ -509,7 +509,7 @@ $customerResult = $conn->query($customerSql);
                                     <div class="col-12">
                                         <div>
                                             <label class="form-label">Subject</label>
-                                            <input type="text" class="form-control" name="subject" placeholder="e.g. Repair of passenger elevator">
+                                            <input type="text" class="form-control" name="subject" placeholder="Enter quotation subject or title" maxlength="255">
                                         </div>
                                     </div>
                                 </div>

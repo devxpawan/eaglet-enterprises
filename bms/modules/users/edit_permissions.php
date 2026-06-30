@@ -91,7 +91,6 @@ $permissionGroups = [
         'price_lists'                => 'Price Lists - Basic Access',
         'price_lists.create'         => 'Price Lists - Create',
         'price_lists.view_all'       => 'Price Lists - View All',
-        'price_lists.manage_assets'  => 'Price Lists - Manage Assets',
     ],
 
     'Customers' => [

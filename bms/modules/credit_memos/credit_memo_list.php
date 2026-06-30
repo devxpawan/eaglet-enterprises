@@ -13,7 +13,6 @@ require_once BASE_PATH . 'includes/db_connection.php';
 require_once BASE_PATH . 'includes/functions.php';
 
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
-$filter_status = isset($_GET['filter_status']) ? trim($_GET['filter_status']) : '';
 $filter_from_date = isset($_GET['filter_from_date']) ? trim($_GET['filter_from_date']) : '';
 $filter_to_date = isset($_GET['filter_to_date']) ? trim($_GET['filter_to_date']) : '';
 $limit = 15;
@@ -34,11 +33,6 @@ $conditions = [];
 if (!empty($search)) {
     $s = $conn->real_escape_string($search);
     $conditions[] = "(cm.credit_memo_no LIKE '%$s%' OR i.invoice_ref_no LIKE '%$s%' OR c.name LIKE '%$s%' OR c.business_name LIKE '%$s%' OR cm.invoice_id LIKE '%$s%')";
-}
-
-if (!empty($filter_status)) {
-    $st = $conn->real_escape_string($filter_status);
-    $conditions[] = "cm.status = '$st'";
 }
 
 if (!empty($filter_from_date)) {
@@ -100,14 +94,6 @@ $result = $conn->query($sql);
                                         <label class="form-label mb-1" style="font-size:11px;font-weight:600;color:#667085;">Search</label>
                                         <input type="text" name="search" class="form-control" placeholder="Memo No, Invoice or Customer"
                                             value="<?php echo htmlspecialchars($search); ?>">
-                                    </div>
-                                    <div class="col-md-2 col-lg-1">
-                                        <label class="form-label mb-1" style="font-size:11px;font-weight:600;color:#667085;">Status</label>
-                                        <select name="filter_status" class="form-select">
-                                            <option value="">All</option>
-                                            <option value="refund" <?= $filter_status === 'refund' ? 'selected' : '' ?>>Refund</option>
-                                            <option value="cancelled" <?= $filter_status === 'cancelled' ? 'selected' : '' ?>>Cancelled</option>
-                                        </select>
                                     </div>
                                     <div class="col-md-2">
                                         <label class="form-label mb-1" style="font-size:11px;font-weight:600;color:#667085;">From Date</label>

@@ -70,10 +70,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                     // Handle "Remember Me" by setting cookies
                     if ($remember) {
-                        setcookie("email", $user['email'], time() + (86400 * 30), "/"); // 30 days
+                        setcookie("remembered_login", $login, time() + (3600 * 12), "/"); // 12 hours
                     } else {
                         // Clear cookie if "Remember Me" is unchecked
-                        setcookie("email", "", time() - 3600, "/");
+                        setcookie("remembered_login", "", time() - 3600, "/");
                     }
 
                     header("Location: " . BASE_URL . "index.php");
@@ -478,7 +478,7 @@ $conn->close();
                         <div class="input-icon-wrapper">
                             <i class="fas fa-envelope"></i>
                             <input type="text" id="email" name="email"
-                                value="<?php echo isset($_COOKIE['email']) ? $_COOKIE['email'] : ''; ?>" placeholder="email@example.com or username" required>
+                                value="<?php echo isset($_COOKIE['remembered_login']) ? $_COOKIE['remembered_login'] : ''; ?>" placeholder="email@example.com or username" required>
                         </div>
                     </div>
                     <div class="input-group">
@@ -495,7 +495,7 @@ $conn->close();
                     </div>
                     <div class="input-group remember-me">
                         <label>
-                            <input type="checkbox" name="remember" <?php echo isset($_COOKIE['email']) ? 'checked' : ''; ?>>
+                            <input type="checkbox" name="remember" <?php echo isset($_COOKIE['remembered_login']) ? 'checked' : ''; ?>>
                             Remember me
                         </label>
                     </div>

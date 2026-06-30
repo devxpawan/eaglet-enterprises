@@ -26,22 +26,14 @@ if (!$price_list) {
     exit();
 }
 
-// Fetch assets for the selection
-$assetSql = "SELECT id, name FROM assets WHERE status = 'active' ORDER BY name ASC";
-$assetResult = $conn->query($assetSql);
-$assetsList = [];
-while($row = $assetResult->fetch_assoc()) {
-    $assetsList[] = $row;
-}
-
-// Fetch existing items grouped by asset
+// Fetch existing items grouped by asset_name
 $itemSql = "SELECT * FROM price_list_items WHERE price_list_id = $id ORDER BY id ASC";
 $itemResult = $conn->query($itemSql);
 
 $existingGroups = [];
 while ($row = $itemResult->fetch_assoc()) {
-    $assetId = $row['asset_id'];
-    $existingGroups[$assetId][] = $row;
+    $assetName = $row['asset_name'] ?? '';
+    $existingGroups[$assetName][] = $row;
 }
 
 // Fetch active customers for customer selection modal
@@ -63,9 +55,6 @@ if (!empty($price_list['customer_id'])) {
 <head>
     <?php require_once BASE_PATH . 'includes/header.php'; ?>
     <title>Edit Price List PL-<?= str_pad($id, 5, '0', STR_PAD_LEFT) ?></title>
-    <!-- Select2 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -282,16 +271,6 @@ if (!empty($price_list['customer_id'])) {
             background: #fff;
             padding-bottom: 12px;
         }
-
-        .select2-container--bootstrap-5 .select2-selection {
-            border-radius: 8px !important;
-            border-color: #d0d5dd !important;
-            min-height: 40px !important;
-        }
-        .select2-container--bootstrap-5.select2-container--focus .select2-selection {
-            border-color: #3B82F6 !important;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12) !important;
-        }
     </style>
 </head>
 
@@ -397,18 +376,13 @@ if (!empty($price_list['customer_id'])) {
                             <?php 
                             $groupIndex = 0;
                             if (!empty($existingGroups)):
-                                foreach ($existingGroups as $assetId => $items): ?>
+                                foreach ($existingGroups as $assetName => $items): ?>
                                     <div class="asset-group" data-group-index="<?= $groupIndex ?>">
                                         <div class="asset-group-header">
                                             <div class="d-flex align-items-center gap-2 flex-grow-1 me-3">
                                                 <i class="fas fa-microchip text-primary" style="font-size: 16px;"></i>
-                                                <span class="fw-semibold" style="color: #344054; font-size: 14px;">Asset:</span>
-                                                <select name="asset_id[<?= $groupIndex ?>]" class="form-select asset-select" required style="max-width: 300px;">
-                                                    <option value="">-- Select Asset --</option>
-                                                    <?php foreach($assetsList as $asset): ?>
-                                                        <option value="<?= $asset['id'] ?>" <?= $asset['id'] == $assetId ? 'selected' : '' ?>><?= htmlspecialchars($asset['name']) ?></option>
-                                                    <?php endforeach; ?>
-                                                </select>
+                                                <span class="fw-semibold" style="color: #344054; font-size: 14px;">Asset Name:</span>
+                                                <input type="text" name="asset_name[<?= $groupIndex ?>]" class="form-control" value="<?= htmlspecialchars($assetName) ?>" placeholder="Enter asset name (optional)" style="max-width: 300px;">
                                             </div>
                                             <button type="button" class="btn btn-outline-danger btn-sm remove-asset-group">
                                                 <i class="fas fa-trash"></i>
@@ -417,16 +391,20 @@ if (!empty($price_list['customer_id'])) {
                                         <div class="asset-group-body">
                                             <div class="items-container">
                                                 <div class="row fw-semibold mb-2" style="font-size: 12px; color: #667085; text-transform: uppercase; letter-spacing: 0.05em;">
-                                                    <div class="col-md-4">Item Name</div>
+                                                    <div class="col-md-1">#</div>
+                                                    <div class="col-md-3">Item Name</div>
                                                     <div class="col-md-5">Description</div>
                                                     <div class="col-md-2 text-end">Price</div>
                                                     <div class="col-md-1"></div>
                                                 </div>
                                                 
                                                 <div class="item-list">
-                                                    <?php foreach ($items as $item): ?>
+                                                    <?php foreach ($items as $index => $item): ?>
                                                         <div class="row item-row">
-                                                            <div class="col-md-4">
+                                                            <div class="col-md-1 d-flex align-items-center">
+                                                                <span class="row-number fw-semibold" style="font-size: 13px; color: #667085;"><?= $index + 1 ?></span>
+                                                            </div>
+                                                            <div class="col-md-3">
                                                                 <input type="text" name="item_name[<?= $groupIndex ?>][]" class="form-control" value="<?= htmlspecialchars($item['item_name']) ?>" required>
                                                             </div>
                                                             <div class="col-md-5">
@@ -460,13 +438,8 @@ if (!empty($price_list['customer_id'])) {
                                     <div class="asset-group-header">
                                         <div class="d-flex align-items-center gap-2 flex-grow-1 me-3">
                                             <i class="fas fa-microchip text-primary" style="font-size: 16px;"></i>
-                                            <span class="fw-semibold" style="color: #344054; font-size: 14px;">Asset:</span>
-                                            <select name="asset_id[0]" class="form-select asset-select" required style="max-width: 300px;">
-                                                <option value="">-- Select Asset --</option>
-                                                <?php foreach($assetsList as $asset): ?>
-                                                    <option value="<?= $asset['id'] ?>"><?= htmlspecialchars($asset['name']) ?></option>
-                                                <?php endforeach; ?>
-                                            </select>
+                                            <span class="fw-semibold" style="color: #344054; font-size: 14px;">Asset Name:</span>
+                                            <input type="text" name="asset_name[0]" class="form-control" placeholder="Enter asset name (optional)" style="max-width: 300px;">
                                         </div>
                                         <button type="button" class="btn btn-outline-danger btn-sm remove-asset-group">
                                             <i class="fas fa-trash"></i>
@@ -475,15 +448,19 @@ if (!empty($price_list['customer_id'])) {
                                     <div class="asset-group-body">
                                         <div class="items-container">
                                             <div class="row fw-semibold mb-2" style="font-size: 12px; color: #667085; text-transform: uppercase; letter-spacing: 0.05em;">
-                                                <div class="col-md-4">Item Name</div>
+                                                <div class="col-md-1">#</div>
+                                                <div class="col-md-3">Item Name</div>
                                                 <div class="col-md-5">Description</div>
                                                 <div class="col-md-2 text-end">Price</div>
                                                 <div class="col-md-1"></div>
                                             </div>
                                             <div class="item-list">
                                                 <div class="row item-row">
-                                                    <div class="col-md-4">
-                                                        <input type="text" name="item_name[0][]" class="form-control" placeholder="e.g. Core i5 12th Gen" required>
+                                                    <div class="col-md-1 d-flex align-items-center">
+                                                        <span class="row-number fw-semibold" style="font-size: 13px; color: #667085;">1</span>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <input type="text" name="item_name[0][]" class="form-control" placeholder="Enter Service/Product Name" required>
                                                     </div>
                                                     <div class="col-md-5">
                                                         <input type="text" name="item_description[0][]" class="form-control" placeholder="Specifications...">
@@ -618,7 +595,6 @@ if (!empty($price_list['customer_id'])) {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="<?= BASE_URL ?>js/scripts.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
         $(document).ready(function() {
             let groupCount = <?= $groupIndex ?>;
@@ -665,16 +641,6 @@ if (!empty($price_list['customer_id'])) {
                 });
             });
 
-            // Initialize Select2
-            function initSelect2(element) {
-                element.select2({
-                    theme: 'bootstrap-5',
-                    width: '100%'
-                });
-            }
-
-            initSelect2($('.asset-select'));
-
             // Customer Selection Modal
             var customerModal = document.getElementById("customerModal");
             $("#select_existing_customer").click(function () { customerModal.style.display = "block"; });
@@ -715,13 +681,8 @@ if (!empty($price_list['customer_id'])) {
                     <div class="asset-group-header">
                         <div class="d-flex align-items-center gap-2 flex-grow-1 me-3">
                             <i class="fas fa-microchip text-primary" style="font-size: 16px;"></i>
-                            <span class="fw-semibold" style="color: #344054; font-size: 14px;">Asset:</span>
-                            <select name="asset_id[${index}]" class="form-select asset-select" required style="max-width: 300px;">
-                                <option value="">-- Select Asset --</option>
-                                <?php foreach($assetsList as $asset): ?>
-                                    <option value="<?= $asset['id'] ?>"><?= htmlspecialchars($asset['name']) ?></option>
-                                <?php endforeach; ?>
-                            </select>
+                            <span class="fw-semibold" style="color: #344054; font-size: 14px;">Asset Name:</span>
+                            <input type="text" name="asset_name[${index}]" class="form-control" placeholder="Enter asset name (optional)" style="max-width: 300px;">
                         </div>
                         <button type="button" class="btn btn-outline-danger btn-sm remove-asset-group">
                             <i class="fas fa-trash"></i>
@@ -730,15 +691,19 @@ if (!empty($price_list['customer_id'])) {
                     <div class="asset-group-body">
                         <div class="items-container">
                             <div class="row fw-semibold mb-2" style="font-size: 12px; color: #667085; text-transform: uppercase; letter-spacing: 0.05em;">
-                                <div class="col-md-4">Item Name</div>
+                                <div class="col-md-1">#</div>
+                                <div class="col-md-3">Item Name</div>
                                 <div class="col-md-5">Description</div>
                                 <div class="col-md-2 text-end">Price</div>
                                 <div class="col-md-1"></div>
                             </div>
                             <div class="item-list">
                                 <div class="row item-row">
-                                    <div class="col-md-4">
-                                        <input type="text" name="item_name[${index}][]" class="form-control" placeholder="e.g. Core i5 12th Gen" required>
+                                    <div class="col-md-1 d-flex align-items-center">
+                                        <span class="row-number fw-semibold" style="font-size: 13px; color: #667085;">1</span>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="text" name="item_name[${index}][]" class="form-control" placeholder="Enter Service/Product Name" required>
                                     </div>
                                     <div class="col-md-5">
                                         <input type="text" name="item_description[${index}][]" class="form-control" placeholder="Specifications...">
@@ -763,7 +728,6 @@ if (!empty($price_list['customer_id'])) {
                 </div>`;
                 
                 $('#assetGroupsContainer').append(newGroup);
-                initSelect2($('#assetGroupsContainer .asset-group:last .asset-select'));
                 checkFormChanges();
             });
 
@@ -781,10 +745,14 @@ if (!empty($price_list['customer_id'])) {
             $(document).on('click', '.add-item', function() {
                 let group = $(this).closest('.asset-group');
                 let index = group.data('group-index');
+                let itemCount = group.find('.item-list .item-row').length + 1;
                 let newItem = `
                 <div class="row item-row">
-                    <div class="col-md-4">
-                        <input type="text" name="item_name[${index}][]" class="form-control" placeholder="e.g. Core i5 12th Gen" required>
+                    <div class="col-md-1 d-flex align-items-center">
+                        <span class="row-number fw-semibold" style="font-size: 13px; color: #667085;">${itemCount}</span>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" name="item_name[${index}][]" class="form-control" placeholder="Enter Service/Product Name" required>
                     </div>
                     <div class="col-md-5">
                         <input type="text" name="item_description[${index}][]" class="form-control" placeholder="Specifications...">
@@ -807,11 +775,19 @@ if (!empty($price_list['customer_id'])) {
                 let itemList = $(this).closest('.item-list');
                 if (itemList.find('.item-row').length > 1) {
                     $(this).closest('.item-row').remove();
+                    renumberRows($(this).closest('.asset-group'));
                 } else {
                     alert('Each asset group must have at least one item.');
                 }
                 checkFormChanges();
             });
+
+            // Renumber rows within a group
+            function renumberRows(group) {
+                group.find('.item-list .item-row').each(function(index) {
+                    $(this).find('.row-number').text(index + 1);
+                });
+            }
 
             // --- Change detection for submit button ---
             let initialFormData = $('#priceListForm').serialize();
@@ -823,8 +799,6 @@ if (!empty($price_list['customer_id'])) {
             }
 
             $('#priceListForm').on('change input', 'input, select, textarea', checkFormChanges);
-            $('#priceListForm').on('change', '.asset-select', checkFormChanges);
-            $(document).on('change', '.asset-select', checkFormChanges);
         });
     </script>
 </body>

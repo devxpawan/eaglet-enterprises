@@ -228,36 +228,35 @@ if (!empty($quotation['ref_no'])) {
             margin-bottom: 5px;
         }
 
-        .header-spacer-cell {
-            width: 33%;
-            vertical-align: middle;
-        }
-
         .header-logo-cell {
-            width: 33%;
+            width: 25%;
             vertical-align: middle;
-            text-align: right;
+            text-align: left;
         }
 
         .header-logo-cell img {
-            max-height: 60px;
-            max-width: 120px;
+            max-height: 70px;
+            max-width: 140px;
         }
 
         .header-title-cell {
-            width: 34%;
+            width: 50%;
             text-align: center;
             vertical-align: middle;
         }
 
         .header-title-cell h1 {
             color: #1B1C56;
-            font-size: 18px;
-            font-weight: 800;
+            font-size: 22px;
+            font-weight: 900;
             margin: 0;
-            text-decoration: underline;
             letter-spacing: 0.5px;
             text-transform: uppercase;
+        }
+
+        .header-spacer-cell {
+            width: 25%;
+            vertical-align: middle;
         }
 
         .header-divider {
@@ -275,7 +274,6 @@ if (!empty($quotation['ref_no'])) {
             font-size: 15px;
             font-weight: bold;
             color: #1B1C56;
-            text-decoration: underline;
             margin: 0;
             text-transform: uppercase;
             letter-spacing: 1.5px;
@@ -332,7 +330,7 @@ if (!empty($quotation['ref_no'])) {
 
         .totals-table-wrapper {
             float: right;
-            width: 300px;
+            width: 40%;
             margin-bottom: 8px;
         }
 
@@ -381,11 +379,12 @@ if (!empty($quotation['ref_no'])) {
         }
 
         .signature-section {
-            margin-top: 15px;
-            margin-bottom: 20px;
+            margin-top: 10px;
+            margin-bottom: 10px;
             width: 100%;
             display: flex;
             justify-content: space-between;
+            align-items: center;
         }
 
         .signature-col-left {
@@ -394,37 +393,34 @@ if (!empty($quotation['ref_no'])) {
 
         .signature-col-right {
             width: 45%;
-            text-align: right;
+            padding-top: 18px;
+            text-align: center;
         }
 
         .signature-placeholder {
-            margin-top: 20px;
+            margin-top: 50px;
+            border-top: 1px dashed #333;
+            width: 180px;
+            padding-top: 3px;
+            font-size: 10px;
+            text-align:center;
+        }
+
+        .signature-placeholder-right {
+            margin-top: 50px;
             border-top: 1px dashed #333;
             width: 180px;
             padding-top: 3px;
             font-size: 10px;
         }
 
-        .signature-placeholder-right {
-            margin-top: 20px;
-            width: 180px;
-            padding-top: 3px;
-            font-size: 10px;
-            display: inline-block;
-            text-align: left;
-        }
-
-        .footer-line {
-            border-bottom: 1.5px solid #1B1C56;
-            margin-top: 10px;
-            margin-bottom: 5px;
-        }
-
-        .footer-text {
+        .company-footer {
+            border-top: 1px solid #1B1C56;
+            padding: 3px 0;
+            font-size: 8.5px;
             text-align: center;
-            font-size: 9px;
+            clear: both;
             color: #555;
-            line-height: 1.3;
         }
 
         .control-buttons {
@@ -436,10 +432,6 @@ if (!empty($quotation['ref_no'])) {
             margin: 0 5px;
             padding: 8px 15px;
             cursor: pointer;
-        }
-
-        .print-footer {
-            /* normal screen: just flows in place */
         }
 
         @media print {
@@ -456,8 +448,7 @@ if (!empty($quotation['ref_no'])) {
 
             .quotation-container {
                 box-shadow: none;
-                padding: 0;
-                padding-bottom: 60px;
+                padding: 0 0 35px 0;
                 margin: 0;
                 width: 100%;
                 max-width: 100%;
@@ -491,11 +482,6 @@ if (!empty($quotation['ref_no'])) {
                 break-inside: auto;
             }
 
-            .product-table tr {
-                page-break-inside: avoid;
-                break-inside: avoid;
-            }
-
             .totals-table-wrapper {
                 page-break-inside: avoid;
                 break-inside: avoid;
@@ -526,13 +512,17 @@ if (!empty($quotation['ref_no'])) {
                 break-inside: avoid;
             }
 
-            .print-footer {
+            .company-footer {
                 position: fixed;
                 bottom: 0;
                 left: 0;
                 right: 0;
-                background: white;
-                padding: 0 0.3in;
+                width: 100%;
+                font-size: 8px;
+                background: #fff;
+                z-index: 1000;
+                padding: 3px 0.3in;
+                box-sizing: border-box;
             }
         }
 
@@ -556,18 +546,17 @@ if (!empty($quotation['ref_no'])) {
         <!-- Header -->
         <table class="header-table">
             <tr>
-                <td class="header-spacer-cell"></td>
-                <td class="header-title-cell">
-                    <h1 style="white-space: nowrap;"><?php echo htmlspecialchars($company['company_name']); ?></h1>
-                </td>
                 <td class="header-logo-cell">
                     <?php if (!empty($company['logo_path']) && file_exists(BASE_PATH . $company['logo_path'])): ?>
                         <img src="<?= BASE_URL . htmlspecialchars($company['logo_path']) ?>" alt="Logo">
                     <?php else: ?>
-                        <!-- Fallback default logo if available -->
                         <img src="<?= BASE_URL ?>assets/img/logo.png" onerror="this.style.display='none';" alt="">
                     <?php endif; ?>
                 </td>
+                <td class="header-title-cell">
+                    <h1 style="white-space: nowrap;"><?php echo htmlspecialchars($company['company_name']); ?></h1>
+                </td>
+                <td class="header-spacer-cell"></td>
             </tr>
         </table>
         
@@ -698,19 +687,8 @@ if (!empty($quotation['ref_no'])) {
             <?php endif; ?>
         </div>
 
-        <!-- Validity & Terms -->
-        <div class="validity-terms-box">
-            <?php 
-            $validity_days = 14;
-            if (!empty($quotation['expiry_date']) && !empty($quotation['quotation_date'])) {
-                $diff = strtotime($quotation['expiry_date']) - strtotime($quotation['quotation_date']);
-                $validity_days = round($diff / (60 * 60 * 24));
-            }
-            ?>
-            <strong>Quotation Validity :</strong> This quotation is valid for <?php echo $validity_days; ?> days.<br>
-            <strong>Payment Terms     :</strong> Full payment in advance.
-        </div>
-
+        <!-- Footer Group (Validity, Notes, Bank, Signatures) stays together -->
+        <div class="footer-group-container">
         <!-- Notes if any -->
         <?php if (!empty($quotation['notes'])): ?>
             <div style="margin-bottom: 25px;">
@@ -718,9 +696,6 @@ if (!empty($quotation['ref_no'])) {
                 <p style="margin-top: 5px; line-height: 1.5; white-space: pre-line;"><?php echo htmlspecialchars($quotation['notes']); ?></p>
             </div>
         <?php endif; ?>
-
-        <!-- Footer Group (Bank, Signatures, Footer Address) to prevent middle-page split -->
-        <div class="footer-group-container">
             <!-- Bank Details Section -->
             <?php 
             $hasBank = !empty($company['bank_name']) || !empty($company['account_name']) || !empty($company['account_number']);
@@ -750,31 +725,29 @@ if (!empty($quotation['ref_no'])) {
                 </div>
                 <div class="signature-col-right">
                     <div class="signature-placeholder-right">
-                        Accepted By - ........................................
+                        Accepted By
                     </div>
-                    <div class="signature-placeholder-right" style="margin-top: 15px;">
-                        Signature & Date - ................................
+                    <div class="signature-placeholder-right">
+                        Signature & Date
                     </div>
                 </div>
             </div>
 
         </div>
+    </div>
 
-        <!-- Footer (fixed to bottom of paper when printing) -->
-        <div class="print-footer">
-            <div class="footer-line"></div>
-            <div class="footer-text">
-                <?php 
-                $footer_addr = $company['address'] ? htmlspecialchars(str_replace("\n", ", ", $company['address'])) : '';
-                echo $footer_addr;
-                if (!empty($company['phone']) || !empty($company['email'])):
-                    echo "<br>";
-                    if ($company['phone']) echo "Hot line / Tel: " . htmlspecialchars($company['phone']) . " ";
-                    if ($company['email']) echo "| E-Mail: " . htmlspecialchars($company['email']) . " ";
-                endif;
-                ?>
-            </div>
-        </div>
+    <!-- One-line Company Footer (repeats at bottom of every printed page) -->
+    <div class="company-footer">
+        <?php echo htmlspecialchars($company['company_name']); ?>
+        <?php if (!empty($company['address'])): ?>
+            &nbsp;|&nbsp; <?php echo htmlspecialchars($company['address']); ?>
+        <?php endif; ?>
+        <?php if (!empty($company['phone'])): ?>
+            &nbsp;|&nbsp; Tel: <?php echo htmlspecialchars($company['phone']); ?>
+        <?php endif; ?>
+        <?php if (!empty($company['email'])): ?>
+            &nbsp;|&nbsp; Email: <?php echo htmlspecialchars($company['email']); ?>
+        <?php endif; ?>
     </div>
 
     <?php if (!$isModalView): ?>

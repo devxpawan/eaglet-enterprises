@@ -573,6 +573,15 @@ $invoice_vat_pct = ($invoice_net > 0) ? ($invoice_vat / $invoice_net * 100) : 0;
                                         </div>
                                     </div>
                                 </div>
+                                <div class="row g-3 mt-1">
+                                    <div class="col-12">
+                                        <div>
+                                            <label class="form-label">Subject</label>
+                                            <input type="text" class="form-control" name="subject" placeholder="Enter invoice subject or title"
+                                                value="<?= htmlspecialchars($invoice['subject'] ?? '') ?>">
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 

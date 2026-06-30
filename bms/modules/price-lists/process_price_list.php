@@ -36,8 +36,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $price_list_id = $conn->insert_id;
 
         // Process Asset Groups and Items
-        if (isset($_POST['asset_id']) && is_array($_POST['asset_id'])) {
-            foreach ($_POST['asset_id'] as $groupIndex => $asset_id) {
+        if (isset($_POST['asset_name']) && is_array($_POST['asset_name'])) {
+            foreach ($_POST['asset_name'] as $groupIndex => $asset_name) {
                 if (isset($_POST['item_name'][$groupIndex]) && is_array($_POST['item_name'][$groupIndex])) {
                     $itemNames = $_POST['item_name'][$groupIndex];
                     $itemDescriptions = $_POST['item_description'][$groupIndex];
@@ -49,8 +49,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $itemPrice = $itemPrices[$i];
 
                         if (!empty($itemName)) {
-                            $stmtItem = $conn->prepare("INSERT INTO price_list_items (price_list_id, asset_id, item_name, price, description) VALUES (?, ?, ?, ?, ?)");
-                            $stmtItem->bind_param("iisds", $price_list_id, $asset_id, $itemName, $itemPrice, $itemDesc);
+                            $stmtItem = $conn->prepare("INSERT INTO price_list_items (price_list_id, asset_name, item_name, price, description) VALUES (?, ?, ?, ?, ?)");
+                            $stmtItem->bind_param("issds", $price_list_id, $asset_name, $itemName, $itemPrice, $itemDesc);
                             $stmtItem->execute();
                         }
                     }

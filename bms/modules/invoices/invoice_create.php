@@ -504,6 +504,14 @@ $customerResult = $conn->query($customerSql);
                                         </div>
                                     </div>
                                 </div>
+                                <div class="row g-3 mt-1">
+                                    <div class="col-12">
+                                        <div>
+                                            <label class="form-label">Subject</label>
+                                            <input type="text" class="form-control" name="subject" placeholder="Enter invoice subject or title">
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 

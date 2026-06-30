@@ -77,6 +77,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Prepare invoice details
         $invoice_date = $_POST['invoice_date'] ?? date('Y-m-d');
         $due_date = !empty($_POST['due_date']) ? $_POST['due_date'] : date('Y-m-d', strtotime('+30 days'));
+        $subject = !empty($_POST['subject']) ? trim($_POST['subject']) : null;
         $notes = $_POST['notes'] ?? 'Thank you for choosing our services. Please review the invoice details and ensure payment is completed by the due date. If there are any discrepancies, kindly inform us immediately.';
         
         // Always use LKR currency
@@ -152,15 +153,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Insert invoice
         $insertInvoiceSql = "INSERT INTO invoices (
-            customer_id, user_id, issue_date, due_date, 
+            customer_id, user_id, issue_date, due_date, subject,
             subtotal, discount, vat, total_amount, amount_paid,
             notes, currency, status, pay_status, pay_date, created_by
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         $stmt = $conn->prepare($insertInvoiceSql);
         $stmt->bind_param(
-            "iissdddddsssssi", 
-            $customer_id, $user_id, $invoice_date, $due_date, 
+            "iisssdddddsssssi", 
+            $customer_id, $user_id, $invoice_date, $due_date, $subject,
             $subtotal, $total_discount, $vat_amount, $total_amount, $amount_paid,
             $notes, $currency, $status, $pay_status, $pay_date, $user_id
         );
