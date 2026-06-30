@@ -54,7 +54,7 @@ if (!empty($price_list['customer_id'])) {
 
 <head>
     <?php require_once BASE_PATH . 'includes/header.php'; ?>
-    <title>Edit Price List PL-<?= str_pad($id, 5, '0', STR_PAD_LEFT) ?></title>
+    <title>Edit Price List <?= htmlspecialchars($price_list['ref_no'] ?? 'PL-' . str_pad($id, 5, '0', STR_PAD_LEFT)) ?></title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -117,6 +117,7 @@ if (!empty($price_list['customer_id'])) {
             border-color: #d0d5dd;
             font-size: 14px;
             resize: vertical;
+            height: auto;
         }
         textarea.form-control:focus {
             border-color: #3B82F6;
@@ -282,7 +283,7 @@ if (!empty($price_list['customer_id'])) {
             <main>
                 <div class="page-header d-flex justify-content-between align-items-center">
                     <div>
-                        <h5>Edit Price List PL-<?= str_pad($id, 5, '0', STR_PAD_LEFT) ?></h5>
+                        <h5>Edit Price List <?= htmlspecialchars($price_list['ref_no'] ?? 'PL-' . str_pad($id, 5, '0', STR_PAD_LEFT)) ?></h5>
                         <p class="text-muted">Update asset pricing and regenerate the price list</p>
                     </div>
                     <div class="d-flex gap-2">
@@ -319,6 +320,14 @@ if (!empty($price_list['customer_id'])) {
                                                 <option value="lkr" selected>LKR</option>
                                             </select>
                                             <input type="hidden" name="currency" value="lkr">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row g-3 mt-1">
+                                    <div class="col-12">
+                                        <div>
+                                            <label class="form-label">Subject</label>
+                                            <input type="text" class="form-control" name="subject" placeholder="Enter subject" value="<?= htmlspecialchars($price_list['subject'] ?? '') ?>">
                                         </div>
                                     </div>
                                 </div>
@@ -500,19 +509,19 @@ if (!empty($price_list['customer_id'])) {
                                     <div class="col-md-12">
                                         <div>
                                             <label class="form-label">Notes</label>
-                                            <textarea name="notes" class="form-control" rows="2" placeholder="Any additional notes..."><?= htmlspecialchars($price_list['notes']) ?></textarea>
+                                            <textarea name="notes" class="form-control" rows="8" placeholder="Any additional notes..."><?= htmlspecialchars($price_list['notes']) ?></textarea>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div>
                                             <label class="form-label">Payment Terms</label>
-                                            <textarea name="payment_terms" class="form-control" rows="4" placeholder="Enter payment terms..."><?= htmlspecialchars($price_list['payment_terms']) ?></textarea>
+                                            <textarea name="payment_terms" class="form-control" rows="6" placeholder="Enter payment terms..."><?= htmlspecialchars($price_list['payment_terms']) ?></textarea>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div>
                                             <label class="form-label">Terms & Conditions</label>
-                                            <textarea name="terms_conditions" class="form-control" rows="4" placeholder="Enter terms & conditions..."><?= htmlspecialchars($price_list['terms_conditions']) ?></textarea>
+                                            <textarea name="terms_conditions" class="form-control" rows="6" placeholder="Enter terms & conditions..."><?= htmlspecialchars($price_list['terms_conditions']) ?></textarea>
                                         </div>
                                     </div>
                                 </div>

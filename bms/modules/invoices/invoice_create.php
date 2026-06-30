@@ -264,6 +264,7 @@ $customerResult = $conn->query($customerSql);
             border-color: #d0d5dd;
             font-size: 14px;
             resize: vertical;
+            height: auto;
         }
 
         textarea.form-control:focus {
@@ -702,7 +703,7 @@ $customerResult = $conn->query($customerSql);
                                     <h6 class="card-title m-0">Additional Notes</h6>
                                 </div>
                                 <div class="mb-3">
-                                    <textarea name="notes" class="form-control" rows="3" placeholder="Enter any additional notes or terms for this invoice..."></textarea>
+                                    <textarea name="notes" class="form-control" rows="8" placeholder="Enter any additional notes or terms for this invoice..."></textarea>
                                 </div>
                                 <div class="d-flex justify-content-end gap-2 pt-2">
                                     <a href="invoices.php" class="btn btn-outline-secondary">Cancel</a>

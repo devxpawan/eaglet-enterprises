@@ -414,7 +414,7 @@ function validateEmail(email) {
     if (!emailRegex.test(email)) {
         return {
             valid: false,
-            message: 'Please enter a valid email address format (e.g., name@example.com)'
+            message: 'Please enter a valid email address format.'
         };
     }
 

@@ -82,6 +82,7 @@ $customerResult = $conn->query($customerSql);
             border-color: #d0d5dd;
             font-size: 14px;
             resize: vertical;
+            height: auto;
         }
         textarea.form-control:focus {
             border-color: #3B82F6;
@@ -280,6 +281,14 @@ $customerResult = $conn->query($customerSql);
                                         </div>
                                     </div>
                                 </div>
+                                <div class="row g-3 mt-1">
+                                    <div class="col-12">
+                                        <div>
+                                            <label class="form-label">Subject</label>
+                                            <input type="text" class="form-control" name="subject" placeholder="Enter subject">
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -395,19 +404,19 @@ $customerResult = $conn->query($customerSql);
                                     <div class="col-md-12">
                                         <div>
                                             <label class="form-label">Notes</label>
-                                            <textarea name="notes" class="form-control" rows="2" placeholder="Any additional notes..."></textarea>
+                                            <textarea name="notes" class="form-control" rows="8" placeholder="Any additional notes..."></textarea>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div>
                                             <label class="form-label">Payment Terms</label>
-                                            <textarea name="payment_terms" class="form-control" rows="4" placeholder="Enter payment terms..."></textarea>
+                                            <textarea name="payment_terms" class="form-control" rows="6" placeholder="Enter payment terms..."></textarea>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div>
                                             <label class="form-label">Terms & Conditions</label>
-                                            <textarea name="terms_conditions" class="form-control" rows="4" placeholder="Enter terms & conditions..."></textarea>
+                                            <textarea name="terms_conditions" class="form-control" rows="6" placeholder="Enter terms & conditions..."></textarea>
                                         </div>
                                     </div>
                                 </div>

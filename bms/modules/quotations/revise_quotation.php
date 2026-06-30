@@ -778,7 +778,7 @@ $rev_label = ($quotation['revision_no'] == 0) ? 'Original' : 'R' . $quotation['r
                                     <h6 class="card-title m-0">Additional Notes</h6>
                                 </div>
                                 <div class="mb-3">
-                                    <textarea name="notes" class="form-control" rows="3" placeholder="Enter any additional notes or terms for this quotation..."><?php echo htmlspecialchars($quotation['notes'] ?? ''); ?></textarea>
+                                    <textarea name="notes" class="form-control" rows="8" placeholder="Enter any additional notes or terms for this quotation..."><?php echo htmlspecialchars($quotation['notes'] ?? ''); ?></textarea>
                                 </div>
                                 <div class="d-flex justify-content-end gap-2 pt-2">
                                     <a href="<?= BASE_URL ?>modules/quotations/draft_quotation_list.php" class="btn btn-outline-secondary">Cancel</a>

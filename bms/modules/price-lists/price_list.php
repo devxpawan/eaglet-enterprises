@@ -146,7 +146,7 @@ $result = $conn->query($sql);
                                             <th>Price List No.</th>
                                             <th>Date</th>
                                             <th>Customer</th>
-                                            <th>Currency</th>
+                                            <th>Subject</th>
                                             <th class="text-end pe-3">Actions</th>
                                         </tr>
                                     </thead>
@@ -154,12 +154,10 @@ $result = $conn->query($sql);
                                         <?php if ($result && $result->num_rows > 0): ?>
                                             <?php while($row = $result->fetch_assoc()): ?>
                                                 <tr>
-                                                    <td class="text-muted" style="font-weight: 500;">PL-<?= str_pad($row['id'], 5, '0', STR_PAD_LEFT) ?></td>
+                                                    <td class="text-muted" style="font-weight: 500;"><?= htmlspecialchars($row['ref_no'] ?? 'PL-' . str_pad($row['id'], 5, '0', STR_PAD_LEFT)) ?></td>
                                                     <td><?= date('d M, Y', strtotime($row['price_list_date'])) ?></td>
                                                     <td><?= htmlspecialchars($row['customer_name'] ?? '-') ?></td>
-                                                    <td>
-                                                        <span class="badge-soft badge-soft-info">LKR</span>
-                                                    </td>
+                                                    <td><?= htmlspecialchars($row['subject'] ?? '-') ?></td>
                                                     <td class="text-end pe-3">
                                 <div class="action-btn-group d-flex justify-content-end gap-1">
                                     <?php if (hasAccess('price_lists')): ?>

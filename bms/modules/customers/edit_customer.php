@@ -45,7 +45,7 @@ function validateEmail($email) {
     
     // Basic format validation with filter_var
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        return "Please enter a valid email address format (e.g., name@example.com).";
+        return "Please enter a valid email address format.";
     }
     
     // Advanced structure validation
@@ -794,7 +794,7 @@ $business_name = isset($_POST['business_name']) ? htmlspecialchars($_POST['busin
         if (!emailRegex.test(email)) {
             return {
                 valid: false,
-                message: 'Please enter a valid email address format (e.g., name@example.com)'
+                message: 'Please enter a valid email address format'
             };
         }
 
@@ -829,7 +829,7 @@ function validatePhone(phone) {
         }
         return {
             valid: false,
-            message: 'International format should be +94 followed by 9 digits (e.g., +94729666892)'
+            message: 'International format should be +94 followed by 9 digits'
         };
     }
     

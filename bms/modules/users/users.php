@@ -585,11 +585,11 @@ $result = $conn->query($sql);
                         <div class="row g-3 align-items-end">
                             <div class="col-md-5">
                                 <label for="positionName" class="form-label">Position Name</label>
-                                <input type="text" id="positionName" name="position_name" class="form-control" maxlength="100" placeholder="e.g. Manager" required>
+                                <input type="text" id="positionName" name="position_name" class="form-control" maxlength="100" placeholder="Position Name" required>
                             </div>
                             <div class="col-md-5">
                                 <label for="positionDescription" class="form-label">Description</label>
-                                <input type="text" id="positionDescription" name="position_description" class="form-control" placeholder="Optional description">
+                                <input type="text" id="positionDescription" name="position_description" class="form-control" placeholder="Description">
                             </div>
                             <div class="col-md-2 d-flex gap-2">
                                 <button type="submit" class="btn btn-primary flex-fill" id="savePositionBtn">

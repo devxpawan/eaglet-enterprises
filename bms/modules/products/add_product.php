@@ -118,7 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     <div class="col-md-6 mb-3">
                                         <label for="sku" class="form-label">SKU (Stock Keeping Unit)</label>
                                         <input type="text" class="form-control" id="sku" name="sku"
-                                            placeholder="e.g. ELEC-001"
+                                            placeholder="SKU (Stock Keeping Unit)"
                                             value="<?php echo isset($_POST['sku']) ? htmlspecialchars($_POST['sku']) : ''; ?>">
                                         <small class="text-muted">Leave empty to auto-generate</small>
                                     </div>
@@ -148,12 +148,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     <div class="col-md-4 mb-3">
                                         <label for="stock_quantity" class="form-label">Initial Stock Quantity</label>
                                         <input type="number" class="form-control" id="stock_quantity" name="stock_quantity"
-                                            min="0" value="0" placeholder="e.g. 100">
+                                            min="0" value="0" placeholder="Initial Stock Quantity">
                                     </div>
                                     <div class="col-md-4 mb-3">
                                         <label for="reorder_level" class="form-label">Reorder Level</label>
                                         <input type="number" class="form-control" id="reorder_level" name="reorder_level"
-                                            min="1" value="5" placeholder="e.g. 10">
+                                            min="1" value="5" placeholder="Reorder Level">
                                         <small class="text-muted">Alert when stock drops to this level</small>
                                     </div>
                                     <div class="col-md-4 mb-3">

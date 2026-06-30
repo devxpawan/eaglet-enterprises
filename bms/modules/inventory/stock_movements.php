@@ -289,11 +289,11 @@ $products = $conn->query("SELECT id, name, sku, stock_quantity, unit FROM produc
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Quantity <span class="text-danger">*</span></label>
-                            <input type="number" name="quantity" class="form-control" min="1" required placeholder="e.g. 10">
+                            <input type="number" name="quantity" class="form-control" min="1" required placeholder="Quantity">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Reason / Notes</label>
-                            <textarea name="notes" class="form-control" rows="2" placeholder="Why is this adjustment needed?"></textarea>
+                            <textarea name="notes" class="form-control" rows="2" placeholder="Reason / Notes"></textarea>
                         </div>
                     </div>
                     <div class="modal-footer">

@@ -8,6 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $price_list_id = intval($_POST['price_list_id']);
     $price_list_date = $_POST['price_list_date'];
     $currency = $_POST['currency'];
+    $subject = trim($_POST['subject'] ?? '');
     $notes = $_POST['notes'];
     $payment_terms = $_POST['payment_terms'];
     $terms_conditions = $_POST['terms_conditions'];
@@ -32,8 +33,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     try {
         // Update price_lists
-        $stmt = $conn->prepare("UPDATE price_lists SET price_list_date = ?, currency = ?, notes = ?, payment_terms = ?, terms_conditions = ?, customer_id = ? WHERE id = ?");
-        $stmt->bind_param("sssssii", $price_list_date, $currency, $notes, $payment_terms, $terms_conditions, $customer_id, $price_list_id);
+        $stmt = $conn->prepare("UPDATE price_lists SET price_list_date = ?, subject = ?, currency = ?, notes = ?, payment_terms = ?, terms_conditions = ?, customer_id = ? WHERE id = ?");
+        $stmt->bind_param("ssssssii", $price_list_date, $subject, $currency, $notes, $payment_terms, $terms_conditions, $customer_id, $price_list_id);
         $stmt->execute();
 
         // Delete existing items

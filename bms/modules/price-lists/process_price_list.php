@@ -7,10 +7,12 @@ require_once BASE_PATH . 'includes/db_connection.php';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $price_list_date = $_POST['price_list_date'];
     $currency = $_POST['currency'];
+    $subject = trim($_POST['subject'] ?? '');
     $notes = $_POST['notes'];
     $payment_terms = $_POST['payment_terms'];
     $terms_conditions = $_POST['terms_conditions'];
     $created_by = $_SESSION['user_id'] ?? null;
+    $ref_no = 'PL-' . date('ymdHi');
 
     // Customer handling
     $customer_id = $_POST['customer_id'] ?? 0;
@@ -30,8 +32,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     try {
         // Insert into price_lists
-        $stmt = $conn->prepare("INSERT INTO price_lists (price_list_date, currency, notes, payment_terms, terms_conditions, created_by, customer_id) VALUES (?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("sssssii", $price_list_date, $currency, $notes, $payment_terms, $terms_conditions, $created_by, $customer_id);
+        $stmt = $conn->prepare("INSERT INTO price_lists (ref_no, price_list_date, subject, currency, notes, payment_terms, terms_conditions, created_by, customer_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("sssssssii", $ref_no, $price_list_date, $subject, $currency, $notes, $payment_terms, $terms_conditions, $created_by, $customer_id);
         $stmt->execute();
         $price_list_id = $conn->insert_id;
 

@@ -701,7 +701,7 @@ $customerResult = $conn->query($customerSql);
                                     <h6 class="card-title m-0">Additional Notes</h6>
                                 </div>
                                 <div class="mb-3">
-                                    <textarea name="notes" class="form-control" rows="3" placeholder="Enter any additional notes or terms for this quotation..."></textarea>
+                                    <textarea name="notes" class="form-control" rows="8" placeholder="Enter any additional notes or terms for this quotation..."></textarea>
                                 </div>
                                 <div class="d-flex justify-content-end gap-2 pt-2">
                                     <a href="quotations.php" class="btn btn-outline-secondary">Cancel</a>

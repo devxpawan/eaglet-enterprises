@@ -485,7 +485,7 @@ if (isset($_SESSION['success_message'])) {
         if (!emailRegex.test(email)) {
             return {
                 valid: false,
-                message: 'Please enter a valid email address format (e.g., name@example.com)'
+                message: 'Please enter a valid email address format.'
             };
         }
 

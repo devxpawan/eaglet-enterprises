@@ -46,7 +46,7 @@ function validateEmail($email) {
     
     // Basic format validation with filter_var
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        return "Please enter a valid email address format (e.g., name@example.com).";
+        return "Please enter a valid email address format.";
     }
     
     // Advanced structure validation
@@ -448,7 +448,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (!emailRegex.test(email)) {
             return {
                 valid: false,
-                message: 'Please enter a valid email address format (e.g., name@example.com)'
+                message: 'Please enter a valid email address format'
             };
         }
 

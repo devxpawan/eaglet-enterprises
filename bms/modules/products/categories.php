@@ -256,7 +256,7 @@ $allCats = $conn->query("SELECT id, name FROM categories WHERE status = 'active'
                     <div class="modal-body">
                         <div class="mb-3">
                             <label class="form-label">Category Name <span class="text-danger">*</span></label>
-                            <input type="text" name="name" class="form-control" required placeholder="e.g. Electronics">
+                            <input type="text" name="name" class="form-control" required placeholder="Category Name">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Description</label>

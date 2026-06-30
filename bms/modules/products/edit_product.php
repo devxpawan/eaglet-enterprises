@@ -176,7 +176,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <div class="col-md-6 mb-3">
                                             <label for="sku" class="form-label">SKU (Stock Keeping Unit)</label>
                                             <input type="text" class="form-control" id="sku" name="sku"
-                                                placeholder="e.g. ELEC-001"
+                                                placeholder="SKU (Stock Keeping Unit)"
                                                 value="<?= htmlspecialchars($product['sku'] ?? '') ?>" data-original="<?= htmlspecialchars($product['sku'] ?? '') ?>">
                                         </div>
                                         <div class="col-md-6 mb-3">

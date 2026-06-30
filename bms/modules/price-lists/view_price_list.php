@@ -59,7 +59,7 @@ $isModalView = ($format === 'html');
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Price List PL-<?= str_pad($id, 5, '0', STR_PAD_LEFT) ?></title>
+    <title>Price List <?= htmlspecialchars($price_list['ref_no'] ?? 'PL-' . str_pad($id, 5, '0', STR_PAD_LEFT)) ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="<?= BASE_URL ?>css/style.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css" rel="stylesheet">
@@ -355,8 +355,11 @@ $isModalView = ($format === 'html');
                     <?php endif; ?>
                 </td>
                 <td class="pl-meta-cell">
+                    <?php if (!empty($price_list['subject'])): ?>
+                        <strong>Subject :</strong> <?= htmlspecialchars($price_list['subject']) ?><br>
+                    <?php endif; ?>
                     <strong>Date :</strong> <?= date('j/n/Y', strtotime($price_list['price_list_date'])) ?><br>
-                    <strong>Ref No :</strong> PL-<?= str_pad($id, 5, '0', STR_PAD_LEFT) ?>
+                    <strong>Ref No :</strong> <?= htmlspecialchars($price_list['ref_no'] ?? 'PL-' . str_pad($id, 5, '0', STR_PAD_LEFT)) ?>
                 </td>
             </tr>
         </table>
