@@ -597,7 +597,7 @@ $customerResult = $conn->query($customerSql);
                                                     <div class="input-group input-group-sm">
                                                         <span class="input-group-text currency-symbol">Rs.</span>
                                                         <input type="number" name="invoice_product_price[]"
-                                                            class="form-control price" value="0.00" step="0.01">
+                                                            class="form-control price" value="0.00" min="0" step="0.01">
                                                     </div>
                                                 </td>
                                                 <td>
@@ -1124,6 +1124,12 @@ $customerResult = $conn->query($customerSql);
                 if ($(this).hasClass('qty')) {
                     let value = $(this).val();
                     $(this).val(value.replace(/[^0-9]/g, ''));
+                }
+                if ($(this).hasClass('price') || $(this).hasClass('discount')) {
+                    let value = parseFloat($(this).val());
+                    if (value < 0) {
+                        $(this).val(0);
+                    }
                 }
                 updateRowTotal($(this).closest('tr'));
             });

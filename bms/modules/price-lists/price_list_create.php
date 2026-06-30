@@ -362,7 +362,7 @@ $customerResult = $conn->query($customerSql);
                                                     <input type="text" name="item_description[0][]" class="form-control" placeholder="Specifications...">
                                                 </div>
                                                 <div class="col-md-2">
-                                                    <input type="number" name="item_price[0][]" class="form-control text-end" step="0.01" placeholder="0.00" required>
+                                                    <input type="number" name="item_price[0][]" class="form-control text-end" min="0" step="0.01" placeholder="0.00" required>
                                                 </div>
                                                 <div class="col-md-1 text-end">
                                                     <button type="button" class="btn btn-link text-danger remove-item p-0 mt-2">
@@ -565,7 +565,7 @@ $customerResult = $conn->query($customerSql);
                                         <input type="text" name="item_description[${index}][]" class="form-control" placeholder="Specifications...">
                                     </div>
                                     <div class="col-md-2">
-                                        <input type="number" name="item_price[${index}][]" class="form-control text-end" step="0.01" placeholder="0.00" required>
+                                        <input type="number" name="item_price[${index}][]" class="form-control text-end" min="0" step="0.01" placeholder="0.00" required>
                                     </div>
                                     <div class="col-md-1 text-end">
                                         <button type="button" class="btn btn-link text-danger remove-item p-0 mt-2">
@@ -610,7 +610,7 @@ $customerResult = $conn->query($customerSql);
                         <input type="text" name="item_description[${index}][]" class="form-control" placeholder="Specifications...">
                     </div>
                     <div class="col-md-2">
-                        <input type="number" name="item_price[${index}][]" class="form-control text-end" step="0.01" placeholder="0.00" required>
+                        <input type="number" name="item_price[${index}][]" class="form-control text-end" min="0" step="0.01" placeholder="0.00" required>
                     </div>
                     <div class="col-md-1 text-end">
                         <button type="button" class="btn btn-link text-danger remove-item p-0 mt-2">

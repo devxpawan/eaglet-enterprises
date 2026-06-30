@@ -108,6 +108,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $discount_type = $discount_types[$key] ?? 'flat';
             $description = $product_descriptions[$key] ?? '';
             
+            if ($price < 0) {
+                throw new Exception("Price cannot be negative for item '$product_val'.");
+            }
+            if ($discount_val < 0) {
+                throw new Exception("Discount cannot be negative for item '$product_val'.");
+            }
+            
             $row_total = $price * $qty;
             
             // Calculate flat discount based on type

@@ -44,6 +44,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $sku = trim($_POST['sku'] ?? '');
     $category_id = !empty($_POST['category_id']) ? (int)$_POST['category_id'] : null;
     $lkr_price = floatval($_POST['lkr_price']);
+    if ($lkr_price < 0) {
+        $_SESSION['error_message'] = "Price cannot be negative.";
+        header("Location: " . BASE_URL . "modules/products/edit_product.php?id=" . $product_id);
+        exit;
+    }
     $stock_quantity = (int)($_POST['stock_quantity'] ?? 0);
     $reorder_level = (int)($_POST['reorder_level'] ?? 5);
     $unit = trim($_POST['unit'] ?? 'pcs');
@@ -165,7 +170,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <div class="col-md-6 mb-3">
                                             <label for="lkr_price" class="form-label">LKR Price <span class="text-danger">*</span></label>
                                             <input type="number" step="0.01" class="form-control" id="lkr_price" 
-                                                name="lkr_price" placeholder="Enter LKR Price" required
+                                                name="lkr_price" placeholder="Enter LKR Price" min="0" required
                                                 value="<?= ($product['lkr_price'] !== NULL) ? htmlspecialchars($product['lkr_price']) : '' ?>" data-original="<?= ($product['lkr_price'] !== NULL) ? htmlspecialchars($product['lkr_price']) : '' ?>">
                                         </div>
                                         <div class="col-md-6 mb-3">

@@ -677,7 +677,7 @@ $invoice_vat_pct = ($invoice_net > 0) ? ($invoice_vat / $invoice_net * 100) : 0;
                                                             <input type="number" name="invoice_product_price[]"
                                                                 class="form-control price"
                                                                 value="<?= htmlspecialchars(number_format((float)($item['total_amount'] / max(1, (int)$item['quantity'])) + ((float)($item['discount'] ?? 0) / max(1, (int)$item['quantity'])), 2, '.', '')) ?>"
-                                                                step="0.01">
+                                                                min="0" step="0.01">
                                                         </div>
                                                     </td>
                                                     <td>
@@ -1132,6 +1132,12 @@ $invoice_vat_pct = ($invoice_net > 0) ? ($invoice_vat / $invoice_net * 100) : 0;
                 if ($(this).hasClass('qty')) {
                     let value = $(this).val();
                     $(this).val(value.replace(/[^0-9]/g, ''));
+                }
+                if ($(this).hasClass('price') || $(this).hasClass('discount')) {
+                    let value = parseFloat($(this).val());
+                    if (value < 0) {
+                        $(this).val(0);
+                    }
                 }
                 updateRowTotal($(this).closest('tr'));
             });

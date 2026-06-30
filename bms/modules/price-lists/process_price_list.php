@@ -46,7 +46,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     for ($i = 0; $i < count($itemNames); $i++) {
                         $itemName = $itemNames[$i];
                         $itemDesc = $itemDescriptions[$i];
-                        $itemPrice = $itemPrices[$i];
+                        $itemPrice = floatval($itemPrices[$i]);
+
+                        if ($itemPrice < 0) {
+                            throw new Exception("Price cannot be negative for item '$itemName'.");
+                        }
 
                         if (!empty($itemName)) {
                             $stmtItem = $conn->prepare("INSERT INTO price_list_items (price_list_id, asset_name, item_name, price, description) VALUES (?, ?, ?, ?, ?)");

@@ -33,6 +33,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Validate prices (handle empty inputs properly)
     $lkr_price = !empty($_POST['lkr_price']) ? floatval($_POST['lkr_price']) : null;
     
+    if ($lkr_price !== null && $lkr_price < 0) {
+        $_SESSION['error_message'] = "Price cannot be negative.";
+        header("Location: " . BASE_URL . "modules/products/update_product.php?id=$product_id");
+        exit;
+    }
+    
     // Validate required fields
     if (empty($name) || empty($description)) {
         $_SESSION['error_message'] = "Name and description are required.";
@@ -156,7 +162,7 @@ $conn->close();
                                             <div class="mb-3">
                                                 <label for="lkr_price" class="form-label">LKR Price</label>
                                                 <input type="number" step="0.01" class="form-control" id="lkr_price" 
-                                                    name="lkr_price" value="<?php echo $product['lkr_price'] !== null ? $product['lkr_price'] : ''; ?>">
+                                                    name="lkr_price" min="0" value="<?php echo $product['lkr_price'] !== null ? $product['lkr_price'] : ''; ?>">
                                             </div>
 
                                             <div class="mb-3">
