@@ -34,8 +34,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $customer_id = $conn->insert_id;
         }
         
-        $q_date = $_POST['quotation_date'] ?? date('Y-m-d');
-        $e_date = $_POST['expiry_date'] ?? date('Y-m-d', strtotime('+14 days'));
+        $q_date = $_POST['issue_date'] ?? date('Y-m-d');
+        $e_date = $_POST['due_date'] ?? date('Y-m-d', strtotime('+14 days'));
         $subject = !empty($_POST['subject']) ? trim($_POST['subject']) : null;
         $notes = $_POST['notes'] ?? '';
         $currency = 'lkr';
@@ -94,7 +94,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $total_amount = ($subtotal - $total_discount) + $vat_amount;
         
         // Insert Quotation
-        $insertQSql = "INSERT INTO quotations (customer_id, user_id, quotation_date, expiry_date, subject, subtotal, discount, vat, total_amount, notes, currency, status, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $insertQSql = "INSERT INTO quotations (customer_id, user_id, issue_date, due_date, subject, subtotal, discount, vat, total_amount, notes, currency, status, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($insertQSql);
         $stmt->bind_param("iisssddddsssi", $customer_id, $user_id, $q_date, $e_date, $subject, $subtotal, $total_discount, $vat_amount, $total_amount, $notes, $currency, $status, $user_id);
         $stmt->execute();

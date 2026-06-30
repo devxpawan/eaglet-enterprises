@@ -36,11 +36,11 @@ if (!empty($search)) {
 }
 if (!empty($filter_from_date)) {
     $d = $conn->real_escape_string($filter_from_date);
-    $conditions[] = "q.quotation_date >= '$d'";
+    $conditions[] = "q.issue_date >= '$d'";
 }
 if (!empty($filter_to_date)) {
     $d = $conn->real_escape_string($filter_to_date);
-    $conditions[] = "q.quotation_date <= '$d'";
+    $conditions[] = "q.issue_date <= '$d'";
 }
 if (!empty($filter_customer)) {
     $c = $conn->real_escape_string($filter_customer);
@@ -148,7 +148,7 @@ $result = $conn->query($sql);
                                                         <?php
                                                         $refNo = !empty($row['ref_no'])
                                                             ? htmlspecialchars($row['ref_no'])
-                                                            : htmlspecialchars(generateRefNo($conn, $row['quotation_id'], $row['quotation_date'], 'QT'));
+                                                            : htmlspecialchars(generateRefNo($conn, $row['quotation_id'], $row['issue_date'], 'QT'));
                                                         echo $refNo;
                                                         ?>
                                                     </td>
@@ -156,10 +156,10 @@ $result = $conn->query($sql);
                                                         <div class="fw-semibold"><?php echo htmlspecialchars($row['customer_business_name'] ?: $row['customer_name']); ?></div>
                                                         <div class="text-muted small"><?php echo htmlspecialchars($row['customer_name']); ?></div>
                                                     </td>
-                                                    <td><?php echo date('d/m/Y', strtotime($row['quotation_date'])); ?></td>
-                                                    <td><?php echo $row['expiry_date'] ? date('d/m/Y', strtotime($row['expiry_date'])) : '-'; ?></td>
+                                                    <td><?php echo date('d/m/Y', strtotime($row['issue_date'])); ?></td>
+                                                    <td><?php echo $row['due_date'] ? date('d/m/Y', strtotime($row['due_date'])) : '-'; ?></td>
                                                     <td>
-                                                        <div class="amount-text"><?php echo number_format($row['total_amount'], 2); ?> <span class="currency-symbol">(<?php echo $row['currency'] == 'usd' ? '$' : 'Rs'; ?>)</span></div>
+                                                        <div class="amount-text"><?php echo number_format($row['total_amount'], 2); ?> <span class="currency-symbol">(Rs)</span></div>
                                                     </td>
                                                     <td>
                                                         <span class="badge-soft badge-soft-cancelled">

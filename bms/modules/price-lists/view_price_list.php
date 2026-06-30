@@ -47,7 +47,7 @@ if (!empty($price_list['customer_id'])) {
 
 $company = getCompanyInfo($conn);
 
-$currencySymbol = ($price_list['currency'] == 'usd') ? '$' : 'Rs.';
+$currencySymbol = 'Rs.';
 $format = isset($_GET['format']) ? $_GET['format'] : 'view';
 $isModalView = ($format === 'html');
 ?>
@@ -371,7 +371,7 @@ $isModalView = ($format === 'html');
                         <th width="8%" style="text-align: center;">S.NO</th>
                         <th width="40%">ITEM DETAILS</th>
                         <th width="32%">DESCRIPTION</th>
-                        <th width="20%" style="text-align: right;">PRICE (<?= strtoupper($price_list['currency']) ?>)</th>
+                        <th width="20%" style="text-align: right;">PRICE (LKR)</th>
                     </tr>
                 </thead>
                 <tbody>

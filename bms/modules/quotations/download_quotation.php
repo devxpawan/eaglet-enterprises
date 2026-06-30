@@ -181,7 +181,7 @@ if ($grand_total_words) {
 if (!empty($quotation['ref_no'])) {
     $ref_no = $quotation['ref_no'];
 } else {
-    $ref_no = generateRefNo($conn, $quotation_id, $quotation['quotation_date'], 'QT');
+    $ref_no = generateRefNo($conn, $quotation_id, $quotation['issue_date'], 'QT');
 }
 ?>
 
@@ -582,7 +582,7 @@ if (!empty($quotation['ref_no'])) {
                     <?php echo nl2br(htmlspecialchars($quotation['customer_address'])); ?>
                 </td>
                 <td class="quote-meta-cell">
-                    <strong>Date :</strong> <?php echo date('j/n/Y', strtotime($quotation['quotation_date'])); ?><br>
+                    <strong>Date :</strong> <?php echo date('j/n/Y', strtotime($quotation['issue_date'])); ?><br>
                     <strong>Ref No :</strong> <?php echo htmlspecialchars($ref_no); ?>
                     <?php if (!empty($quotation['revision_no']) && $quotation['revision_no'] > 0): ?>
                         <br><strong>Revision :</strong> R<?php echo $quotation['revision_no']; ?>

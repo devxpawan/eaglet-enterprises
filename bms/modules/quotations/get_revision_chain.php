@@ -40,7 +40,7 @@ foreach ($chain as $rev) {
                 <?php endif; ?>
                 <br>
                 <small class="text-muted">
-                    <?php echo date('d/m/Y', strtotime($rev['quotation_date'])); ?> |
+                    <?php echo date('d/m/Y', strtotime($rev['issue_date'])); ?> |
                     Amount: <?php echo number_format($rev['total_amount'], 2); ?>
                 </small>
                 <div class="mt-1">

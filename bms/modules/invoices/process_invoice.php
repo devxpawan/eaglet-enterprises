@@ -76,7 +76,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         // Prepare invoice details
         $invoice_date = $_POST['invoice_date'] ?? date('Y-m-d');
-        $due_date = !empty($_POST['due_date']) ? $_POST['due_date'] : date('Y-m-d', strtotime('+30 days'));
+        $due_date = !empty($_POST['due_date']) ? $_POST['due_date'] : date('Y-m-d', strtotime('+14 days'));
         $subject = !empty($_POST['subject']) ? trim($_POST['subject']) : null;
         $notes = $_POST['notes'] ?? 'Thank you for choosing our services. Please review the invoice details and ensure payment is completed by the due date. If there are any discrepancies, kindly inform us immediately.';
         

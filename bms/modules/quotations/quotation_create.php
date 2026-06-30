@@ -490,14 +490,14 @@ $customerResult = $conn->query($customerSql);
                                             <div class="col-md-6">
                                                 <div>
                                                     <label class="form-label">Quotation Date</label>
-                                                    <input type="date" class="form-control" name="quotation_date"
+                                                    <input type="date" class="form-control" name="issue_date"
                                                         value="<?php echo date('Y-m-d'); ?>" required>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div>
                                                     <label class="form-label">Expiry Date</label>
-                                                    <input type="date" class="form-control" name="expiry_date"
+                                                    <input type="date" class="form-control" name="due_date"
                                                         value="<?php echo date('Y-m-d', strtotime('+14 days')); ?>"
                                                         required>
                                                 </div>
@@ -1043,12 +1043,12 @@ $customerResult = $conn->query($customerSql);
         });
         
         // Update expiry date when quotation date changes
-        $('input[name="quotation_date"]').on('change', function() {
+        $('input[name="issue_date"]').on('change', function() {
             const qDate = new Date($(this).val());
             if (!isNaN(qDate.getTime())) {
                 const expDate = new Date(qDate);
                 expDate.setDate(expDate.getDate() + 14);
-                $('input[name="expiry_date"]').val(expDate.toISOString().split('T')[0]);
+                $('input[name="due_date"]').val(expDate.toISOString().split('T')[0]);
             }
         });
     </script>

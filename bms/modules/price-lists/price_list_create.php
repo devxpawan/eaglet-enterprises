@@ -273,10 +273,10 @@ $customerResult = $conn->query($customerSql);
                                     <div class="col-md-6">
                                         <div>
                                             <label class="form-label">Currency</label>
-                                            <select name="currency" class="form-select">
-                                                <option value="lkr">LKR</option>
-                                                <option value="usd">USD</option>
+                                            <select name="currency" class="form-select" disabled>
+                                                <option value="lkr" selected>LKR</option>
                                             </select>
+                                            <input type="hidden" name="currency" value="lkr">
                                         </div>
                                     </div>
                                 </div>

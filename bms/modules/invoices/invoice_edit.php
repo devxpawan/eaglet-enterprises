@@ -566,7 +566,7 @@ $invoice_vat_pct = ($invoice_net > 0) ? ($invoice_vat / $invoice_net * 100) : 0;
                                                 <div>
                                                     <label class="form-label">Due Date</label>
                                                     <input type="date" class="form-control" name="due_date"
-                                                        value="<?= htmlspecialchars((!empty($invoice['due_date']) && $invoice['due_date'] !== '0000-00-00') ? date('Y-m-d', strtotime($invoice['due_date'])) : date('Y-m-d', strtotime('+30 days'))) ?>"
+                                                        value="<?= htmlspecialchars((!empty($invoice['due_date']) && $invoice['due_date'] !== '0000-00-00') ? date('Y-m-d', strtotime($invoice['due_date'])) : date('Y-m-d', strtotime('+14 days'))) ?>"
                                                         required>
                                                 </div>
                                             </div>

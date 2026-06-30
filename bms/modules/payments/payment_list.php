@@ -176,8 +176,7 @@ if ($pu) {
                                 <tbody>
                                     <?php if ($result && $result->num_rows > 0): ?>
                                         <?php while ($row = $result->fetch_assoc()): 
-                                            $currency = isset($row['currency']) ? $row['currency'] : 'lkr';
-                                            $currencySymbol = ($currency == 'usd') ? '$' : 'Rs';
+                                            $currencySymbol = 'Rs';
                                         ?>
                                             <tr>
                                                 <td><?php echo intval($row['payment_id']); ?></td>

@@ -497,7 +497,7 @@ $customerResult = $conn->query($customerSql);
                                                 <div>
                                                     <label class="form-label">Due Date</label>
                                                     <input type="date" class="form-control" name="due_date"
-                                                        value="<?php echo date('Y-m-d', strtotime('+30 days')); ?>"
+                                                        value="<?php echo date('Y-m-d', strtotime('+14 days')); ?>"
                                                         required>
                                                 </div>
                                             </div>

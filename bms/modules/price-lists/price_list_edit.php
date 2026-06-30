@@ -315,10 +315,10 @@ if (!empty($price_list['customer_id'])) {
                                     <div class="col-md-6">
                                         <div>
                                             <label class="form-label">Currency</label>
-                                            <select name="currency" class="form-select">
-                                                <option value="lkr" <?= $price_list['currency'] == 'lkr' ? 'selected' : '' ?>>LKR</option>
-                                                <option value="usd" <?= $price_list['currency'] == 'usd' ? 'selected' : '' ?>>USD</option>
+                                            <select name="currency" class="form-select" disabled>
+                                                <option value="lkr" selected>LKR</option>
                                             </select>
+                                            <input type="hidden" name="currency" value="lkr">
                                         </div>
                                     </div>
                                 </div>

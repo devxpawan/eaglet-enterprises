@@ -340,8 +340,7 @@ if ($result && $result->num_rows > 0) {
                                                         <?php
                                                         $totalAmt = isset($row['total_amount']) ? floatval($row['total_amount']) : 0;
                                                         $paidAmt = isset($row['amount_paid']) ? floatval($row['amount_paid']) : 0;
-                                                        $currency = isset($row['currency']) ? $row['currency'] : 'lkr';
-                                                        $currencySymbol = ($currency == 'usd') ? '$' : 'Rs';
+                                                        $currencySymbol = 'Rs';
                                                         $payStatus = isset($row['pay_status']) ? $row['pay_status'] : 'unpaid';
 
                                                         echo '<div class="amount-text">' . number_format($paidAmt, 2) . ' / ' . number_format($totalAmt, 2) . ' <span class="currency-symbol">(' . $currencySymbol . ')</span></div>';
@@ -761,8 +760,7 @@ if ($result && $result->num_rows > 0) {
                 var invoiceId = $(this).data('id');
                 var customerName = $(this).data('customer');
                 var amountPaid = parseFloat($(this).data('amount')) || 0;
-                var currency = $(this).data('currency') || 'lkr';
-                var currencySymbol = (currency === 'usd') ? '$' : 'Rs';
+                var currencySymbol = 'Rs';
 
                 $('#cancel_invoice_id').text(invoiceId);
                 $('#cancel_customer_name').text(customerName);

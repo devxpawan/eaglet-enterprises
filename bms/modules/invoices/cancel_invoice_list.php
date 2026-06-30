@@ -205,8 +205,7 @@ $result = $conn->query($sql);
                                                     <td>
                                                         <?php
                                                         $amount = isset($row['total_amount']) ? htmlspecialchars(number_format((float) $row['total_amount'], 2)) : '0.00';
-                                                        $currency = isset($row['currency']) ? $row['currency'] : 'lkr';
-                                                        $currencySymbol = ($currency == 'usd') ? '$' : 'Rs';
+                                                        $currencySymbol = 'Rs';
                                                         $payStatus = isset($row['pay_status']) ? $row['pay_status'] : 'unpaid';
 
                                                         echo '<div class="amount-text">' . $amount . ' <span class="currency-symbol">(' . $currencySymbol . ')</span></div>';

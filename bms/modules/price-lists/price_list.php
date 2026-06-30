@@ -158,9 +158,7 @@ $result = $conn->query($sql);
                                                     <td><?= date('d M, Y', strtotime($row['price_list_date'])) ?></td>
                                                     <td><?= htmlspecialchars($row['customer_name'] ?? '-') ?></td>
                                                     <td>
-                                                        <span class="badge-soft badge-soft-info">
-                                                            <?= strtoupper($row['currency']) ?>
-                                                        </span>
+                                                        <span class="badge-soft badge-soft-info">LKR</span>
                                                     </td>
                                                     <td class="text-end pe-3">
                                 <div class="action-btn-group d-flex justify-content-end gap-1">

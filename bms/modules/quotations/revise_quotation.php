@@ -66,7 +66,7 @@ $revision_chain = getQuotationRevisionChain($conn, $quotation_id);
 // Determine display info
 $display_ref_no = !empty($quotation['ref_no'])
     ? htmlspecialchars($quotation['ref_no'])
-    : htmlspecialchars(generateRefNo($conn, $quotation_id, $quotation['quotation_date'], 'QT'));
+    : htmlspecialchars(generateRefNo($conn, $quotation_id, $quotation['issue_date'], 'QT'));
 
 $rev_label = ($quotation['revision_no'] == 0) ? 'Original' : 'R' . $quotation['revision_no'];
 ?>
@@ -493,15 +493,15 @@ $rev_label = ($quotation['revision_no'] == 0) ? 'Original' : 'R' . $quotation['r
                                             <div class="col-md-6">
                                                 <div>
                                                     <label class="form-label">Quotation Date</label>
-                                                    <input type="date" class="form-control" name="quotation_date"
-                                                        value="<?php echo htmlspecialchars($quotation['quotation_date']); ?>" required>
+                                                    <input type="date" class="form-control" name="issue_date"
+                                                        value="<?php echo htmlspecialchars($quotation['issue_date']); ?>" required>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div>
                                                     <label class="form-label">Expiry Date</label>
-                                                    <input type="date" class="form-control" name="expiry_date"
-                                                        value="<?php echo htmlspecialchars($quotation['expiry_date']); ?>"
+                                                    <input type="date" class="form-control" name="due_date"
+                                                        value="<?php echo htmlspecialchars($quotation['due_date']); ?>"
                                                         required>
                                                 </div>
                                             </div>
@@ -925,12 +925,12 @@ $rev_label = ($quotation['revision_no'] == 0) ? 'Original' : 'R' . $quotation['r
             updateRowTotal(row);
         });
 
-        $('input[name="quotation_date"]').on('change', function() {
+        $('input[name="issue_date"]').on('change', function() {
             const qDate = new Date($(this).val());
             if (!isNaN(qDate.getTime())) {
                 const expDate = new Date(qDate);
                 expDate.setDate(expDate.getDate() + 14);
-                $('input[name="expiry_date"]').val(expDate.toISOString().split('T')[0]);
+                $('input[name="due_date"]').val(expDate.toISOString().split('T')[0]);
             }
         });
 
