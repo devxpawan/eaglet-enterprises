@@ -6,6 +6,7 @@ require_once BASE_PATH . 'includes/db_connection.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $price_list_date = $_POST['price_list_date'];
+    $due_date = !empty($_POST['due_date']) ? $_POST['due_date'] : null;
     $currency = $_POST['currency'];
     $subject = trim($_POST['subject'] ?? '');
     $notes = $_POST['notes'];
@@ -14,32 +15,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $created_by = $_SESSION['user_id'] ?? null;
     $ref_no = 'PL-' . date('ymdHi');
 
-    // Customer handling
-    $customer_id = $_POST['customer_id'] ?? 0;
-    if (empty($customer_id) && !empty(trim($_POST['customer_name'] ?? ''))) {
-        $customer_name = trim($_POST['customer_name']);
-        $customer_email = !empty($_POST['customer_email']) ? trim($_POST['customer_email']) : null;
-        $customer_phone = $_POST['customer_phone'] ?? '';
-        $customer_address = $_POST['customer_address'] ?? '';
-        $insertCustomerSql = "INSERT INTO customers (name, email, phone, address, status) VALUES (?, ?, ?, ?, 'Active')";
-        $stmtCust = $conn->prepare($insertCustomerSql);
-        $stmtCust->bind_param("ssss", $customer_name, $customer_email, $customer_phone, $customer_address);
-        $stmtCust->execute();
-        $customer_id = $conn->insert_id;
-    }
+    // Customer handling - store directly, no auto-creation
+    $customer_id = !empty($_POST['customer_id']) ? intval($_POST['customer_id']) : null;
+    $customer_name = !empty(trim($_POST['customer_name'] ?? '')) ? trim($_POST['customer_name']) : null;
+    $customer_email = !empty(trim($_POST['customer_email'] ?? '')) ? trim($_POST['customer_email']) : null;
+    $customer_phone = !empty(trim($_POST['customer_phone'] ?? '')) ? trim($_POST['customer_phone']) : null;
+    $customer_address = !empty(trim($_POST['customer_address'] ?? '')) ? trim($_POST['customer_address']) : null;
 
     $conn->begin_transaction();
 
     try {
         // Insert into price_lists
-        $stmt = $conn->prepare("INSERT INTO price_lists (ref_no, price_list_date, subject, currency, notes, payment_terms, terms_conditions, created_by, customer_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("sssssssii", $ref_no, $price_list_date, $subject, $currency, $notes, $payment_terms, $terms_conditions, $created_by, $customer_id);
+        $stmt = $conn->prepare("INSERT INTO price_lists (ref_no, price_list_date, due_date, subject, currency, notes, payment_terms, terms_conditions, created_by, customer_id, customer_name, customer_email, customer_phone, customer_address) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("ssssssssiissss", $ref_no, $price_list_date, $due_date, $subject, $currency, $notes, $payment_terms, $terms_conditions, $created_by, $customer_id, $customer_name, $customer_email, $customer_phone, $customer_address);
         $stmt->execute();
         $price_list_id = $conn->insert_id;
 
-        // Process Asset Groups and Items
-        if (isset($_POST['asset_name']) && is_array($_POST['asset_name'])) {
-            foreach ($_POST['asset_name'] as $groupIndex => $asset_name) {
+        // Process Sections and Items
+        if (isset($_POST['section_name']) && is_array($_POST['section_name'])) {
+            foreach ($_POST['section_name'] as $groupIndex => $section_name) {
                 if (isset($_POST['item_name'][$groupIndex]) && is_array($_POST['item_name'][$groupIndex])) {
                     $itemNames = $_POST['item_name'][$groupIndex];
                     $itemDescriptions = $_POST['item_description'][$groupIndex];
@@ -55,8 +49,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         }
 
                         if (!empty($itemName)) {
-                            $stmtItem = $conn->prepare("INSERT INTO price_list_items (price_list_id, asset_name, item_name, price, description) VALUES (?, ?, ?, ?, ?)");
-                            $stmtItem->bind_param("issds", $price_list_id, $asset_name, $itemName, $itemPrice, $itemDesc);
+                            $stmtItem = $conn->prepare("INSERT INTO price_list_items (price_list_id, section_name, item_name, price, description) VALUES (?, ?, ?, ?, ?)");
+                            $stmtItem->bind_param("issds", $price_list_id, $section_name, $itemName, $itemPrice, $itemDesc);
                             $stmtItem->execute();
                         }
                     }

@@ -89,7 +89,6 @@ if (!isset($_SESSION['csrf_token'])) {
     <!-- Select2 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
-    <style></style>
 </head>
 
 <body class="sb-nav-fixed">
@@ -177,7 +176,7 @@ if (!isset($_SESSION['csrf_token'])) {
                                         <div class="mb-3">
                                             <label for="mobile" class="form-label">Mobile Number</label>
                                             <input type="tel" class="form-control" id="mobile" name="mobile"
-                                                placeholder="Enter Mobile Number" 
+                                                placeholder="Enter Mobile Number" maxlength="10" pattern="[0-9]{10}" inputmode="numeric"
                                                 value="<?php echo htmlspecialchars($mobile); ?>" data-original="<?php echo htmlspecialchars($mobile); ?>">
                                             <div class="error-feedback" id="mobile-error"></div>
                                         </div>

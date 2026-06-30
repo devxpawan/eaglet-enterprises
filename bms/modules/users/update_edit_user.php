@@ -62,6 +62,13 @@ if (empty($position_id)) {
     exit();
 }
 
+// Validate mobile number format if provided
+if (!empty($mobile) && !preg_match('/^[0-9]{10}$/', $mobile)) {
+    $_SESSION['error_message'] = "Invalid mobile number.";
+    header("Location: " . BASE_URL . "modules/users/users.php");
+    exit();
+}
+
 // Validate email format
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     $_SESSION['error_message'] = "Invalid email format.";

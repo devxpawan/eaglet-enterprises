@@ -79,347 +79,7 @@ $rev_label = ($quotation['revision_no'] == 0) ? 'Original' : 'R' . $quotation['r
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        * { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
-
-        .quotation-container {
-            margin: 0;
-            background: #fff;
-            border-radius: 16px;
-            box-shadow: 0 1px 3px rgba(16, 24, 40, 0.06), 0 1px 2px rgba(16, 24, 40, 0.04);
-            border: 1px solid #eaecf0;
-            padding: 28px 32px;
-            transition: box-shadow 0.15s ease;
-        }
-
-        .quotation-container:hover {
-            box-shadow: 0 4px 8px rgba(16, 24, 40, 0.06), 0 2px 4px rgba(16, 24, 40, 0.04);
-        }
-
-        .form-label {
-            font-weight: 600;
-            color: #344054;
-            font-size: 13px;
-            margin-bottom: 6px;
-            letter-spacing: 0.01em;
-        }
-
-        .form-control, .form-select {
-            font-size: 14px;
-            color: #101828;
-            border-color: #d0d5dd;
-            border-radius: 8px;
-            transition: all 0.15s ease;
-        }
-
-        .form-control:focus, .form-select:focus {
-            border-color: #3B82F6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
-        }
-
-        .form-control:hover, .form-select:hover {
-            border-color: #98a2b3;
-        }
-
-        .card {
-            border-radius: 12px;
-            border: 1px solid #eaecf0;
-            box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
-            transition: box-shadow 0.15s ease;
-        }
-
-        .card:hover {
-            box-shadow: 0 4px 8px rgba(16, 24, 40, 0.06);
-        }
-
-        .card-title {
-            font-size: 15px;
-            color: #101828;
-            letter-spacing: -0.01em;
-        }
-
-        .card-body {
-            padding: 20px 24px;
-        }
-
-        #quotation_table {
-            margin-bottom: 0;
-        }
-
-        #quotation_table thead th {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: #ffffffff;
-            font-weight: 600;
-            background: #303361;
-            border-bottom: 1px solid #eaecf0;
-            padding: 10px 12px;
-            white-space: nowrap;
-        }
-
-        .discount-group .discount-type-btn {
-            font-size: 10px;
-            padding: 0 6px;
-            height: 28px;
-            line-height: 26px;
-            border-radius: 0;
-        }
-        .discount-group .discount-type-btn:first-of-type {
-            border-top-right-radius: 0;
-            border-bottom-right-radius: 0;
-        }
-        .discount-group .discount-type-btn:last-of-type {
-            border-top-left-radius: 0;
-            border-bottom-left-radius: 0;
-        }
-        .discount-group .discount-type-btn.active {
-            background: #303361;
-            border-color: #303361;
-            color: #fff;
-        }
-        .discount-group input.form-control.discount {
-            border-top-right-radius: 0;
-            border-bottom-right-radius: 0;
-            min-width: 50px;
-        }
-
-        #quotation_table tbody td {
-            padding: 10px 8px;
-            vertical-align: middle;
-            border-bottom: 1px solid #f2f4f7;
-        }
-
-        #quotation_table tbody tr:last-child td {
-            border-bottom: none;
-        }
-
-        #quotation_table .remove_product {
-            width: 30px;
-            height: 30px;
-            padding: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 6px;
-            font-size: 13px;
-        }
-
-        .validation-error {
-            color: #f04438;
-            font-size: 12px;
-            margin-top: 4px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .validation-error::before {
-            content: "\26A0";
-            font-size: 11px;
-        }
-
-        .totals-section {
-            background: #f9fafb;
-            padding: 16px 20px;
-            border-radius: 12px;
-            border: 1px solid #eaecf0;
-            min-width: 280px;
-        }
-
-        .totals-section .form-control {
-            font-weight: 600;
-            background: #fff;
-            border-color: #d0d5dd;
-        }
-
-        .totals-section .row {
-            margin-bottom: 6px;
-        }
-
-        .totals-section .row:last-child {
-            margin-bottom: 0;
-        }
-
-        .totals-section .currency-symbol {
-            color: #667085;
-        }
-
-        input.form-control, select.form-select {
-            height: 40px;
-            padding: 8px 12px;
-        }
-
-        textarea.form-control {
-            border-radius: 8px;
-            border-color: #d0d5dd;
-            font-size: 14px;
-            resize: vertical;
-        }
-
-        textarea.form-control:focus {
-            border-color: #3B82F6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
-        }
-
-        .btn {
-            font-weight: 600;
-            font-size: 14px;
-            padding: 8px 18px;
-            border-radius: 8px;
-            transition: all 0.15s ease;
-            letter-spacing: 0.01em;
-        }
-
-        .btn-primary {
-            background: #3B82F6;
-            border-color: #3B82F6;
-        }
-
-        .btn-primary:hover {
-            background: #2563EB;
-            border-color: #2563EB;
-            box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
-            transform: translateY(-1px);
-        }
-
-        .btn-primary:active {
-            transform: translateY(0);
-        }
-
-        .btn-outline-success {
-            color: #079455;
-            border-color: #d0d5dd;
-            background: #fff;
-        }
-
-        .btn-outline-success:hover {
-            background: #f6fef9;
-            border-color: #079455;
-            color: #079455;
-        }
-
-        .btn-outline-primary {
-            color: #3B82F6;
-            border-color: #d0d5dd;
-            background: #fff;
-        }
-
-        .btn-outline-primary:hover {
-            background: #f5f5ff;
-            border-color: #3B82F6;
-            color: #3B82F6;
-        }
-
-        .btn-outline-danger {
-            color: #f04438;
-            border-color: #d0d5dd;
-            background: #fff;
-        }
-
-        .btn-outline-danger:hover {
-            background: #fffbfa;
-            border-color: #f04438;
-            color: #f04438;
-        }
-
-        .btn-outline-secondary {
-            color: #344054;
-            border-color: #d0d5dd;
-            background: #fff;
-        }
-
-        .btn-outline-secondary:hover {
-            background: #f9fafb;
-            border-color: #98a2b3;
-            color: #101828;
-        }
-
-        .btn-sm {
-            font-size: 13px;
-            padding: 6px 14px;
-        }
-
-        .input-group .input-group-text {
-            background: #f9fafb;
-            border-color: #d0d5dd;
-            color: #667085;
-            font-weight: 500;
-            font-size: 14px;
-        }
-
-        .input-group .form-control {
-            border-top-left-radius: 0;
-            border-bottom-left-radius: 0;
-        }
-
-        .input-group:not(.has-validation) > .form-control:not(:last-child) {
-            border-top-right-radius: 8px;
-            border-bottom-right-radius: 8px;
-        }
-
-        .select2-container--bootstrap-5 .select2-selection {
-            border-radius: 8px !important;
-            border-color: #d0d5dd !important;
-            min-height: 40px !important;
-        }
-
-        .select2-container--bootstrap-5.select2-container--focus .select2-selection {
-            border-color: #3B82F6 !important;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12) !important;
-        }
-
-        .page-header {
-            background: linear-gradient(135deg, #f9fafb 0%, #f3f4ff 100%);
-            border-bottom: 1px solid #eaecf0;
-            padding: 20px 32px;
-            margin-bottom: 24px;
-        }
-
-        .page-header h5 {
-            font-size: 22px;
-            font-weight: 700;
-            color: #101828;
-            letter-spacing: -0.02em;
-        }
-
-        .page-header .text-muted {
-            font-size: 14px;
-            color: #667085;
-        }
-
-        .status-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 4px 12px;
-            border-radius: 999px;
-            background: #fff8e1;
-            color: #b78103;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .revise-banner {
-            background: linear-gradient(135deg, #f0f0ff 0%, #eef2ff 100%);
-            border: 1px solid #c7d2fe;
-            border-radius: 12px;
-            padding: 16px 20px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .revise-banner i {
-            font-size: 24px;
-            color: #4338ca;
-        }
-
-        .revise-banner strong {
-            color: #4338ca;
-        }
-    </style>
+    <link href="<?= BASE_URL ?>css/quotation-list.css" rel="stylesheet" />
 </head>
 
 <body class="sb-nav-fixed">
@@ -533,19 +193,19 @@ $rev_label = ($quotation['revision_no'] == 0) ? 'Original' : 'R' . $quotation['r
                                         <div>
                                             <label class="form-label">Name <span class="text-danger">*</span></label>
                                             <input type="text" class="form-control" name="customer_name"
-                                                id="customer_name" placeholder="Enter customer name" required
+                                                id="customer_name" placeholder="Enter Customer Name" required
                                                 value="<?php echo htmlspecialchars($quotation['customer_name']); ?>">
                                         </div>
                                         <div class="mt-3">
                                             <label class="form-label">Business Name</label>
                                             <input type="text" class="form-control" name="customer_business_name"
-                                                id="customer_business_name" placeholder="Enter business name (optional)"
+                                                id="customer_business_name" placeholder="Enter Business Name (optional)"
                                                 value="<?php echo htmlspecialchars($quotation['customer_business_name'] ?? ''); ?>">
                                         </div>
                                         <div class="mt-3">
                                             <label class="form-label">Email</label>
                                             <input type="email" class="form-control" name="customer_email"
-                                                id="customer_email" placeholder="customer@example.com"
+                                                id="customer_email" placeholder="Enter Email (optional)"
                                                 value="<?php echo htmlspecialchars($quotation['customer_email'] ?? ''); ?>">
                                         </div>
                                     </div>
@@ -553,13 +213,13 @@ $rev_label = ($quotation['revision_no'] == 0) ? 'Original' : 'R' . $quotation['r
                                         <div>
                                             <label class="form-label">Phone</label>
                                             <input type="text" class="form-control" name="customer_phone"
-                                                id="customer_phone" placeholder="077 123 4567" maxlength="10" pattern="[0-9]{10}" inputmode="numeric"
+                                                id="customer_phone" placeholder="Enter Phone Number" maxlength="10" pattern="[0-9]{10}" inputmode="numeric"
                                                 value="<?php echo htmlspecialchars($quotation['customer_phone'] ?? ''); ?>">
                                         </div>
                                         <div class="mt-3">
                                             <label class="form-label">Address</label>
                                             <input type="text" class="form-control" name="customer_address"
-                                                id="customer_address" placeholder="Enter customer address"
+                                                id="customer_address" placeholder="Enter Address"
                                                 value="<?php echo htmlspecialchars($quotation['customer_address'] ?? ''); ?>">
                                         </div>
                                     </div>
@@ -797,6 +457,42 @@ $rev_label = ($quotation['revision_no'] == 0) ? 'Original' : 'R' . $quotation['r
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        function isValidPhoneNumber(phone) {
+            const phoneRegex = /^\d{10}$/;
+            return phoneRegex.test(phone);
+        }
+
+        function validateCustomerInfo() {
+            const customerName = $('#customer_name').val().trim();
+            const customerEmail = $('#customer_email').val().trim();
+            const customerPhone = $('#customer_phone').val().trim();
+
+            $('.validation-error').remove();
+            let isValid = true;
+
+            if (customerName === '') {
+                $('#customer_name').after('<div class="text-danger validation-error">Customer name is required</div>');
+                isValid = false;
+            }
+
+            if (customerEmail !== '' && !isValidEmail(customerEmail)) {
+                $('#customer_email').after('<div class="text-danger validation-error">Invalid email format</div>');
+                isValid = false;
+            }
+
+            if (customerPhone !== '' && !isValidPhoneNumber(customerPhone)) {
+                $('#customer_phone').after('<div class="text-danger validation-error">Phone number must be 10 digits</div>');
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
         function getFlatDiscount(row) {
             let price = parseFloat(row.find('.price').val()) || 0;
             let qty = parseFloat(row.find('.qty').val()) || 0;
@@ -934,7 +630,20 @@ $rev_label = ($quotation['revision_no'] == 0) ? 'Original' : 'R' . $quotation['r
             }
         });
 
+        $('#customer_phone').on('input', function () {
+            $('.validation-error').remove();
+            const phone = $(this).val().trim();
+            if (phone !== '' && !isValidPhoneNumber(phone)) {
+                $(this).after('<div class="text-danger validation-error">Phone number must be 10 digits</div>');
+            }
+        });
+
         $('#quotationForm').on('submit', function(e) {
+            if (!validateCustomerInfo()) {
+                e.preventDefault();
+                return false;
+            }
+
             if ($('#quotation_table tbody tr').length === 0) {
                 showToast('warning', 'Please add at least one item to the quotation.');
                 e.preventDefault();

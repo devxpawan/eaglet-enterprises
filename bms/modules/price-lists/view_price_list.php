@@ -24,22 +24,30 @@ if (!$price_list) {
     die("Price list not found.");
 }
 
-// Fetch Items Grouped by Asset Name
+// Fetch Items Grouped by Section Name
 $itemSql = "SELECT pli.* 
             FROM price_list_items pli 
             WHERE pli.price_list_id = $id 
-            ORDER BY pli.asset_name, pli.id";
+            ORDER BY pli.section_name, pli.id";
 $itemResult = $conn->query($itemSql);
 
-$itemsByAsset = [];
+$itemsBySection = [];
 while ($row = $itemResult->fetch_assoc()) {
-    $assetName = $row['asset_name'] ?? '';
-    $itemsByAsset[$assetName][] = $row;
+    $sectionName = $row['section_name'] ?? '';
+    $itemsBySection[$sectionName][] = $row;
 }
 
-// Fetch customer info if associated
+// Fetch customer info - stored on price_list or from customers table
 $customerInfo = null;
-if (!empty($price_list['customer_id'])) {
+if (!empty($price_list['customer_name'])) {
+    $customerInfo = [
+        'name' => $price_list['customer_name'],
+        'business_name' => null,
+        'email' => $price_list['customer_email'],
+        'phone' => $price_list['customer_phone'],
+        'address' => $price_list['customer_address'],
+    ];
+} elseif (!empty($price_list['customer_id'])) {
     $custSql = "SELECT * FROM customers WHERE customer_id = " . intval($price_list['customer_id']);
     $custResult = $conn->query($custSql);
     $customerInfo = $custResult->fetch_assoc();
@@ -188,7 +196,7 @@ $isModalView = ($format === 'html');
             vertical-align: top;
         }
 
-        .asset-header {
+        .section-header {
     background: #f8fafc;
     padding: 3px 6px;
     border-left: 2px solid #1B1C56;
@@ -258,7 +266,7 @@ $isModalView = ($format === 'html');
                 display: none !important;
             }
 
-            .header-table, .info-table, .asset-header {
+            .header-table, .info-table, .section-header {
                 page-break-inside: avoid;
                 break-inside: avoid;
             }
@@ -359,14 +367,17 @@ $isModalView = ($format === 'html');
                         <strong>Subject :</strong> <?= htmlspecialchars($price_list['subject']) ?><br>
                     <?php endif; ?>
                     <strong>Date :</strong> <?= date('j/n/Y', strtotime($price_list['price_list_date'])) ?><br>
+                    <?php if (!empty($price_list['due_date'])): ?>
+                        <strong>Due Date :</strong> <?= date('j/n/Y', strtotime($price_list['due_date'])) ?><br>
+                    <?php endif; ?>
                     <strong>Ref No :</strong> <?= htmlspecialchars($price_list['ref_no'] ?? 'PL-' . str_pad($id, 5, '0', STR_PAD_LEFT)) ?>
                 </td>
             </tr>
         </table>
 
-        <?php foreach ($itemsByAsset as $assetName => $items): ?>
-            <?php if (!empty($assetName)): ?>
-            <div class="asset-header"><?= htmlspecialchars($assetName) ?></div>
+        <?php foreach ($itemsBySection as $sectionName => $items): ?>
+            <?php if (!empty($sectionName)): ?>
+            <div class="section-header"><?= htmlspecialchars($sectionName) ?></div>
             <?php endif; ?>
             <table class="product-table">
                 <thead>

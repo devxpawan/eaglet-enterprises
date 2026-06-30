@@ -131,48 +131,6 @@ function hasMultipleChanges($details) {
     <title>User Activity Logs</title>
     <link href="<?= BASE_URL ?>css/users-list.css" rel="stylesheet" />
     <link rel="stylesheet" href="<?= BASE_URL ?>css/forms.css">
-    <style>
-        .details-cell {
-            max-width: 300px;
-        }
-        .details-cell ul {
-            margin-top: 5px;
-            padding-left: 18px;
-        }
-        .details-cell li {
-            text-align: left;
-            font-size: 12px;
-            line-height: 1.4;
-            margin-bottom: 2px;
-        }
-        .action-type-text {
-            min-width: 100px;
-            display: inline-block;
-        }
-        .table-users {
-            table-layout: fixed;
-        }
-        .table-users th:nth-child(1),
-        .table-users td:nth-child(1) {
-            width: 80px;
-        }
-        .table-users th:nth-child(2),
-        .table-users td:nth-child(2) {
-            width: 120px;
-        }
-        .table-users th:nth-child(3),
-        .table-users td:nth-child(3) {
-            width: 110px;
-        }
-        .table-users th:nth-child(4),
-        .table-users td:nth-child(4) {
-            width: 300px;
-        }
-        .table-users th:nth-child(5),
-        .table-users td:nth-child(5) {
-            width: 120px;
-        }
-    </style>
 </head>
 
 <body class="sb-nav-fixed">
@@ -261,8 +219,7 @@ function hasMultipleChanges($details) {
                                                         <span class="user-id-text"><?php echo htmlspecialchars($row['id']); ?></span>
                                                     </td>
                                                     <td>
-                                                        <div class="user-name"><?php echo !empty($row['user_name']) ? htmlspecialchars($row['user_name']) : '-'; ?></div>
-                                                        <div class="user-role">ID: <?php echo htmlspecialchars($row['user_id']); ?></div>
+                                                        <div class="user-name"><?php echo !empty($row['user_name']) ? htmlspecialchars($row['user_name']) : '-'; ?> <span class="text-muted">(<?php echo htmlspecialchars($row['user_id']); ?>)</span></div>
                                                     </td>
                                                     <td>
                                                         <?php

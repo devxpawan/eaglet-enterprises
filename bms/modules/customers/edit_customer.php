@@ -425,72 +425,8 @@ $business_name = isset($_POST['business_name']) ? htmlspecialchars($_POST['busin
 <head>
     <?php require_once BASE_PATH . 'includes/header.php'; ?>
     <title>Edit Customer</title>
+    <link href="<?= BASE_URL ?>css/customer-list.css" rel="stylesheet" />
     <link href="<?= BASE_URL ?>css/forms.css" rel="stylesheet" />
-    <style>
-        .alert {
-            border-radius: 5px;
-            border-left-width: 5px;
-        }
-        
-        .alert-success {
-            border-left-color: #198754;
-        }
-        
-        .alert-danger {
-            border-left-color: #dc3545;
-        }
-        
-        /* Edit history styles */
-        .history-card {
-            margin-top: 30px;
-            border-radius: 5px;
-            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15) !important;
-        }
-        
-        .history-header {
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-bottom: 1px solid #dee2e6;
-            font-weight: 500;
-        }
-        
-        .history-item {
-            padding: 15px;
-            border-bottom: 1px solid #dee2e6;
-        }
-        
-        .history-item:last-child {
-            border-bottom: none;
-        }
-        
-        .change-item {
-            background-color: #f8f9fc;
-            padding: 8px 12px;
-            margin: 5px 0;
-            border-radius: 5px;
-            font-size: 0.9rem;
-        }
-        
-        .change-field {
-            font-weight: 500;
-            color: #1565C0;
-        }
-        
-        .old-value {
-            color: #dc3545;
-            text-decoration: line-through;
-        }
-        
-        .new-value {
-            color: #198754;
-        }
-        
-        .history-meta {
-            font-size: 0.8rem;
-            color: #6c757d;
-            margin-top: 8px;
-        }
-    </style>
     <!-- Select2 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
@@ -577,8 +513,8 @@ $business_name = isset($_POST['business_name']) ? htmlspecialchars($_POST['busin
                                         <div class="mb-3">
                                             <label for="phone" class="form-label">Phone Number</label>
                                              <input type="tel" class="form-control" id="phone" name="phone"
-                                                 placeholder="Enter 10-digit phone number" value="<?php echo $phone; ?>" data-original="<?php echo $phone; ?>" required>
-                                            <div class="error-feedback" id="phone-error"></div>
+                                                  placeholder="Enter 10-digit phone number" maxlength="10" pattern="[0-9]{10}" inputmode="numeric" value="<?php echo $phone; ?>" data-original="<?php echo $phone; ?>" required>
+                                             <div class="error-feedback" id="phone-error"></div>
                                         </div>
 
                                         <!-- Address Field -->
@@ -805,65 +741,23 @@ $business_name = isset($_POST['business_name']) ? htmlspecialchars($_POST['busin
     }
 
 
-   // Enhanced phone validation function for Sri Lankan numbers
+// Updated phone validation function - strict 10 digits only
 function validatePhone(phone) {
-    // Remove all non-digit characters except the + sign
-    const cleanPhone = phone.replace(/[^\d+]/g, '');
-    
-    // Remove all non-digit characters for digit counting
+    // Remove all non-digit characters for validation
     const digits = phone.replace(/\D/g, '');
     
-    // Check for international format: +94 followed by 9 digits
-    if (cleanPhone.startsWith('+94')) {
-        if (digits.length === 12) { // +94 (2 digits) + 9 digits = 11 total, but we count all digits including 94
-            const localNumber = digits.substring(2); // Remove the 94
-            if (localNumber.length === 9) {
-                return {
-                    valid: true,
-                    message: '',
-                    format: 'international',
-                    countryCode: '+94',
-                    localNumber: localNumber
-                };
-            }
-        }
+    if (digits.length !== 10) {
         return {
             valid: false,
-            message: 'International format should be +94 followed by 9 digits'
+            message: 'Please enter exactly 10 digits for the phone number'
         };
     }
     
-    // Check for local format: exactly 10 digits
-    if (digits.length === 10) {
-        return {
-            valid: true,
-            message: '',
-            format: 'local',
-            localNumber: digits
-        };
-    }
-    
-    // Invalid length
-    if (digits.length < 10) {
-        return {
-            valid: false,
-            message: 'Phone number too short. Enter 10 digits for local or +94 followed by 9 digits for international format'
-        };
-    } else {
-        return {
-            valid: false,
-            message: 'Phone number too long. Enter 10 digits for local or +94 followed by 9 digits for international format'
-        };
-    }
+    return {
+        valid: true,
+        message: ''
+    };
 }
-
-// Test examples
-console.log('Testing phone validation:');
-console.log(validatePhone('+94729666892')); // Should be valid (international)
-console.log(validatePhone('0729666892'));   // Should be valid (local)
-console.log(validatePhone('729666892'));    // Should be invalid (9 digits)
-console.log(validatePhone('072966689234')); // Should be invalid (too long)
-console.log(validatePhone('+947296668'));   // Should be invalid (international but too short)
 
     // Name validation function
     function validateName(name) {

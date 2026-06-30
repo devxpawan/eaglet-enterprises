@@ -129,7 +129,6 @@ $permissionGroups = [
     <?php require_once BASE_PATH . 'includes/header.php'; ?>
     <title>Edit Permissions - <?= htmlspecialchars($editUser['name']) ?></title>
     <link href="<?= BASE_URL ?>css/forms.css" rel="stylesheet" />
-    <style></style>
 </head>
 <body class="sb-nav-fixed">
     <?php require_once BASE_PATH . 'includes/navbar.php'; ?>

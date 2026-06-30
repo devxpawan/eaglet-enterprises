@@ -23,221 +23,7 @@ $customerResult = $conn->query($customerSql);
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        * { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
-
-        .page-header {
-            background: linear-gradient(135deg, #f9fafb 0%, #f3f4ff 100%);
-            border-bottom: 1px solid #eaecf0;
-            padding: 20px 32px;
-            margin-bottom: 24px;
-        }
-        .page-header h5 { font-size: 22px; font-weight: 700; color: #101828; letter-spacing: -0.02em; margin-bottom: 2px; }
-        .page-header .text-muted { font-size: 14px; color: #667085; margin: 0; }
-
-        .price-list-container {
-            margin: 0;
-            background: #fff;
-            border-radius: 16px;
-            box-shadow: 0 1px 3px rgba(16, 24, 40, 0.06), 0 1px 2px rgba(16, 24, 40, 0.04);
-            border: 1px solid #eaecf0;
-            padding: 28px 32px;
-        }
-
-        .card {
-            border-radius: 12px;
-            border: 1px solid #eaecf0;
-            box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
-            transition: box-shadow 0.15s ease;
-        }
-        .card:hover { box-shadow: 0 4px 8px rgba(16, 24, 40, 0.06); }
-        .card-title { font-size: 15px; color: #101828; letter-spacing: -0.01em; }
-        .card-body { padding: 20px 24px; }
-
-        .form-label {
-            font-weight: 600;
-            color: #344054;
-            font-size: 13px;
-            margin-bottom: 6px;
-            letter-spacing: 0.01em;
-        }
-
-        .form-control, .form-select {
-            font-size: 14px;
-            color: #101828;
-            border-color: #d0d5dd;
-            border-radius: 8px;
-            transition: all 0.15s ease;
-            height: 40px;
-            padding: 8px 12px;
-        }
-        .form-control:focus, .form-select:focus {
-            border-color: #3B82F6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
-        }
-        .form-control:hover, .form-select:hover { border-color: #98a2b3; }
-
-        textarea.form-control {
-            border-radius: 8px;
-            border-color: #d0d5dd;
-            font-size: 14px;
-            resize: vertical;
-            height: auto;
-        }
-        textarea.form-control:focus {
-            border-color: #3B82F6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
-        }
-
-        .asset-group {
-            border: 1px solid #eaecf0;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            overflow: hidden;
-            background: #fff;
-            box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
-        }
-        .asset-group-header {
-            background: #f9fafb;
-            padding: 14px 20px;
-            border-bottom: 1px solid #eaecf0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .asset-group-body { padding: 16px 20px; }
-
-        .item-row {
-            margin-bottom: 10px;
-            border-bottom: 1px solid #f2f4f7;
-            padding-bottom: 10px;
-        }
-        .item-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-
-        .btn {
-            font-weight: 600;
-            font-size: 14px;
-            padding: 8px 18px;
-            border-radius: 8px;
-            transition: all 0.15s ease;
-            letter-spacing: 0.01em;
-        }
-        .btn-primary {
-            background: #3B82F6;
-            border-color: #3B82F6;
-        }
-        .btn-primary:hover {
-            background: #2563EB;
-            border-color: #2563EB;
-            box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
-            transform: translateY(-1px);
-        }
-        .btn-primary:active { transform: translateY(0); }
-
-        .btn-outline-success {
-            color: #079455;
-            border-color: #d0d5dd;
-            background: #fff;
-        }
-        .btn-outline-success:hover {
-            background: #f6fef9;
-            border-color: #079455;
-            color: #079455;
-        }
-
-        .btn-outline-primary {
-            color: #3B82F6;
-            border-color: #d0d5dd;
-            background: #fff;
-        }
-        .btn-outline-primary:hover {
-            background: #f5f5ff;
-            border-color: #3B82F6;
-            color: #3B82F6;
-        }
-
-        .btn-outline-danger {
-            color: #f04438;
-            border-color: #d0d5dd;
-            background: #fff;
-        }
-        .btn-outline-danger:hover {
-            background: #fffbfa;
-            border-color: #f04438;
-            color: #f04438;
-        }
-
-        .btn-outline-secondary {
-            color: #344054;
-            border-color: #d0d5dd;
-            background: #fff;
-        }
-        .btn-outline-secondary:hover {
-            background: #f9fafb;
-            border-color: #98a2b3;
-            color: #101828;
-        }
-
-        .btn-sm { font-size: 13px; padding: 6px 14px; }
-
-        .customer-modal {
-            display: none;
-            position: fixed;
-            z-index: 1055;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(52, 64, 84, 0.6);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-            animation: fadeIn 0.15s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes slideUp {
-            from { transform: translateY(12px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        .customer-modal-content {
-            width: 95%;
-            max-width: 1200px;
-            margin: 3% auto;
-            background: #fff;
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(16, 24, 40, 0.12), 0 8px 24px rgba(16, 24, 40, 0.08);
-            padding: 0;
-            max-height: 85vh;
-            overflow-y: auto;
-            animation: slideUp 0.2s ease;
-        }
-
-        .customer-modal-content .modal-header-sticky {
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            background: #fff;
-            padding: 20px 24px 16px;
-            border-bottom: 1px solid #eaecf0;
-        }
-
-        .customer-modal-content .modal-body-scroll {
-            padding: 16px 24px 24px;
-        }
-
-        .customer-modal-content .input-group {
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            background: #fff;
-            padding-bottom: 12px;
-        }
-    </style>
+    <link href="<?= BASE_URL ?>css/price-list.css" rel="stylesheet" />
 </head>
 
 <body class="sb-nav-fixed">
@@ -265,19 +51,29 @@ $customerResult = $conn->query($customerSql);
                                     <h6 class="card-title m-0">General Information</h6>
                                 </div>
                                 <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <div>
-                                            <label class="form-label">Date</label>
-                                            <input type="date" name="price_list_date" class="form-control" value="<?php echo date('Y-m-d'); ?>" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-2">
                                         <div>
                                             <label class="form-label">Currency</label>
                                             <select name="currency" class="form-select" disabled>
                                                 <option value="lkr" selected>LKR</option>
                                             </select>
                                             <input type="hidden" name="currency" value="lkr">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-10">
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <div>
+                                                    <label class="form-label">Date</label>
+                                                    <input type="date" name="price_list_date" class="form-control" value="<?php echo date('Y-m-d'); ?>" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div>
+                                                    <label class="form-label">Due Date</label>
+                                                    <input type="date" name="due_date" class="form-control" value="<?php echo date('Y-m-d', strtotime('+30 days')); ?>">
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -298,7 +94,8 @@ $customerResult = $conn->query($customerSql);
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <div class="d-flex align-items-center gap-2">
                                         <i class="fas fa-user-circle text-primary" style="font-size: 18px;"></i>
-                                        <h6 class="card-title m-0">Customer Information</h6>
+                                        <h6 class="card-title m-0">Customer Information </h6>
+                                        <span class="text-muted">(Optional)</span>
                                     </div>
                                     <button type="button" class="btn btn-outline-primary btn-sm" id="select_existing_customer">
                                         <i class="fas fa-users me-1"></i> Select Customer
@@ -310,45 +107,45 @@ $customerResult = $conn->query($customerSql);
                                         <div>
                                             <label class="form-label">Name</label>
                                             <input type="text" class="form-control" name="customer_name"
-                                                id="customer_name" placeholder="Enter customer name (optional)">
+                                                id="customer_name" placeholder="Enter Customer Name">
                                         </div>
                                         <div class="mt-3">
                                             <label class="form-label">Email</label>
                                             <input type="email" class="form-control" name="customer_email"
-                                                id="customer_email" placeholder="customer@example.com">
+                                                id="customer_email" placeholder="Enter Email (optional)">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div>
                                             <label class="form-label">Phone</label>
                                             <input type="text" class="form-control" name="customer_phone"
-                                                id="customer_phone" placeholder="+94 77 123 4567">
+                                                id="customer_phone" placeholder="Enter Phone Number" maxlength="10" pattern="[0-9]{10}" inputmode="numeric">
                                         </div>
                                         <div class="mt-3">
                                             <label class="form-label">Address</label>
                                             <input type="text" class="form-control" name="customer_address"
-                                                id="customer_address" placeholder="Enter customer address">
+                                                id="customer_address" placeholder="Enter Address">
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Asset Groups -->
-                        <div id="assetGroupsContainer">
-                            <!-- Initial Asset Group -->
-                            <div class="asset-group" data-group-index="0">
-                                <div class="asset-group-header">
+                        <!-- Sections -->
+                        <div id="sectionsContainer">
+                            <!-- Initial Section -->
+                            <div class="section-group" data-group-index="0">
+                                <div class="section-group-header">
                                     <div class="d-flex align-items-center gap-2 flex-grow-1 me-3">
                                         <i class="fas fa-microchip text-primary" style="font-size: 16px;"></i>
-                                        <span class="fw-semibold" style="color: #344054; font-size: 14px;">Asset Name:</span>
-<input type="text" name="asset_name[0]" class="form-control" placeholder="Enter asset name (optional)" style="max-width: 300px;">
+                                        <span class="fw-semibold" style="color: #344054; font-size: 14px;">Section Name:</span>
+                                        <input type="text" name="section_name[0]" class="form-control" placeholder="Enter Section Name (optional)" style="max-width: 300px;">
                                     </div>
-                                    <button type="button" class="btn btn-outline-danger btn-sm remove-asset-group">
+                                    <button type="button" class="btn btn-outline-danger btn-sm remove-section-group">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
-                                <div class="asset-group-body">
+                                <div class="section-group-body">
                                     <div class="items-container">
                                         <!-- Header for items -->
                                         <div class="row fw-semibold mb-2" style="font-size: 12px; color: #667085; text-transform: uppercase; letter-spacing: 0.05em;">
@@ -392,8 +189,8 @@ $customerResult = $conn->query($customerSql);
                         </div>
 
                         <div class="mb-4">
-                            <button type="button" id="btnAddAssetGroup" class="btn btn-outline-success">
-                                <i class="fas fa-plus-circle me-1"></i> Add Another Asset Group
+                            <button type="button" id="btnAddSectionGroup" class="btn btn-outline-success">
+                                <i class="fas fa-plus-circle me-1"></i> Add Another Section
                             </button>
                         </div>
 
@@ -505,6 +302,16 @@ $customerResult = $conn->query($customerSql);
         $(document).ready(function() {
             let groupCount = 1;
 
+            // Auto-calculate due date when date changes
+            $('input[name="price_list_date"]').on('change', function() {
+                const qDate = new Date($(this).val());
+                if (!isNaN(qDate.getTime())) {
+                    const expDate = new Date(qDate);
+                    expDate.setDate(expDate.getDate() + 30);
+                    $('input[name="due_date"]').val(expDate.toISOString().split('T')[0]);
+                }
+            });
+
             // Customer Selection Modal
             var customerModal = document.getElementById("customerModal");
             $("#select_existing_customer").click(function () { customerModal.style.display = "block"; });
@@ -538,22 +345,22 @@ $customerResult = $conn->query($customerSql);
 
 
 
-            // Add Asset Group
-            $('#btnAddAssetGroup').click(function() {
+            // Add Section
+            $('#btnAddSectionGroup').click(function() {
                 let index = groupCount++;
                 let newGroup = `
-                <div class="asset-group" data-group-index="${index}">
-                    <div class="asset-group-header">
+                <div class="section-group" data-group-index="${index}">
+                    <div class="section-group-header">
                         <div class="d-flex align-items-center gap-2 flex-grow-1 me-3">
                             <i class="fas fa-microchip text-primary" style="font-size: 16px;"></i>
-                            <span class="fw-semibold" style="color: #344054; font-size: 14px;">Asset Name:</span>
-                            <input type="text" name="asset_name[${index}]" class="form-control" placeholder="Enter asset name (optional)" style="max-width: 300px;">
+                            <span class="fw-semibold" style="color: #344054; font-size: 14px;">Section Name:</span>
+                            <input type="text" name="section_name[${index}]" class="form-control" placeholder="Enter Section Name (optional)" style="max-width: 300px;">
                         </div>
-                        <button type="button" class="btn btn-outline-danger btn-sm remove-asset-group">
+                        <button type="button" class="btn btn-outline-danger btn-sm remove-section-group">
                             <i class="fas fa-trash"></i>
                         </button>
                     </div>
-                    <div class="asset-group-body">
+                    <div class="section-group-body">
                         <div class="items-container">
                                         <div class="row fw-semibold mb-2" style="font-size: 12px; color: #667085; text-transform: uppercase; letter-spacing: 0.05em;">
                                             <div class="col-md-1">#</div>
@@ -592,19 +399,19 @@ $customerResult = $conn->query($customerSql);
                     </div>
                 </div>`;
                 
-                $('#assetGroupsContainer').append(newGroup);
+                $('#sectionsContainer').append(newGroup);
             });
-            $(document).on('click', '.remove-asset-group', function() {
-                if ($('.asset-group').length > 1) {
-                    $(this).closest('.asset-group').remove();
+            $(document).on('click', '.remove-section-group', function() {
+                if ($('.section-group').length > 1) {
+                    $(this).closest('.section-group').remove();
                 } else {
-                    alert('You must have at least one asset group.');
+                    alert('You must have at least one section.');
                 }
             });
 
             // Add Item within Group
             $(document).on('click', '.add-item', function() {
-                let group = $(this).closest('.asset-group');
+                let group = $(this).closest('.section-group');
                 let index = group.data('group-index');
                 let itemCount = group.find('.item-list .item-row').length + 1;
                 let newItem = `
@@ -635,9 +442,9 @@ $customerResult = $conn->query($customerSql);
                 let itemList = $(this).closest('.item-list');
                 if (itemList.find('.item-row').length > 1) {
                     $(this).closest('.item-row').remove();
-                    renumberRows($(this).closest('.asset-group'));
+                    renumberRows($(this).closest('.section-group'));
                 } else {
-                    alert('Each asset group must have at least one item.');
+                    alert('Each section must have at least one item.');
                 }
             });
 
@@ -653,20 +460,20 @@ $customerResult = $conn->query($customerSql);
                 var form = this;
                 setTimeout(function() {
                     form.reset();
-                    // Restore single asset group
-                    $('#assetGroupsContainer').html(`
-                    <div class="asset-group" data-group-index="0">
-                        <div class="asset-group-header">
+                    // Restore single section
+                    $('#sectionsContainer').html(`
+                    <div class="section-group" data-group-index="0">
+                        <div class="section-group-header">
                             <div class="d-flex align-items-center gap-2 flex-grow-1 me-3">
                                 <i class="fas fa-microchip text-primary" style="font-size: 16px;"></i>
-                                <span class="fw-semibold" style="color: #344054; font-size: 14px;">Asset Name:</span>
-                                <input type="text" name="asset_name[0]" class="form-control" placeholder="Enter asset name (optional)" style="max-width: 300px;">
+                                <span class="fw-semibold" style="color: #344054; font-size: 14px;">Section Name:</span>
+                                <input type="text" name="section_name[0]" class="form-control" placeholder="Enter Section Name (optional)" style="max-width: 300px;">
                             </div>
-                            <button type="button" class="btn btn-outline-danger btn-sm remove-asset-group">
+                            <button type="button" class="btn btn-outline-danger btn-sm remove-section-group">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </div>
-                        <div class="asset-group-body">
+                        <div class="section-group-body">
                             <div class="items-container">
                                 <div class="row fw-bold mb-2 text-muted" style="font-size: 0.85rem;">
                                     <div class="col-md-1">#</div>

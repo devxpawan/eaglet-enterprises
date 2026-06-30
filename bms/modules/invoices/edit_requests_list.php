@@ -65,13 +65,6 @@ $pendingCount = $conn->query("SELECT COUNT(*) as c FROM invoice_edit_requests WH
     <title>Invoice Edit Requests</title>
     <link href="<?= BASE_URL ?>css/invoice-list.css" rel="stylesheet" />
     <link href="<?= BASE_URL ?>css/forms.css" rel="stylesheet" />
-    <style>
-        .status-badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; }
-        .status-pending { background: #fff8e1; color: #b78103; }
-        .status-approved { background: #e6f9ee; color: #079455; }
-        .status-rejected { background: #fef3f2; color: #f04438; }
-        .action-btn { padding: 4px 12px; font-size: 12px; border-radius: 6px; }
-    </style>
 </head>
 
 <body class="sb-nav-fixed">

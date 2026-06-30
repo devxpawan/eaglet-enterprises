@@ -491,3 +491,11 @@
 .position-form-status {
     min-height: 18px;
 }
+
+/* ---------- User Logs ---------- */
+.details-cell { max-width: 300px; }
+.details-cell ul { margin-top: 5px; padding-left: 18px; }
+.details-cell li { text-align: left; font-size: 12px; line-height: 1.4; margin-bottom: 2px; }
+.action-type-text { min-width: 100px; display: inline-block; }
+
+.table-users { table-layout: auto; }

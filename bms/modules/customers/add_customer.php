@@ -198,7 +198,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <?php require_once BASE_PATH . 'includes/header.php'; ?>
     <title>Add Customer</title>
     <link href="<?= BASE_URL ?>css/forms.css" rel="stylesheet" />
-    <style></style>
     <!-- Select2 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
@@ -274,8 +273,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <div class="mb-3">
                                             <label for="phone" class="form-label">Phone Number</label>
                                             <input type="tel" class="form-control" id="phone" name="phone"
-                                                 placeholder="Enter 10-digit phone number" value="<?php echo isset($phone) ? htmlspecialchars($phone) : ''; ?>" required>
-                                            <div class="error-feedback" id="phone-error"></div>
+                                                  placeholder="Enter 10-digit phone number" maxlength="10" pattern="[0-9]{10}" inputmode="numeric" value="<?php echo isset($phone) ? htmlspecialchars($phone) : ''; ?>" required>
+                                             <div class="error-feedback" id="phone-error"></div>
                                         </div>
 
                                         <!-- Address Field -->

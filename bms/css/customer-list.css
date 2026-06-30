@@ -372,3 +372,36 @@
     .table-invoice tbody td { padding: 10px 12px; font-size: 13px; }
     .action-btn-group .btn { width: 30px; height: 30px; font-size: 12px; }
 }
+
+/* Edit customer styles */
+.alert { border-radius: 5px; border-left-width: 5px; }
+.alert-success { border-left-color: #198754; }
+.alert-danger { border-left-color: #dc3545; }
+
+.history-item {
+    padding: 15px;
+    border-bottom: 1px solid #eaecf0;
+}
+
+.change-item {
+    background-color: #f9fafb;
+    padding: 8px 12px;
+    margin: 5px 0;
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+.change-field { font-weight: 500; color: #3B82F6; }
+
+.old-value {
+    color: #b42318;
+    text-decoration: line-through;
+}
+
+.new-value { color: #067647; }
+
+.history-meta {
+    font-size: 0.8rem;
+    color: #98a2b3;
+    margin-top: 8px;
+}

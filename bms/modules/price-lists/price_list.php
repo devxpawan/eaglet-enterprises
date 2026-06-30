@@ -43,7 +43,7 @@ $totalRows = ($countResult && $countResult->num_rows > 0) ? $countResult->fetch_
 $totalPages = ceil($totalRows / $limit);
 
 // Fetch price lists with limit (JOIN with customers)
-$sql = "SELECT pl.*, c.name as customer_name 
+$sql = "SELECT pl.*, COALESCE(pl.customer_name, c.name) as display_customer_name 
         FROM price_lists pl 
         LEFT JOIN customers c ON pl.customer_id = c.customer_id 
         $whereClause 
@@ -58,31 +58,7 @@ $result = $conn->query($sql);
     <?php require_once BASE_PATH . 'includes/header.php'; ?>
     <title>Price Lists</title>
     <link href="<?= BASE_URL ?>css/invoice-list.css" rel="stylesheet" />
-    <style>
-        .btn-primary {
-            background: #3B82F6;
-            border-color: #3B82F6;
-        }
-        .btn-primary:hover {
-            background: #2563EB;
-            border-color: #2563EB;
-            box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
-            transform: translateY(-1px);
-        }
-        .btn-edit { color: #f59e0b; }
-        .btn-edit:hover {
-            background: #fffbeb;
-            border-color: #f59e0b;
-            color: #d97706;
-            transform: translateY(-1px);
-            box-shadow: 0 2px 6px rgba(245, 158, 11, 0.2);
-        }
-        
-        body.modal-open {
-            padding-right: 0 !important;
-            overflow: auto !important;
-        }
-    </style>
+    <link href="<?= BASE_URL ?>css/price-list.css" rel="stylesheet" />
 </head>
 <body class="sb-nav-fixed">
     <?php require_once BASE_PATH . 'includes/navbar.php'; ?>
@@ -145,6 +121,7 @@ $result = $conn->query($sql);
                                         <tr>
                                             <th>Price List No.</th>
                                             <th>Date</th>
+                                            <th>Due Date</th>
                                             <th>Customer</th>
                                             <th>Subject</th>
                                             <th class="text-end pe-3">Actions</th>
@@ -156,7 +133,8 @@ $result = $conn->query($sql);
                                                 <tr>
                                                     <td class="text-muted" style="font-weight: 500;"><?= htmlspecialchars($row['ref_no'] ?? 'PL-' . str_pad($row['id'], 5, '0', STR_PAD_LEFT)) ?></td>
                                                     <td><?= date('d M, Y', strtotime($row['price_list_date'])) ?></td>
-                                                    <td><?= htmlspecialchars($row['customer_name'] ?? '-') ?></td>
+                                                    <td><?= !empty($row['due_date']) ? date('d M, Y', strtotime($row['due_date'])) : '-' ?></td>
+                                                    <td><?= htmlspecialchars($row['display_customer_name'] ?? '-') ?></td>
                                                     <td><?= htmlspecialchars($row['subject'] ?? '-') ?></td>
                                                     <td class="text-end pe-3">
                                 <div class="action-btn-group d-flex justify-content-end gap-1">
@@ -178,7 +156,7 @@ $result = $conn->query($sql);
                                             <?php endwhile; ?>
                                         <?php else: ?>
                                             <tr>
-                                                <td colspan="5" class="text-center py-5 text-muted">No price lists found.</td>
+                                                <td colspan="6" class="text-center py-5 text-muted">No price lists found.</td>
                                             </tr>
                                         <?php endif; ?>
                                     </tbody>

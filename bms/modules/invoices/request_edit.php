@@ -62,19 +62,8 @@ if ($hasApprovedRequest) {
 <head>
     <?php require_once BASE_PATH . 'includes/header.php'; ?>
     <title>Request Edit Approval — Invoice #<?= htmlspecialchars($invoice_id) ?></title>
+    <link href="<?= BASE_URL ?>css/invoice-list.css" rel="stylesheet" />
     <link href="<?= BASE_URL ?>css/forms.css" rel="stylesheet" />
-    <style>
-        body { background: #f5f6fa; font-family: 'Inter', sans-serif; }
-        .request-card { max-width: 640px; margin: 40px auto; border-radius: 16px; border: 1px solid #eaecf0; background: #fff; box-shadow: 0 1px 3px rgba(16,24,40,0.06); overflow: hidden; }
-        .request-header { background: linear-gradient(135deg, #f9fafb 0%, #f3f4ff 100%); padding: 24px 28px; border-bottom: 1px solid #eaecf0; }
-        .request-header h5 { font-weight: 700; color: #101828; margin: 0; }
-        .request-body { padding: 24px 28px; }
-        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #f9fafb; border-radius: 10px; padding: 16px 20px; margin-bottom: 20px; }
-        .info-grid .label { font-size: 11px; font-weight: 600; color: #667085; text-transform: uppercase; letter-spacing: 0.04em; }
-        .info-grid .value { font-size: 14px; font-weight: 600; color: #101828; }
-        .status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 999px; font-size: 12px; font-weight: 600; }
-        .status-pending { background: #fff8e1; color: #b78103; }
-    </style>
 </head>
 
 <body class="sb-nav-fixed">
