@@ -385,6 +385,8 @@ if (!empty($quotation['ref_no'])) {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 0 30px;
+            box-sizing: border-box;
         }
 
         .signature-col-left {
@@ -394,7 +396,7 @@ if (!empty($quotation['ref_no'])) {
         .signature-col-right {
             width: 45%;
             padding-top: 18px;
-            text-align: center;
+            text-align: right;
         }
 
         .signature-placeholder {
@@ -408,10 +410,12 @@ if (!empty($quotation['ref_no'])) {
 
         .signature-placeholder-right {
             margin-top: 50px;
+            display: inline-block;
             border-top: 1px dashed #333;
             width: 180px;
             padding-top: 3px;
             font-size: 10px;
+            text-align: center;
         }
 
         .company-footer {

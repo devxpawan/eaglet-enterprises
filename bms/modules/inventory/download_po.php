@@ -374,6 +374,8 @@ if ($grand_total_words) {
             width: 100%;
             display: flex;
             justify-content: space-between;
+            padding: 0 30px;
+            box-sizing: border-box;
         }
 
         .signature-col-left {
