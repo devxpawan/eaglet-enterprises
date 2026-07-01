@@ -175,7 +175,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                                 <!-- Submit Button -->
                                 <div class="row mt-4 pt-3 border-top">
-                                    <div class="col-12 d-flex justify-content-end gap-2">
+                                    <div class="col-12 d-flex justify-content-end gap-2 flex-wrap">
                                         <a href="<?= BASE_URL ?>modules/products/product_list.php" class="back-btn text-decoration-none d-flex align-items-center">
                                             <i class="fas fa-arrow-left me-1"></i> Cancel
                                         </a>

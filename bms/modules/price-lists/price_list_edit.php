@@ -196,7 +196,7 @@ if (!empty($price_list['customer_id'])) {
                                         </div>
                                         <div class="section-group-body">
                                             <div class="items-container">
-                                                <div class="row fw-semibold mb-2" style="font-size: 12px; color: #667085; text-transform: uppercase; letter-spacing: 0.05em;">
+                                                <div class="row fw-semibold mb-2 d-none d-md-flex" style="font-size: 12px; color: #667085; text-transform: uppercase; letter-spacing: 0.05em;">
                                                     <div class="col-md-1">#</div>
                                                     <div class="col-md-3">Item Name</div>
                                                     <div class="col-md-5">Description</div>
@@ -253,7 +253,7 @@ if (!empty($price_list['customer_id'])) {
                                     </div>
                                     <div class="section-group-body">
                                         <div class="items-container">
-                                            <div class="row fw-semibold mb-2" style="font-size: 12px; color: #667085; text-transform: uppercase; letter-spacing: 0.05em;">
+                                            <div class="row fw-semibold mb-2 d-none d-md-flex" style="font-size: 12px; color: #667085; text-transform: uppercase; letter-spacing: 0.05em;">
                                                 <div class="col-md-1">#</div>
                                                 <div class="col-md-3">Item Name</div>
                                                 <div class="col-md-5">Description</div>
@@ -506,7 +506,7 @@ if (!empty($price_list['customer_id'])) {
                     </div>
                     <div class="section-group-body">
                         <div class="items-container">
-                            <div class="row fw-semibold mb-2" style="font-size: 12px; color: #667085; text-transform: uppercase; letter-spacing: 0.05em;">
+                            <div class="row fw-semibold mb-2 d-none d-md-flex" style="font-size: 12px; color: #667085; text-transform: uppercase; letter-spacing: 0.05em;">
                                 <div class="col-md-1">#</div>
                                 <div class="col-md-3">Item Name</div>
                                 <div class="col-md-5">Description</div>

@@ -529,7 +529,7 @@ $business_name = isset($_POST['business_name']) ? htmlspecialchars($_POST['busin
                                 
                                 <!-- Submit Button -->
                                 <div class="row mt-4 pt-3 border-top">
-                                    <div class="col-12 d-flex justify-content-end gap-2">
+                                    <div class="col-12 d-flex justify-content-end gap-2 flex-wrap">
                                         <a href="<?= BASE_URL ?>modules/customers/customer_list.php" class="back-btn text-decoration-none d-flex align-items-center">
                                             <i class="fas fa-arrow-left me-1"></i> Cancel
                                         </a>

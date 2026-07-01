@@ -164,16 +164,24 @@ function getQuotationRevisionChain($conn, $quotation_id) {
 
 function generateRefNo($conn, $id, $date, $type = 'QT') {
     $company = getCompanyInfo($conn);
-    $words = explode(' ', preg_replace('/[^a-zA-Z0-9 ]/', '', $company['company_name']));
-    $initials = '';
-    foreach ($words as $w) {
-        if (!empty($w) && strtolower($w) !== 'and' && strtolower($w) !== 'pvt' && strtolower($w) !== 'ltd') {
-            $initials .= strtoupper($w[0]);
-        }
+    $cleanName = preg_replace('/[^a-zA-Z0-9]/', '', $company['company_name']);
+    $prefix = strtoupper(substr($cleanName, 0, 3));
+    if (empty($prefix)) {
+        $prefix = strtoupper($type);
     }
-    if (empty($initials)) {
-        $initials = strtoupper($type);
+    return $prefix . '/' . strtoupper($type) . '/J' . date('y', strtotime($date)) . '/' . str_pad(intval($id), 3, '0', STR_PAD_LEFT);
+}
+
+function getNextAutoIncrement($conn, $table) {
+    $result = $conn->query("SHOW TABLE STATUS LIKE '" . $conn->real_escape_string($table) . "'");
+    if ($result && $row = $result->fetch_assoc()) {
+        return intval($row['Auto_increment']);
     }
-    return $initials . '/' . strtoupper($type) . '/' . date('y', strtotime($date)) . '/' . str_pad(intval($id), 3, '0', STR_PAD_LEFT);
+    return 1;
+}
+
+function predictInvoiceRefNo($conn, $date) {
+    $nextId = getNextAutoIncrement($conn, 'invoices');
+    return generateRefNo($conn, $nextId, $date, 'IN');
 }
 ?>

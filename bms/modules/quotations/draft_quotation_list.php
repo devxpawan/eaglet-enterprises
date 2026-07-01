@@ -25,6 +25,9 @@ $offset = ($page - 1) * $limit;
 
 $status_filter = "Draft";
 
+// Predict next invoice ref number for convert-to-invoice confirmation
+$predictedInvoiceRef = predictInvoiceRefNo($conn, date('Y-m-d'));
+
 $baseFrom = "FROM quotations q 
              LEFT JOIN customers c ON q.customer_id = c.customer_id
              LEFT JOIN users u ON q.created_by = u.id
@@ -204,7 +207,7 @@ $result = $conn->query($sql);
                                     <a href="<?= BASE_URL ?>modules/quotations/download_quotation.php?id=<?php echo $row['quotation_id']; ?>" class="btn btn-download" title="Download Quotation" target="_blank">
                                         <i class="fas fa-download"></i>
                                     </a>
-                                    <a href="javascript:void(0);" onclick="convertAndOpen('convert_to_invoice.php?id=<?php echo $row['quotation_id']; ?>')" class="btn btn-process" title="Convert to Invoice">
+                                    <a href="javascript:void(0);" onclick="convertAndOpen('convert_to_invoice.php?id=<?php echo $row['quotation_id']; ?>', '<?= htmlspecialchars($predictedInvoiceRef) ?>')" class="btn btn-process" title="Convert to Invoice">
                                         <i class="fas fa-file-invoice"></i>
                                     </a>
                                     <a href="javascript:void(0);" class="btn btn-cancel cancel-quotation" title="Cancel Quotation"
@@ -369,10 +372,10 @@ $result = $conn->query($sql);
             });
         });
 
-        function convertAndOpen(url) {
+        function convertAndOpen(url, refNo) {
             Swal.fire({
                 title: 'Convert to Invoice?',
-                text: 'Are you sure you want to convert this quotation to an invoice?',
+                html: 'Are you sure you want to convert this quotation to an invoice?<br><br><strong>New Invoice Ref No: ' + refNo + '</strong>',
                 icon: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#28a745',

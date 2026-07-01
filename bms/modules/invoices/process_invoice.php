@@ -176,7 +176,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $invoice_id = $conn->insert_id;
         
         // Generate and store invoice reference number
-        $invoice_ref_no = generateRefNo($conn, $invoice_id, $invoice_date, 'INV');
+        $invoice_ref_no = generateRefNo($conn, $invoice_id, $invoice_date, 'IN');
         $updateRefSql = "UPDATE invoices SET invoice_ref_no = ? WHERE invoice_id = ?";
         $stmt = $conn->prepare($updateRefSql);
         $stmt->bind_param("si", $invoice_ref_no, $invoice_id);

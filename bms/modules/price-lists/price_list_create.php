@@ -148,7 +148,7 @@ $customerResult = $conn->query($customerSql);
                                 <div class="section-group-body">
                                     <div class="items-container">
                                         <!-- Header for items -->
-                                        <div class="row fw-semibold mb-2" style="font-size: 12px; color: #667085; text-transform: uppercase; letter-spacing: 0.05em;">
+                                        <div class="row fw-semibold mb-2 d-none d-md-flex" style="font-size: 12px; color: #667085; text-transform: uppercase; letter-spacing: 0.05em;">
                                             <div class="col-md-1">#</div>
                                             <div class="col-md-3">Item Name</div>
                                             <div class="col-md-5">Description</div>
@@ -362,7 +362,7 @@ $customerResult = $conn->query($customerSql);
                     </div>
                     <div class="section-group-body">
                         <div class="items-container">
-                                        <div class="row fw-semibold mb-2" style="font-size: 12px; color: #667085; text-transform: uppercase; letter-spacing: 0.05em;">
+                                        <div class="row fw-semibold mb-2 d-none d-md-flex" style="font-size: 12px; color: #667085; text-transform: uppercase; letter-spacing: 0.05em;">
                                             <div class="col-md-1">#</div>
                                             <div class="col-md-3">Item Name</div>
                                             <div class="col-md-5">Description</div>
@@ -398,7 +398,7 @@ $customerResult = $conn->query($customerSql);
                         </div>
                     </div>
                 </div>`;
-                
+
                 $('#sectionsContainer').append(newGroup);
             });
             $(document).on('click', '.remove-section-group', function() {
@@ -475,7 +475,7 @@ $customerResult = $conn->query($customerSql);
                         </div>
                         <div class="section-group-body">
                             <div class="items-container">
-                                <div class="row fw-bold mb-2 text-muted" style="font-size: 0.85rem;">
+                                <div class="row fw-bold mb-2 text-muted d-none d-md-flex" style="font-size: 0.85rem;">
                                     <div class="col-md-1">#</div>
                                     <div class="col-md-3">Item Name</div>
                                     <div class="col-md-5">Description</div>

@@ -16,6 +16,10 @@ require_once BASE_PATH . 'includes/functions.php';
 $customerSql = "SELECT * FROM customers WHERE status = 'active' ORDER BY customer_id DESC";
 $customerResult = $conn->query($customerSql);
 
+// Predict the next quotation reference number
+$nextQtId = getNextAutoIncrement($conn, 'quotations');
+$predictedQtRefNo = generateRefNo($conn, $nextQtId, date('Y-m-d'), 'QT');
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -47,6 +51,7 @@ $customerResult = $conn->query($customerSql);
                         <h5 class="mb-1">Create Quotation</h5>
                         <p class="text-muted mb-0">Fill in the details below to generate a new quotation</p>
                     </div>
+                    <span class="badge bg-primary" id="predictedRefNo">Ref No: <?= htmlspecialchars($predictedQtRefNo) ?></span>
                 </div>
                 <div class="quotation-container">
                     <form method="post" action="<?= BASE_URL ?>modules/quotations/process_quotation.php" id="quotationForm" target="_blank">
@@ -373,8 +378,9 @@ $customerResult = $conn->query($customerSql);
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-
-
+        var NEXT_QUOTATION_ID = <?= $nextQtId ?>;
+        var QT_COMPANY_PREFIX = '<?= htmlspecialchars(strtoupper(substr(preg_replace('/[^a-zA-Z0-9]/', '', getCompanyInfo($conn)['company_name']), 0, 3))) ?>';
+        if (!QT_COMPANY_PREFIX) QT_COMPANY_PREFIX = 'QT';
 
         function getFlatDiscount(row) {
             let price = parseFloat(row.find('.price').val()) || 0;
@@ -641,6 +647,13 @@ $customerResult = $conn->query($customerSql);
                 const expDate = new Date(qDate);
                 expDate.setDate(expDate.getDate() + 14);
                 $('input[name="due_date"]').val(expDate.toISOString().split('T')[0]);
+            }
+            // Update predicted ref number
+            const dateVal = $(this).val();
+            if (dateVal) {
+                const yr = dateVal.substring(2, 4);
+                const padded = String(NEXT_QUOTATION_ID).padStart(3, '0');
+                $('#predictedRefNo').text('Ref No: ' + QT_COMPANY_PREFIX + '/QT/J' + yr + '/' + padded);
             }
         });
     </script>

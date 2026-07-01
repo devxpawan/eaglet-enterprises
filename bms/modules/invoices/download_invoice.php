@@ -263,7 +263,7 @@ if ($grand_total_words) {
 }
 
 // Reference Number - use stored invoice_ref_no or generate one
-$ref_no = !empty($invoice['invoice_ref_no']) ? $invoice['invoice_ref_no'] : generateRefNo($conn, $invoice_id, $invoice['issue_date'], 'INV');
+$ref_no = !empty($invoice['invoice_ref_no']) ? $invoice['invoice_ref_no'] : generateRefNo($conn, $invoice_id, $invoice['issue_date'], 'IN');
 // Store quotation ref separately for cross-reference display
 $quotation_ref = !empty($invoice['quotation_ref_no']) ? $invoice['quotation_ref_no'] : null;
 ?>

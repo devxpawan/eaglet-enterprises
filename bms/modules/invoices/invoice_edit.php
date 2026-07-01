@@ -96,7 +96,7 @@ $invoice_vat_pct = ($invoice_net > 0) ? ($invoice_vat / $invoice_net * 100) : 0;
 
 <head>
     <?php require_once BASE_PATH . 'includes/header.php'; ?>
-    <title>Edit Invoice #<?= htmlspecialchars($invoice_id) ?></title>
+    <title>Edit Invoice <?= htmlspecialchars($invoice['invoice_ref_no']) ?></title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -118,10 +118,13 @@ $invoice_vat_pct = ($invoice_net > 0) ? ($invoice_vat / $invoice_net * 100) : 0;
                 </div>
                 <div class="page-header d-flex justify-content-between align-items-center">
                     <div>
-                        <h5 class="mb-1">Edit Invoice #<?= htmlspecialchars($invoice_id) ?></h5>
+                        <h5 class="mb-1">Edit Invoice</h5>
                         <p class="text-muted mb-0">Update customer, items, dates or notes for this pending invoice</p>
                     </div>
-                    <span class="status-pill"><i class="fas fa-clock"></i> Pending</span>
+                    <div class="d-flex gap-2 align-items-center">
+                        <span class="badge bg-primary">Ref No: <?= htmlspecialchars($invoice['invoice_ref_no'] ?? 'N/A') ?></span>
+                        <span class="status-pill"><i class="fas fa-clock"></i> Pending</span>
+                    </div>
                 </div>
                 <div class="invoice-container">
                     <form method="post" action="<?= BASE_URL ?>modules/invoices/process_invoice_edit.php" id="invoiceEditForm">

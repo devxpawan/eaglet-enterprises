@@ -16,6 +16,11 @@ require_once BASE_PATH . 'includes/functions.php';
 $customerSql = "SELECT * FROM customers WHERE status = 'active' ORDER BY customer_id DESC";
 $customerResult = $conn->query($customerSql);
 
+// Predict the next invoice reference number
+$todayDate = date('Y-m-d');
+$predictedRefNo = predictInvoiceRefNo($conn, $todayDate);
+$nextInvoiceId = getNextAutoIncrement($conn, 'invoices');
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -47,6 +52,7 @@ $customerResult = $conn->query($customerSql);
                         <h5 class="mb-1">Create Invoice</h5>
                         <p class="text-muted mb-0">Fill in the details below to generate a new invoice</p>
                     </div>
+                    <span class="badge bg-primary" id="predictedRefNo">Ref No: <?= htmlspecialchars($predictedRefNo) ?></span>
                 </div>
                 <div class="invoice-container">
                     <form method="post" action="<?= BASE_URL ?>modules/invoices/process_invoice.php" id="invoiceForm" target="_blank">
@@ -393,6 +399,11 @@ $customerResult = $conn->query($customerSql);
 
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        var NEXT_INVOICE_ID = <?= $nextInvoiceId ?>;
+        var COMPANY_PREFIX = '<?= htmlspecialchars(strtoupper(substr(preg_replace('/[^a-zA-Z0-9]/', '', getCompanyInfo($conn)['company_name']), 0, 3))) ?>';
+        if (!COMPANY_PREFIX) COMPANY_PREFIX = 'IN';
+    </script>
     <!-- Select2 JS -->
     <script>
         $(document).ready(function () {
@@ -703,6 +714,13 @@ $customerResult = $conn->query($customerSql);
                     const day = String(dueDate.getDate()).padStart(2, '0');
                     
                     $('input[name="due_date"]').val(`${year}-${month}-${day}`);
+                }
+                // Update predicted ref number
+                const dateVal = $(this).val();
+                if (dateVal) {
+                    const yr = dateVal.substring(2, 4);
+                    const padded = String(NEXT_INVOICE_ID).padStart(3, '0');
+                    $('#predictedRefNo').text('Ref No: ' + COMPANY_PREFIX + '/IN/J' + yr + '/' + padded);
                 }
             });
 

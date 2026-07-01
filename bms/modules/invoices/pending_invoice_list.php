@@ -309,7 +309,7 @@ if ($result && $result->num_rows > 0) {
                                                     </td>
                                                     <td>
                                                         <?php
-                                                        $refNo = htmlspecialchars($row['invoice_ref_no'] ?? generateRefNo($conn, $row['invoice_id'], $row['issue_date'], 'INV'));
+                                                        $refNo = htmlspecialchars($row['invoice_ref_no'] ?? generateRefNo($conn, $row['invoice_id'], $row['issue_date'], 'IN'));
                                                         echo $refNo;
                                                         if (isset($row['quotation_ref_no']) && !empty($row['quotation_ref_no'])): ?>
                                                             <br><small class="text-muted" style="font-size: 0.75rem;">From: <?php echo htmlspecialchars($row['quotation_ref_no']); ?></small>

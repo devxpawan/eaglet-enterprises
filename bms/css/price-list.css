@@ -232,3 +232,160 @@ body.modal-open {
     background: #fff;
     padding-bottom: 12px;
 }
+
+.customer-modal .table thead th {
+    background: #303361;
+    color: #fff;
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 10px 16px;
+    white-space: nowrap;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   MOBILE RESPONSIVE — Price List Create / Edit
+   ═══════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 575.98px) {
+    .price-list-container {
+        padding: 16px;
+        border-radius: 12px;
+    }
+
+    .card-body {
+        padding: 16px;
+    }
+
+    .section-group-header {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    .section-group-header .d-flex {
+        flex-wrap: wrap;
+        width: 100%;
+    }
+    .section-group-header input.form-control {
+        max-width: 100% !important;
+        width: 100%;
+    }
+
+    .section-group-body {
+        padding: 12px;
+    }
+
+    /* Item rows → stacked card layout */
+    .items-container > .row.fw-semibold {
+        display: none;
+    }
+
+    .item-row {
+        background: #f9fafb;
+        border: 1px solid #eaecf0;
+        border-radius: 10px;
+        padding: 12px;
+        margin-left: 0;
+        margin-right: 0;
+        margin-bottom: 12px;
+    }
+    .item-row > [class*="col-"] {
+        padding-left: 0;
+        padding-right: 0;
+        margin-bottom: 8px;
+        width: 100%;
+    }
+    .item-row .col-md-1 {
+        width: auto;
+        display: inline-flex;
+        align-items: center;
+        margin-bottom: 0;
+    }
+    .item-row .col-md-1.text-end {
+        float: right;
+        margin-bottom: 0;
+    }
+    .item-row .remove-item {
+        margin-top: 0 !important;
+    }
+
+    .items-container .mt-3 .btn.add-item {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Action buttons */
+    .d-flex.justify-content-end.gap-2.pt-3 {
+        flex-direction: column;
+    }
+    .d-flex.justify-content-end.gap-2.pt-3 .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Add Section button */
+    #btnAddSectionGroup {
+        width: 100%;
+        padding: 12px;
+        justify-content: center;
+    }
+
+    /* Customer info header */
+    .card-body .d-flex.justify-content-between.align-items-center.mb-3 {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .card-body .d-flex.justify-content-between.align-items-center.mb-3 #select_existing_customer {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Customer modal full screen on mobile */
+    .customer-modal-content {
+        width: 100%;
+        margin: 0;
+        max-height: 100vh;
+        border-radius: 0;
+        max-width: 100%;
+    }
+    .customer-modal-content .modal-header-sticky {
+        padding: 16px;
+    }
+    .customer-modal-content .modal-body-scroll {
+        padding: 12px 16px 16px;
+    }
+    .customer-modal-content .input-group {
+        flex-wrap: nowrap;
+    }
+    .customer-modal-content #customerSearch {
+        min-width: 0;
+    }
+
+    /* General info columns stack */
+    .row.g-3 > .col-md-2,
+    .row.g-3 > .col-md-10 {
+        width: 100%;
+    }
+
+    /* Section header button groups */
+    .section-group-header .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* ── Extra small screens (≤400px) ── */
+@media (max-width: 400px) {
+    .price-list-container {
+        padding: 10px;
+    }
+    .card-body {
+        padding: 12px;
+    }
+    .section-group-body {
+        padding: 8px;
+    }
+    .item-row {
+        padding: 10px;
+    }
+}
