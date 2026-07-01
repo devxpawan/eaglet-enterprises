@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $payment_terms = $_POST['payment_terms'];
     $terms_conditions = $_POST['terms_conditions'];
     $created_by = $_SESSION['user_id'] ?? null;
-    $ref_no = 'PL-' . date('ymdHi');
+    $ref_no = 'PL-' . date('ymdHis');
 
     // Customer handling - store directly, no auto-creation
     $customer_id = !empty($_POST['customer_id']) ? intval($_POST['customer_id']) : null;

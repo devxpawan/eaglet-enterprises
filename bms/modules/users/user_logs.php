@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once __DIR__ . '/../../config/paths.php';
 
 // Start session at the very beginning
@@ -269,16 +269,8 @@ function hasMultipleChanges($details) {
                                 </table>
                             </div>
                             <!-- Pagination -->
-                            <div class="pagination-container d-flex justify-content-between align-items-center mt-4">
-                                <div class="entries-info">
-                                    <?php if ($result && $result->num_rows > 0): ?>
-                                        Showing <strong><?php echo ($offset + 1); ?></strong> to
-                                        <strong><?php echo min($offset + $limit, $totalRows); ?></strong> of <strong><?php echo $totalRows; ?></strong>
-                                        entries
-                                    <?php else: ?>
-                                        Showing <strong>0</strong> to <strong>0</strong> of <strong>0</strong> entries
-                                    <?php endif; ?>
-                                </div>
+                            <div class="pagination-container d-flex justify-content-end align-items-center mt-4">
+                                
                                 <?= renderPagination($page, $totalPages) ?>
                             </div>
 

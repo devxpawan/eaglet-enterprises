@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once __DIR__ . '/../../config/paths.php';
 
 session_start();
@@ -213,11 +213,8 @@ $pendingCount = $conn->query("SELECT COUNT(*) as c FROM invoice_edit_requests WH
                         </div>
 
                         <?php if ($totalPages > 1): ?>
-                            <div class="pagination-container d-flex justify-content-between align-items-center mt-4">
-                                <div class="entries-info">
-                                    Showing <strong><?= $offset + 1 ?></strong> to
-                                    <strong><?= min($offset + $limit, $totalRows) ?></strong> of <strong><?= $totalRows ?></strong>
-                                </div>
+                            <div class="pagination-container d-flex justify-content-end align-items-center mt-4">
+                                
                                 <?= renderPagination($page, $totalPages) ?>
                             </div>
                         <?php endif; ?>

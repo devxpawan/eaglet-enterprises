@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once __DIR__ . '/../../config/paths.php';
 
 session_start();
@@ -188,10 +188,8 @@ $result = $conn->query($sql);
                                 </table>
                             </div>
 
-                            <div class="pagination-container d-flex justify-content-between align-items-center mt-4">
-                                <div class="entries-info">
-                                    Showing <strong><?php echo ($offset + 1); ?></strong> to <strong><?php echo min($offset + $limit, $totalRows); ?></strong> of <strong><?php echo $totalRows; ?></strong> entries
-                                </div>
+                            <div class="pagination-container d-flex justify-content-end align-items-center mt-4">
+                                
                                 <?= renderPagination($page, $totalPages) ?>
 </div>
                          </div>

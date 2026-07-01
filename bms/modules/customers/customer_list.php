@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once __DIR__ . '/../../config/paths.php';
 
 // Start session at the very beginning
@@ -236,12 +236,8 @@ $result = $conn->query($sql);
                         </div>
 
                         <!-- Pagination -->
-                        <div class="pagination-container d-flex justify-content-between align-items-center mt-4">
-                            <div class="entries-info">
-                                Showing <strong><?php echo ($totalRows > 0) ? ($offset + 1) : 0; ?></strong> to
-                                <strong><?php echo min($offset + $limit, $totalRows); ?></strong> of <strong><?php echo $totalRows; ?></strong>
-                                entries
-                            </div>
+                        <div class="pagination-container d-flex justify-content-end align-items-center mt-4">
+                            
                             <?= renderPagination($page, $totalPages) ?>
                     </div> <!-- card-body close -->
                 </div> <!-- card close -->

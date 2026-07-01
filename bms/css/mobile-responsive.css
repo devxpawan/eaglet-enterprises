@@ -272,16 +272,19 @@
         border-radius: 6px !important;
     }
 
+    .pagination-container.d-flex.align-items-center.flex-wrap,
     .d-flex.justify-content-between.align-items-center.flex-wrap {
         flex-direction: column;
         gap: 12px;
         align-items: stretch !important;
     }
 
+    .pagination-container.d-flex.align-items-center.flex-wrap .entries-info,
     .d-flex.justify-content-between.align-items-center.flex-wrap .entries-info {
         text-align: center;
     }
 
+    .pagination-container.d-flex.align-items-center.flex-wrap .pagination,
     .d-flex.justify-content-between.align-items-center.flex-wrap .pagination {
         justify-content: center;
     }

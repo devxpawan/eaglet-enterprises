@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once __DIR__ . '/../../config/paths.php';
 
 session_start();
@@ -10,6 +10,8 @@ require_once BASE_PATH . 'includes/db_connection.php';
 require_once BASE_PATH . 'includes/functions.php';
 
 // Initialize filter parameters
+$filter_ref_no = isset($_GET['filter_ref_no']) ? trim($_GET['filter_ref_no']) : '';
+
 $filter_customer = isset($_GET['filter_customer']) ? trim($_GET['filter_customer']) : '';
 $filter_from_date = isset($_GET['filter_from_date']) ? trim($_GET['filter_from_date']) : '';
 $filter_to_date = isset($_GET['filter_to_date']) ? trim($_GET['filter_to_date']) : '';
@@ -19,6 +21,10 @@ $offset = ($page - 1) * $limit;
 
 // Build WHERE conditions
 $conditions = [];
+if (!empty($filter_ref_no)) {
+    $s = $conn->real_escape_string($filter_ref_no);
+    $conditions[] = "pl.ref_no LIKE '%$s%'";
+}
 if (!empty($filter_customer)) {
     $s = $conn->real_escape_string($filter_customer);
     $conditions[] = "c.name LIKE '%$s%'";
@@ -84,6 +90,11 @@ $result = $conn->query($sql);
                             <div class="invoice-filter-bar">
                                 <form method="get" id="filterForm">
                                     <div class="row g-2 align-items-end">
+                                        <div class="col-md-2">
+                                            <label class="form-label mb-1" style="font-size:11px;font-weight:600;color:#667085;">Price List No</label>
+                                            <input type="text" name="filter_ref_no" class="form-control" placeholder="Ref No"
+                                                value="<?= htmlspecialchars($filter_ref_no) ?>">
+                                        </div>
                                         <div class="col-md-3 col-lg-2">
                                             <label class="form-label mb-1" style="font-size:11px;font-weight:600;color:#667085;">Customer</label>
                                             <input type="text" name="filter_customer" class="form-control" placeholder="Customer name"
@@ -164,10 +175,8 @@ $result = $conn->query($sql);
                             </div>
 
                             <!-- Pagination -->
-                            <div class="pagination-container d-flex justify-content-between align-items-center mt-4">
-                                <div class="entries-info">
-                                    Showing <strong><?= ($offset + 1) ?></strong> to <strong><?= min($offset + $limit, $totalRows) ?></strong> of <strong><?= $totalRows ?></strong> entries
-                                </div>
+                            <div class="pagination-container d-flex justify-content-end align-items-center mt-4">
+                                
                                 <?= renderPagination($page, $totalPages) ?>
                             </div>
                         </div>
@@ -224,3 +233,5 @@ $result = $conn->query($sql);
 </body>
 </html>
 <?php $conn->close(); ?>
+
+

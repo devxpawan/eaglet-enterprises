@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once __DIR__ . '/../../config/paths.php';
 
 if (session_status() == PHP_SESSION_NONE) session_start();
@@ -238,10 +238,8 @@ $suppliers = $conn->query("SELECT s.*, (SELECT COUNT(*) FROM purchase_orders WHE
                                 </table>
                             </div>
 
-                            <div class="pagination-container d-flex justify-content-between align-items-center mt-4">
-                                <div class="entries-info">
-                                    Showing <strong><?= $totalRows > 0 ? $offset + 1 : 0 ?></strong> to <strong><?= min($offset + $limit, $totalRows) ?></strong> of <strong><?= $totalRows ?></strong> entries
-                                </div>
+                            <div class="pagination-container d-flex justify-content-end align-items-center mt-4">
+                                
                                 <?= renderPagination($page, $totalPages) ?>
                             </div>
                         </div>
