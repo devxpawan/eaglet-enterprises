@@ -156,7 +156,7 @@ $products = $conn->query("SELECT id, name, sku, stock_quantity, unit FROM produc
                                     <div class="row g-2 align-items-end">
                                         <div class="col-md-3">
                                             <label class="form-label mb-1" style="font-size:11px;font-weight:600;color:#667085;">Product</label>
-                                            <input type="text" name="filter_product" class="form-control" placeholder="Product name" value="<?= htmlspecialchars($filter_product) ?>">
+                                            <input type="text" name="filter_product" class="form-control" placeholder="Search by product name..." value="<?= htmlspecialchars($filter_product) ?>">
                                         </div>
                                         <div class="col-md-2">
                                             <label class="form-label mb-1" style="font-size:11px;font-weight:600;color:#667085;">Type</label>
@@ -305,9 +305,23 @@ $products = $conn->query("SELECT id, name, sku, stock_quantity, unit FROM produc
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="<?= BASE_URL ?>js/select2-init.js"></script>
     <script src="<?= BASE_URL ?>js/scripts.js"></script>
     <script>
     $(document).ready(function() {
+        // Initialize Select2 for filter dropdowns
+        $('select[name="filter_type"]').select2({ minimumResultsForSearch: Infinity });
+
+        // Initialize Select2 for product select in adjust modal
+        $('#adjustStockModal').on('shown.bs.modal', function() {
+            $(this).find('select[name="product_id"]').select2({
+                dropdownParent: $(this),
+                placeholder: '— Select Product —',
+                allowClear: true
+            });
+        });
+
         // Product select auto-show current stock
         $('select[name="product_id"]').change(function() {
             const text = $(this).find('option:selected').text();

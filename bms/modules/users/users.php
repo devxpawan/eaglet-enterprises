@@ -381,17 +381,17 @@ $result = $conn->query($sql);
                                     <div class="row g-2 align-items-end">
                                         <div class="col-md-3 col-lg-2">
                                             <label class="form-label mb-1" style="font-size:11px;font-weight:600;color:#667085;">Name</label>
-                                            <input type="text" name="filter_name" class="form-control" placeholder="User Name"
+                                            <input type="text" name="filter_name" class="form-control" placeholder="Search by name..."
                                                 value="<?= htmlspecialchars($filter_name) ?>">
                                         </div>
                                         <div class="col-md-3 col-lg-2">
                                             <label class="form-label mb-1" style="font-size:11px;font-weight:600;color:#667085;">Email</label>
-                                            <input type="text" name="filter_email" class="form-control" placeholder="Email"
+                                            <input type="text" name="filter_email" class="form-control" placeholder="Search by email..."
                                                 value="<?= htmlspecialchars($filter_email) ?>">
                                         </div>
                                         <div class="col-md-3 col-lg-2">
                                             <label class="form-label mb-1" style="font-size:11px;font-weight:600;color:#667085;">Phone</label>
-                                            <input type="text" name="filter_mobile" class="form-control" placeholder="Phone Number"
+                                            <input type="text" name="filter_mobile" class="form-control" placeholder="Search by phone..."
                                                 value="<?= htmlspecialchars($filter_mobile) ?>">
                                         </div>
                                         <div class="col-md-2 col-lg-1">
@@ -623,10 +623,18 @@ $result = $conn->query($sql);
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="<?= BASE_URL ?>js/select2-init.js"></script>
 
     <script src="<?= BASE_URL ?>js/scripts.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Initialize Select2 for filter dropdowns
+        $(function() {
+            $('select[name="filter_position"]').select2({ minimumResultsForSearch: Infinity });
+            $('select[name="filter_status"]').select2({ minimumResultsForSearch: Infinity });
+        });
 
 
 

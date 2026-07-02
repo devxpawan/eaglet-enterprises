@@ -45,6 +45,11 @@ if (isset($conn) && $conn instanceof mysqli && !$conn->connect_error) {
 <!-- Link to Bootstrap 5.3.0 CSS from CDN (Standardized version) -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
 
+<!-- Select2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+<link href="<?= BASE_URL ?>css/select2-custom.css" rel="stylesheet" />
+
 <!-- Link to Google Fonts for Inter font family -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 

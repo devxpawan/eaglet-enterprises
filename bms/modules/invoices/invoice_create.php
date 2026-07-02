@@ -32,6 +32,7 @@ $nextInvoiceId = getNextAutoIncrement($conn, 'invoices');
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="<?= BASE_URL ?>css/forms.css" rel="stylesheet" />
     <link href="<?= BASE_URL ?>css/invoice-list.css" rel="stylesheet" />
 </head>
 
@@ -106,7 +107,7 @@ $nextInvoiceId = getNextAutoIncrement($conn, 'invoices');
                                     <div class="col-12">
                                         <div>
                                             <label class="form-label">Subject</label>
-                                            <input type="text" class="form-control" name="subject" placeholder="Enter invoice subject or title">
+                                            <input type="text" class="form-control" name="subject" placeholder="Enter subject">
                                         </div>
                                     </div>
                                 </div>
@@ -131,29 +132,29 @@ $nextInvoiceId = getNextAutoIncrement($conn, 'invoices');
                                         <div>
                                             <label class="form-label">Name <span class="text-danger">*</span></label>
                                             <input type="text" class="form-control" name="customer_name"
-                                                id="customer_name" placeholder="Enter Customer Name" required>
+                                                id="customer_name" placeholder="Enter customer name" required>
                                         </div>
                                         <div class="mt-3">
                                             <label class="form-label">Business Name</label>
                                             <input type="text" class="form-control" name="customer_business_name"
-                                                id="customer_business_name" placeholder="Enter Business Name (optional)">
+                                                id="customer_business_name" placeholder="Enter business name">
                                         </div>
                                         <div class="mt-3">
                                             <label class="form-label">Email</label>
                                             <input type="email" class="form-control" name="customer_email"
-                                                id="customer_email" placeholder="Enter Email (optional)">
+                                                id="customer_email" placeholder="Enter email address">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div>
                                             <label class="form-label">Phone</label>
                                             <input type="text" class="form-control" name="customer_phone"
-                                                id="customer_phone" placeholder="Enter Phone Number" maxlength="10" pattern="[0-9]{10}" inputmode="numeric">
+                                                id="customer_phone" placeholder="Enter phone number" maxlength="10" pattern="[0-9]{10}" inputmode="numeric">
                                         </div>
                                         <div class="mt-3">
                                             <label class="form-label">Address</label>
                                             <input type="text" class="form-control" name="customer_address"
-                                                id="customer_address" placeholder="Enter Address">
+                                                id="customer_address" placeholder="Enter address">
                                         </div>
                                     </div>
                                 </div>
@@ -185,11 +186,11 @@ $nextInvoiceId = getNextAutoIncrement($conn, 'invoices');
                                             <tr>
                                                 <td class="text-center text-muted" style="font-size: 13px; font-weight: 500;">1</td>
                                                 <td>
-                                                    <input type="text" name="invoice_product[]" class="form-control item-name" placeholder="Enter item name">
+                                                    <input type="text" name="invoice_product[]" class="form-control item-name" placeholder="Enter product or service name">
                                                 </td>
                                                 <td>
                                                     <input type="text" name="invoice_product_description[]"
-                                                        class="form-control product-description" placeholder="Description">
+                                                        class="form-control product-description" placeholder="Enter description">
                                                 </td>
                                                 <td>
                                                     <div class="input-group input-group-sm">
@@ -399,14 +400,17 @@ $nextInvoiceId = getNextAutoIncrement($conn, 'invoices');
 
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="<?= BASE_URL ?>js/select2-init.js"></script>
     <script>
         var NEXT_INVOICE_ID = <?= $nextInvoiceId ?>;
         var COMPANY_PREFIX = '<?= htmlspecialchars(strtoupper(substr(preg_replace('/[^a-zA-Z0-9]/', '', getCompanyInfo($conn)['company_name']), 0, 3))) ?>';
         if (!COMPANY_PREFIX) COMPANY_PREFIX = 'IN';
     </script>
-    <!-- Select2 JS -->
     <script>
         $(document).ready(function () {
+            // Initialize Select2 for status dropdown
+            $('#invoice_status').select2({ minimumResultsForSearch: Infinity });
             // Email validation function
             function isValidEmail(email) {
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

@@ -207,9 +207,7 @@ unset($_SESSION['success_message'], $_SESSION['error_message']);
     <?php require_once BASE_PATH . 'includes/header.php'; ?>
     <title>Company Settings - BMS</title>
     <link href="<?= BASE_URL ?>css/forms.css" rel="stylesheet" />
-    <!-- Select2 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+
 
     <style>
         body {
@@ -537,15 +535,11 @@ unset($_SESSION['success_message'], $_SESSION['error_message']);
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <script src="<?= BASE_URL ?>js/scripts.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="<?= BASE_URL ?>js/select2-init.js"></script>
 
     <script>
     $(document).ready(function() {
-        // Initialize Select2 Account Type selector
-        $('#account_type').select2({
-            theme: 'bootstrap-5',
-            width: '100%',
-            minimumResultsForSearch: Infinity
-        });
+        $('#account_type').select2({ minimumResultsForSearch: Infinity });
 
         // Setup File Upload Live Previews
         setupFilePreview('logo', 'logo-preview', 'logo-filename', 'logo-filesize');

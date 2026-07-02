@@ -198,9 +198,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <?php require_once BASE_PATH . 'includes/header.php'; ?>
     <title>Add Customer</title>
     <link href="<?= BASE_URL ?>css/forms.css" rel="stylesheet" />
-    <!-- Select2 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+
 </head>
 
 <body class="sb-nav-fixed">
@@ -243,7 +241,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <div class="mb-3">
                                             <label for="business_name" class="form-label">Business Name</label>
                                             <input type="text" class="form-control" id="business_name" name="business_name"
-                                                 placeholder="Business Name" value="<?php echo isset($business_name) ? htmlspecialchars($business_name) : ''; ?>">
+                                                 placeholder="Enter business name" value="<?php echo isset($business_name) ? htmlspecialchars($business_name) : ''; ?>">
                                             <div class="error-feedback" id="business_name-error"></div>
                                         </div>
                                         
@@ -251,7 +249,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <div class="mb-3">
                                             <label for="name" class="form-label">Full Name</label>
                                             <input type="text" class="form-control" id="name" name="name"
-                                                placeholder="Full Name" value="<?php echo isset($name) ? htmlspecialchars($name) : ''; ?>" required>
+                                                placeholder="Enter full name" value="<?php echo isset($name) ? htmlspecialchars($name) : ''; ?>" required>
                                             <div class="error-feedback" id="name-error"></div>
                                         </div>
 
@@ -259,7 +257,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <div class="mb-3">
                                             <label for="email" class="form-label">Email Address</label>
                                             <input type="email" class="form-control" id="email" name="email"
-                                                placeholder="name@example.com" value="<?php echo isset($email) ? htmlspecialchars($email) : ''; ?>">
+                                                placeholder="Enter email address" value="<?php echo isset($email) ? htmlspecialchars($email) : ''; ?>">
                                             <div class="error-feedback" id="email-error"></div>
                                         </div>
                                     </div>
@@ -273,7 +271,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <div class="mb-3">
                                             <label for="phone" class="form-label">Phone Number</label>
                                             <input type="tel" class="form-control" id="phone" name="phone"
-                                                  placeholder="Enter 10-digit phone number" maxlength="10" pattern="[0-9]{10}" inputmode="numeric" value="<?php echo isset($phone) ? htmlspecialchars($phone) : ''; ?>" required>
+                                                  placeholder="Enter phone number" maxlength="10" pattern="[0-9]{10}" inputmode="numeric" value="<?php echo isset($phone) ? htmlspecialchars($phone) : ''; ?>" required>
                                              <div class="error-feedback" id="phone-error"></div>
                                         </div>
 
@@ -281,7 +279,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <div class="mb-3">
                                             <label for="address" class="form-label">Address</label>
                                             <textarea class="form-control" id="address" name="address"
-                                                 placeholder="Address" required rows="3"><?php echo isset($address) ? htmlspecialchars($address) : ''; ?></textarea>
+                                                 placeholder="Enter full address" required rows="3"><?php echo isset($address) ? htmlspecialchars($address) : ''; ?></textarea>
                                             <div class="error-feedback" id="address-error"></div>
                                         </div>
                                     </div>
@@ -806,8 +804,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     </script>
 
-    <!-- Select2 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 
     
     <?php

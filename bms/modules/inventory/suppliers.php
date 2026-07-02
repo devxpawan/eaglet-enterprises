@@ -131,7 +131,7 @@ $suppliers = $conn->query("SELECT s.*, (SELECT COUNT(*) FROM purchase_orders WHE
                                     <div class="row g-2 align-items-end">
                                         <div class="col-md-4">
                                             <label class="form-label mb-1" style="font-size:11px;font-weight:600;color:#667085;">Search</label>
-                                            <input type="text" name="search" class="form-control" placeholder="Company, contact, email, city..." value="<?= htmlspecialchars($search) ?>">
+                                            <input type="text" name="search" class="form-control" placeholder="Search by company, contact, email..." value="<?= htmlspecialchars($search) ?>">
                                         </div>
                                         <div class="col-md-2">
                                             <label class="form-label mb-1" style="font-size:11px;font-weight:600;color:#667085;">Status</label>
@@ -419,9 +419,33 @@ $suppliers = $conn->query("SELECT s.*, (SELECT COUNT(*) FROM purchase_orders WHE
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="<?= BASE_URL ?>js/select2-init.js"></script>
     <script src="<?= BASE_URL ?>js/scripts.js"></script>
     <script>
     $(document).ready(function() {
+        // Initialize Select2 for filter dropdowns
+        $('select[name="filter_status"]').select2({ minimumResultsForSearch: Infinity });
+
+        // Initialize Select2 for add supplier modal (guard against re-init)
+        $('#addSupplierModal').on('shown.bs.modal', function() {
+            const $sel = $(this).find('select[name="payment_terms"]');
+            if (!$sel.data('select2')) {
+                $sel.select2({ dropdownParent: $(this), placeholder: '— Select —', allowClear: true, minimumResultsForSearch: Infinity });
+            }
+        });
+        // Initialize Select2 for edit supplier modal (guard against re-init)
+        $('#editSupplierModal').on('shown.bs.modal', function() {
+            const $terms = $(this).find('#edit_sup_terms');
+            if (!$terms.data('select2')) {
+                $terms.select2({ dropdownParent: $(this), placeholder: '— Select —', allowClear: true, minimumResultsForSearch: Infinity });
+            }
+            const $status = $(this).find('#edit_sup_status');
+            if (!$status.data('select2')) {
+                $status.select2({ dropdownParent: $(this), minimumResultsForSearch: Infinity });
+            }
+        });
+
         // View supplier
         $('.view-supplier-btn').click(function() {
             const d = $(this).data();
@@ -454,9 +478,9 @@ $suppliers = $conn->query("SELECT s.*, (SELECT COUNT(*) FROM purchase_orders WHE
             $('#edit_sup_address').val(d.address);
             $('#edit_sup_city').val(d.city);
             $('#edit_sup_tax').val(d.tax);
-            $('#edit_sup_terms').val(d.terms);
+            $('#edit_sup_terms').val(d.terms).trigger('change');
             $('#edit_sup_notes').val(d.notes);
-            $('#edit_sup_status').val(d.status);
+            $('#edit_sup_status').val(d.status).trigger('change');
             $('#editSupplierModal').modal('show');
         });
 

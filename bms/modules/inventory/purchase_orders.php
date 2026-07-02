@@ -281,11 +281,11 @@ $products = $conn->query("SELECT id, name, sku, lkr_price, stock_quantity, unit 
                                     <div class="row g-2 align-items-end">
                                         <div class="col-md-2">
                                             <label class="form-label mb-1" style="font-size:11px;font-weight:600;color:#667085;">PO Number</label>
-                                            <input type="text" name="filter_po" class="form-control" placeholder="PO number" value="<?= htmlspecialchars($filter_po) ?>">
+                                            <input type="text" name="filter_po" class="form-control" placeholder="Search by PO number..." value="<?= htmlspecialchars($filter_po) ?>">
                                         </div>
                                         <div class="col-md-2">
                                             <label class="form-label mb-1" style="font-size:11px;font-weight:600;color:#667085;">Supplier</label>
-                                            <input type="text" name="filter_supplier" class="form-control" placeholder="Supplier name" value="<?= htmlspecialchars($filter_supplier) ?>">
+                                            <input type="text" name="filter_supplier" class="form-control" placeholder="Search by supplier..." value="<?= htmlspecialchars($filter_supplier) ?>">
                                         </div>
                                         <div class="col-md-2">
                                             <label class="form-label mb-1" style="font-size:11px;font-weight:600;color:#667085;">From Date</label>
@@ -584,6 +584,8 @@ $products = $conn->query("SELECT id, name, sku, lkr_price, stock_quantity, unit 
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="<?= BASE_URL ?>js/select2-init.js"></script>
     <script src="<?= BASE_URL ?>js/scripts.js"></script>
     <script>
     // Auto-fill unit price when a product is selected
@@ -624,14 +626,37 @@ $products = $conn->query("SELECT id, name, sku, lkr_price, stock_quantity, unit 
     }
     
     $(document).ready(function() {
+        // Initialize Select2 for filter dropdowns
+        $('select[name="filter_status"]').select2({ minimumResultsForSearch: Infinity });
+
+        // Initialize Select2 for create PO modal
+        $('#createPOModal').on('shown.bs.modal', function() {
+            $(this).find('select[name="supplier_id"]').select2({
+                dropdownParent: $(this),
+                placeholder: '— Select Supplier —',
+                allowClear: true
+            });
+            $(this).find('select[name="product_id[]"]').select2({
+                dropdownParent: $(this),
+                placeholder: '— Select Product —',
+                allowClear: true
+            });
+        });
+
         // Add PO item row
         $('#add-po-item-btn').click(function() {
             const row = $('#po-items-container .po-item-row:first').clone();
             row.find('select').val('');
+            row.find('select').select2('destroy');
             row.find('input').val('');
             row.find('.item-total-display').text('0.00');
             row.find('.remove-po-item-btn').show();
             $('#po-items-container').append(row);
+            row.find('select[name="product_id[]"]').select2({
+                dropdownParent: $('#createPOModal'),
+                placeholder: '— Select Product —',
+                allowClear: true
+            });
             updatePOTotals();
         });
         

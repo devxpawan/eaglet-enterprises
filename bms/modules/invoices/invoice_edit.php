@@ -100,6 +100,7 @@ $invoice_vat_pct = ($invoice_net > 0) ? ($invoice_vat / $invoice_net * 100) : 0;
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="<?= BASE_URL ?>css/forms.css" rel="stylesheet" />
     <link href="<?= BASE_URL ?>css/invoice-list.css" rel="stylesheet" />
 </head>
 
@@ -171,7 +172,7 @@ $invoice_vat_pct = ($invoice_net > 0) ? ($invoice_vat / $invoice_net * 100) : 0;
                                     <div class="col-12">
                                         <div>
                                             <label class="form-label">Subject</label>
-                                            <input type="text" class="form-control" name="subject" placeholder="Enter invoice subject or title"
+                                            <input type="text" class="form-control" name="subject" placeholder="Enter subject"
                                                 value="<?= htmlspecialchars($invoice['subject'] ?? '') ?>">
                                         </div>
                                     </div>
@@ -197,19 +198,19 @@ $invoice_vat_pct = ($invoice_net > 0) ? ($invoice_vat / $invoice_net * 100) : 0;
                                         <div>
                                             <label class="form-label">Name <span class="text-danger">*</span></label>
                                             <input type="text" class="form-control" name="customer_name"
-                                                id="customer_name" placeholder="Enter Customer Name"
+                                                id="customer_name" placeholder="Enter customer name"
                                                 value="<?= htmlspecialchars($invoice['customer_name'] ?? '') ?>" required>
                                         </div>
                                         <div class="mt-3">
                                             <label class="form-label">Business Name</label>
                                             <input type="text" class="form-control" name="customer_business_name"
-                                                id="customer_business_name" placeholder="Enter Business Name (optional)"
+                                                id="customer_business_name" placeholder="Enter business name"
                                                 value="<?= htmlspecialchars($invoice['customer_business_name'] ?? '') ?>">
                                         </div>
                                         <div class="mt-3">
                                             <label class="form-label">Email</label>
                                             <input type="email" class="form-control" name="customer_email"
-                                                id="customer_email" placeholder="Enter Email (optional)"
+                                                id="customer_email" placeholder="Enter email address"
                                                 value="<?= htmlspecialchars($invoice['customer_email'] ?? '') ?>">
                                         </div>
                                     </div>
@@ -217,13 +218,13 @@ $invoice_vat_pct = ($invoice_net > 0) ? ($invoice_vat / $invoice_net * 100) : 0;
                                         <div>
                                             <label class="form-label">Phone</label>
                                             <input type="text" class="form-control" name="customer_phone"
-                                                id="customer_phone" placeholder="Enter Phone Number" maxlength="10" pattern="[0-9]{10}" inputmode="numeric"
+                                                id="customer_phone" placeholder="Enter phone number" maxlength="10" pattern="[0-9]{10}" inputmode="numeric"
                                                 value="<?= htmlspecialchars($invoice['customer_phone'] ?? '') ?>">
                                         </div>
                                         <div class="mt-3">
                                             <label class="form-label">Address</label>
                                             <input type="text" class="form-control" name="customer_address"
-                                                id="customer_address" placeholder="Enter Address"
+                                                id="customer_address" placeholder="Enter address"
                                                 value="<?= htmlspecialchars($invoice['customer_address'] ?? '') ?>">
                                         </div>
                                     </div>
@@ -258,11 +259,11 @@ $invoice_vat_pct = ($invoice_net > 0) ? ($invoice_vat / $invoice_net * 100) : 0;
                                                     <td class="text-center text-muted" style="font-size: 13px; font-weight: 500;"><?= $index + 1 ?></td>
                                                     <input type="hidden" name="invoice_item_id[]" value="<?= $item['item_id'] ?? 0 ?>">
                                                     <td>
-                                                        <input type="text" name="invoice_product[]" class="form-control item-name" placeholder="Enter item name" value="<?= htmlspecialchars($item['product_name'] ?? '') ?>">
+                                                        <input type="text" name="invoice_product[]" class="form-control item-name" placeholder="Enter product or service name" value="<?= htmlspecialchars($item['product_name'] ?? '') ?>">
                                                     </td>
                                                     <td>
                                                         <input type="text" name="invoice_product_description[]"
-                                                            class="form-control product-description" placeholder="Description"
+                                                            class="form-control product-description" placeholder="Enter description"
                                                             value="<?= htmlspecialchars($item['description'] ?? '') ?>">
                                                     </td>
                                                     <td>

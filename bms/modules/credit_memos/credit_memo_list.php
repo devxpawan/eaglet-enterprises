@@ -92,7 +92,7 @@ $result = $conn->query($sql);
                                 <div class="row g-2 align-items-end">
                                     <div class="col-md-3 col-lg-2">
                                         <label class="form-label mb-1" style="font-size:11px;font-weight:600;color:#667085;">Search</label>
-                                        <input type="text" name="search" class="form-control" placeholder="Memo No, Invoice or Customer"
+                                        <input type="text" name="search" class="form-control" placeholder="Search by memo, invoice, or customer..."
                                             value="<?php echo htmlspecialchars($search); ?>">
                                     </div>
                                     <div class="col-md-2">

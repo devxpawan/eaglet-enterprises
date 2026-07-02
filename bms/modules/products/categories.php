@@ -139,7 +139,7 @@ $allCats = $conn->query("SELECT id, name FROM categories WHERE status = 'active'
                                     <div class="row g-2 align-items-end">
                                         <div class="col-md-4">
                                             <label class="form-label mb-1" style="font-size:11px;font-weight:600;color:#667085;">Search</label>
-                                            <input type="text" name="search" class="form-control" placeholder="Category name or description" value="<?= htmlspecialchars($search) ?>">
+                                            <input type="text" name="search" class="form-control" placeholder="Search by category name..." value="<?= htmlspecialchars($search) ?>">
                                         </div>
                                         <div class="col-md-2">
                                             <label class="form-label mb-1" style="font-size:11px;font-weight:600;color:#667085;">Status</label>
@@ -329,16 +329,40 @@ $allCats = $conn->query("SELECT id, name FROM categories WHERE status = 'active'
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="<?= BASE_URL ?>js/select2-init.js"></script>
     <script src="<?= BASE_URL ?>js/scripts.js"></script>
     <script>
     $(document).ready(function() {
+        // Initialize Select2 for filter dropdowns
+        $('select[name="filter_status"]').select2({ minimumResultsForSearch: Infinity });
+
+        // Initialize Select2 for add category modal (guard against re-init)
+        $('#addCategoryModal').on('shown.bs.modal', function() {
+            const $sel = $(this).find('select[name="parent_id"]');
+            if (!$sel.data('select2')) {
+                $sel.select2({ dropdownParent: $(this), placeholder: '— Top Level (None) —', allowClear: true });
+            }
+        });
+        // Initialize Select2 for edit category modal (guard against re-init)
+        $('#editCategoryModal').on('shown.bs.modal', function() {
+            const $parent = $(this).find('#edit_cat_parent');
+            if (!$parent.data('select2')) {
+                $parent.select2({ dropdownParent: $(this), placeholder: '— Top Level (None) —', allowClear: true });
+            }
+            const $status = $(this).find('#edit_cat_status');
+            if (!$status.data('select2')) {
+                $status.select2({ dropdownParent: $(this), minimumResultsForSearch: Infinity });
+            }
+        });
+
         // Edit button - populate modal
         $('.edit-cat-btn').click(function() {
             $('#edit_cat_id').val($(this).data('id'));
             $('#edit_cat_name').val($(this).data('name'));
             $('#edit_cat_desc').val($(this).data('desc'));
-            $('#edit_cat_parent').val($(this).data('parent'));
-            $('#edit_cat_status').val($(this).data('status'));
+            $('#edit_cat_parent').val($(this).data('parent')).trigger('change');
+            $('#edit_cat_status').val($(this).data('status')).trigger('change');
             $('#editCategoryModal').modal('show');
         });
 

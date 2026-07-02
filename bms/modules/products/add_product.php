@@ -68,7 +68,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <?php require_once BASE_PATH . 'includes/header.php'; ?>
     <title>Add New Product</title>
     <link href="<?= BASE_URL ?>css/forms.css" rel="stylesheet" />
-    <style></style>
 </head>
 
 <body class="sb-nav-fixed">
@@ -106,19 +105,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     <div class="col-md-6 mb-3">
                                         <label for="name" class="form-label">Product Name <span class="text-danger">*</span></label>
                                         <input type="text" class="form-control" id="name" name="name"
-                                            placeholder="Enter Product Name" required
+                                            placeholder="Enter product name" required
                                             value="<?php echo isset($_POST['name']) ? htmlspecialchars($_POST['name']) : ''; ?>">
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="lkr_price" class="form-label">LKR Price <span class="text-danger">*</span></label>
                                         <input type="number" step="0.01" class="form-control" id="lkr_price" 
-                                             name="lkr_price" placeholder="Enter LKR Price" min="0" required
+                                             name="lkr_price" placeholder="Enter price" min="0" required
                                             value="<?php echo isset($_POST['lkr_price']) ? htmlspecialchars($_POST['lkr_price']) : ''; ?>">
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="sku" class="form-label">SKU (Stock Keeping Unit)</label>
                                         <input type="text" class="form-control" id="sku" name="sku"
-                                            placeholder="SKU (Stock Keeping Unit)"
+                                            placeholder="Enter SKU"
                                             value="<?php echo isset($_POST['sku']) ? htmlspecialchars($_POST['sku']) : ''; ?>">
                                         <small class="text-muted">Leave empty to auto-generate</small>
                                     </div>
@@ -134,7 +133,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     <div class="col-12 mb-3">
                                         <label for="description" class="form-label">Description</label>
                                         <textarea class="form-control" id="description" name="description"
-                                            placeholder="Enter Product Description" rows="3"><?php 
+                                            placeholder="Enter description" rows="3"><?php 
                                             echo isset($_POST['description']) ? htmlspecialchars($_POST['description']) : ''; 
                                         ?></textarea>
                                     </div>
@@ -148,12 +147,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     <div class="col-md-4 mb-3">
                                         <label for="stock_quantity" class="form-label">Initial Stock Quantity</label>
                                         <input type="number" class="form-control" id="stock_quantity" name="stock_quantity"
-                                            min="0" value="0" placeholder="Initial Stock Quantity">
+                                            min="0" value="0" placeholder="Enter stock quantity">
                                     </div>
                                     <div class="col-md-4 mb-3">
                                         <label for="reorder_level" class="form-label">Reorder Level</label>
                                         <input type="number" class="form-control" id="reorder_level" name="reorder_level"
-                                            min="1" value="5" placeholder="Reorder Level">
+                                            min="1" value="5" placeholder="Enter reorder level">
                                         <small class="text-muted">Alert when stock drops to this level</small>
                                     </div>
                                     <div class="col-md-4 mb-3">
@@ -189,10 +188,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     </div>
             </main>
 
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
         crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="<?= BASE_URL ?>js/select2-init.js"></script>
     <script src="<?= BASE_URL ?>js/scripts.js"></script>
     <script>
+        // Initialize Select2
+        $(document).ready(function() {
+            $('select[name="category_id"]').select2({
+                placeholder: '— No Category —',
+                allowClear: true
+            });
+            $('select[name="unit"]').select2({ minimumResultsForSearch: Infinity });
+        });
+
         document.getElementById('addProductForm').addEventListener('submit', function(event) {
             const lkrPrice = document.getElementById('lkr_price').value.trim();
             if (lkrPrice === '') {

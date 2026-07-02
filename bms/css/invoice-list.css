@@ -21,7 +21,7 @@
     font-size: 14px;
     color: #101828;
     padding: 8px 12px;
-    height: 40px;
+    height: 35px;
     transition: border-color 0.15s, box-shadow 0.15s;
 }
 
@@ -34,9 +34,13 @@
 
 .invoice-filter-bar .btn-filter {
     border-radius: 8px;
-    padding: 8px 18px;
+    padding: 0 18px;
     font-size: 14px;
     font-weight: 600;
+    height: 35px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     background: #3B82F6;
     border-color: #3B82F6;
     color: #fff;
@@ -53,9 +57,13 @@
 
 .invoice-filter-bar .btn-clear {
     border-radius: 8px;
-    padding: 8px 14px;
+    padding: 0 14px;
     font-size: 14px;
     font-weight: 500;
+    height: 35px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     color: #344054;
     border-color: #d0d5dd;
     background: #fff;
@@ -73,7 +81,7 @@
     border-color: #d0d5dd;
     padding: 8px 12px;
     font-size: 14px;
-    height: 40px;
+    height: 35px;
     cursor: pointer;
     background-color: #fff;
 }
@@ -400,27 +408,7 @@
     letter-spacing: 0.01em;
 }
 
-.form-control, .form-select {
-    font-size: 14px;
-    color: #101828;
-    border-color: #d0d5dd;
-    border-radius: 8px;
-    transition: all 0.15s ease;
-}
 
-.form-control:focus, .form-select:focus {
-    border-color: #3B82F6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
-}
-
-.form-control:hover, .form-select:hover {
-    border-color: #98a2b3;
-}
-
-input.form-control, select.form-select { height: 40px; padding: 8px 12px; }
-
-textarea.form-control { border-radius: 8px; border-color: #d0d5dd; font-size: 14px; resize: vertical; height: auto; }
-textarea.form-control:focus { border-color: #3B82F6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12); }
 
 .card { border-radius: 12px; border: 1px solid #eaecf0; box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04); transition: box-shadow 0.15s ease; }
 .card:hover { box-shadow: 0 4px 8px rgba(16, 24, 40, 0.06); }
@@ -499,9 +487,6 @@ textarea.form-control:focus { border-color: #3B82F6; box-shadow: 0 0 0 3px rgba(
 .close-modal:hover { background: #f2f4f7; color: #344054; }
 
 .status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 999px; background: #fff8e1; color: #b78103; font-size: 12px; font-weight: 600; }
-
-.select2-container--bootstrap-5 .select2-selection { border-radius: 8px !important; border-color: #d0d5dd !important; min-height: 40px !important; }
-.select2-container--bootstrap-5.select2-container--focus .select2-selection { border-color: #3B82F6 !important; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12) !important; }
 
 /* ═══════════════════════════════════════════════════════════════════
    MOBILE RESPONSIVE — Invoice Create / Edit

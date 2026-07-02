@@ -282,9 +282,14 @@ function hasMultipleChanges($details) {
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="<?= BASE_URL ?>js/select2-init.js"></script>
     <script src="<?= BASE_URL ?>js/scripts.js"></script>
     <script>
-    // No additional scripts needed
+    $(document).ready(function() {
+        $('select[name="filter_user"]').select2({ minimumResultsForSearch: Infinity });
+        $('select[name="filter_action_type"]').select2({ minimumResultsForSearch: Infinity });
+    });
     </script>
 </body>
 

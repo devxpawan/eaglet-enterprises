@@ -127,7 +127,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <?php require_once BASE_PATH . 'includes/header.php'; ?>
     <title>Edit Product</title>
     <link href="<?= BASE_URL ?>css/forms.css" rel="stylesheet" />
-    <style></style>
 </head>
 
 <body class="sb-nav-fixed">
@@ -164,19 +163,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <div class="col-md-6 mb-3">
                                             <label for="name" class="form-label">Product Name <span class="text-danger">*</span></label>
                                             <input type="text" class="form-control" id="name" name="name"
-                                                placeholder="Enter Product Name" required
+                                                placeholder="Enter product name" required
                                                 value="<?= htmlspecialchars($product['name']) ?>" data-original="<?= htmlspecialchars($product['name']) ?>">
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label for="lkr_price" class="form-label">LKR Price <span class="text-danger">*</span></label>
                                             <input type="number" step="0.01" class="form-control" id="lkr_price" 
-                                                name="lkr_price" placeholder="Enter LKR Price" min="0" required
+                                                name="lkr_price" placeholder="Enter price" min="0" required
                                                 value="<?= ($product['lkr_price'] !== NULL) ? htmlspecialchars($product['lkr_price']) : '' ?>" data-original="<?= ($product['lkr_price'] !== NULL) ? htmlspecialchars($product['lkr_price']) : '' ?>">
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label for="sku" class="form-label">SKU (Stock Keeping Unit)</label>
                                             <input type="text" class="form-control" id="sku" name="sku"
-                                                placeholder="SKU (Stock Keeping Unit)"
+                                                placeholder="Enter SKU"
                                                 value="<?= htmlspecialchars($product['sku'] ?? '') ?>" data-original="<?= htmlspecialchars($product['sku'] ?? '') ?>">
                                         </div>
                                         <div class="col-md-6 mb-3">
@@ -191,7 +190,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <div class="col-12 mb-3">
                                             <label for="description" class="form-label">Description</label>
                                             <textarea class="form-control" id="description" name="description"
-                                                placeholder="Enter Product Description" rows="3" data-original="<?= htmlspecialchars($product['description']) ?>"><?= 
+                                                placeholder="Enter description" rows="3" data-original="<?= htmlspecialchars($product['description']) ?>"><?= 
                                                 htmlspecialchars($product['description']) 
                                             ?></textarea>
                                         </div>
@@ -247,10 +246,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
         crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="<?= BASE_URL ?>js/select2-init.js"></script>
     <script src="<?= BASE_URL ?>js/scripts.js"></script>
     <script>
+        // Initialize Select2
+        $(document).ready(function() {
+            $('#category_id').select2({
+                placeholder: '— No Category —',
+                allowClear: true
+            });
+            $('#unit').select2({ minimumResultsForSearch: Infinity });
+        });
+
         document.getElementById('editProductForm').addEventListener('submit', function(event) {
             const lkrPrice = document.getElementById('lkr_price').value.trim();
             if (lkrPrice === '') {

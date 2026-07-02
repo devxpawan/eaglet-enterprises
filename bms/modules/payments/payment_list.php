@@ -112,7 +112,7 @@ if ($pu) {
                                 <div class="row g-2 align-items-end">
                                     <div class="col-md-3 col-lg-2">
                                         <label class="form-label mb-1" style="font-size:11px;font-weight:600;color:#667085;">Search</label>
-                                        <input type="text" name="search" class="form-control" placeholder="Invoice Ref or Customer"
+                                        <input type="text" name="search" class="form-control" placeholder="Search by ref or customer..."
                                             value="<?php echo htmlspecialchars($search); ?>">
                                     </div>
                                     <div class="col-md-2 col-lg-1">
@@ -278,9 +278,13 @@ if ($pu) {
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="<?= BASE_URL ?>js/select2-init.js"></script>
     <script src="<?= BASE_URL ?>js/scripts.js"></script>
     <script>
         $(document).ready(function () {
+            $('select[name="filter_method"]').select2({ minimumResultsForSearch: Infinity });
+            $('select[name="filter_processed_by"]').select2({ minimumResultsForSearch: Infinity });
             $(document).on('click', '.view-receipt', function (e) {
                 e.preventDefault();
 

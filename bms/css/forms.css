@@ -28,17 +28,37 @@
 }
 
 .form-control, .form-select {
-    font-size: 13px;
-    color: #222;
-    border-color: #ccc;
-    border-radius: 4px;
-    height: 36px;
-    padding: 6px 10px;
+    font-size: 14px;
+    color: #101828;
+    border-color: #d0d5dd;
+    border-radius: 8px;
+    transition: all 0.15s ease;
 }
 
 .form-control:focus, .form-select:focus {
-    border-color: #888;
-    box-shadow: none;
+    border-color: #3B82F6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+}
+
+.form-control:hover, .form-select:hover {
+    border-color: #98a2b3;
+}
+
+input.form-control, select.form-select {
+    height: 35px;
+    padding: 8px 12px;
+}
+
+textarea.form-control {
+    border-radius: 8px;
+    border-color: #d0d5dd;
+    font-size: 14px;
+    resize: vertical;
+}
+
+textarea.form-control:focus {
+    border-color: #3B82F6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
 }
 
 /* Updated Button Styles */
@@ -187,4 +207,38 @@
     font-weight: 600;
     margin: 0;
     line-height: 1.5;
+}
+
+/* Password Toggle */
+.password-toggle {
+    background: transparent;
+    border: 1px solid #d0d5dd;
+    border-left: none;
+    border-radius: 0 8px 8px 0;
+    color: #667085;
+    cursor: pointer;
+    padding: 0 12px;
+    height: 35px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+    font-size: 14px;
+}
+
+.password-toggle:hover {
+    color: #3B82F6;
+    border-color: #98a2b3;
+    background: #f9fafb;
+}
+
+.password-toggle:focus {
+    outline: none;
+    border-color: #3B82F6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+}
+
+.password-toggle i {
+    font-size: 14px;
+    line-height: 1;
 }

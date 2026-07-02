@@ -79,6 +79,7 @@ $rev_label = ($quotation['revision_no'] == 0) ? 'Original' : 'R' . $quotation['r
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="<?= BASE_URL ?>css/forms.css" rel="stylesheet" />
     <link href="<?= BASE_URL ?>css/quotation-list.css" rel="stylesheet" />
 </head>
 
@@ -172,7 +173,7 @@ $rev_label = ($quotation['revision_no'] == 0) ? 'Original' : 'R' . $quotation['r
                                     <div class="col-12">
                                         <div>
                                             <label class="form-label">Subject</label>
-                                            <input type="text" class="form-control" name="subject" placeholder="Enter quotation subject or title"
+                                            <input type="text" class="form-control" name="subject" placeholder="Enter subject"
                                                 value="<?php echo htmlspecialchars($quotation['subject'] ?? ''); ?>">
                                         </div>
                                     </div>
@@ -193,19 +194,19 @@ $rev_label = ($quotation['revision_no'] == 0) ? 'Original' : 'R' . $quotation['r
                                         <div>
                                             <label class="form-label">Name <span class="text-danger">*</span></label>
                                             <input type="text" class="form-control" name="customer_name"
-                                                id="customer_name" placeholder="Enter Customer Name" required
+                                                id="customer_name" placeholder="Enter customer name" required
                                                 value="<?php echo htmlspecialchars($quotation['customer_name']); ?>">
                                         </div>
                                         <div class="mt-3">
                                             <label class="form-label">Business Name</label>
                                             <input type="text" class="form-control" name="customer_business_name"
-                                                id="customer_business_name" placeholder="Enter Business Name (optional)"
+                                                id="customer_business_name" placeholder="Enter business name"
                                                 value="<?php echo htmlspecialchars($quotation['customer_business_name'] ?? ''); ?>">
                                         </div>
                                         <div class="mt-3">
                                             <label class="form-label">Email</label>
                                             <input type="email" class="form-control" name="customer_email"
-                                                id="customer_email" placeholder="Enter Email (optional)"
+                                                id="customer_email" placeholder="Enter email address"
                                                 value="<?php echo htmlspecialchars($quotation['customer_email'] ?? ''); ?>">
                                         </div>
                                     </div>
@@ -213,13 +214,13 @@ $rev_label = ($quotation['revision_no'] == 0) ? 'Original' : 'R' . $quotation['r
                                         <div>
                                             <label class="form-label">Phone</label>
                                             <input type="text" class="form-control" name="customer_phone"
-                                                id="customer_phone" placeholder="Enter Phone Number" maxlength="10" pattern="[0-9]{10}" inputmode="numeric"
+                                                id="customer_phone" placeholder="Enter phone number" maxlength="10" pattern="[0-9]{10}" inputmode="numeric"
                                                 value="<?php echo htmlspecialchars($quotation['customer_phone'] ?? ''); ?>">
                                         </div>
                                         <div class="mt-3">
                                             <label class="form-label">Address</label>
                                             <input type="text" class="form-control" name="customer_address"
-                                                id="customer_address" placeholder="Enter Address"
+                                                id="customer_address" placeholder="Enter address"
                                                 value="<?php echo htmlspecialchars($quotation['customer_address'] ?? ''); ?>">
                                         </div>
                                     </div>

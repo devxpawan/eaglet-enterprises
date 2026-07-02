@@ -713,14 +713,4 @@ body.touch-device .dash-action-btn:active {
     transform: scale(0.97) !important;
 }
 
-/* ── Select2 mobile fix (used in invoice_create) ────────────── */
 
-@media (max-width: 575.98px) {
-    .select2-container {
-        width: 100% !important;
-    }
-
-    .select2-container .select2-selection--single {
-        height: 38px !important;
-    }
-}

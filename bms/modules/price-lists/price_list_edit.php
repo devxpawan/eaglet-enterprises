@@ -149,13 +149,13 @@ if (!empty($price_list['customer_id'])) {
                                         <div>
                                             <label class="form-label">Name</label>
                                             <input type="text" class="form-control" name="customer_name"
-                                                id="customer_name" placeholder="Enter Customer Name"
+                                                id="customer_name" placeholder="Enter customer name"
                                                 value="<?= htmlspecialchars($price_list['customer_name'] ?? $selectedCustomer['name'] ?? '') ?>">
                                         </div>
                                         <div class="mt-3">
                                             <label class="form-label">Email</label>
                                             <input type="email" class="form-control" name="customer_email"
-                                                id="customer_email" placeholder="Enter Email (optional)"
+                                                id="customer_email" placeholder="Enter email address"
                                                 value="<?= htmlspecialchars($price_list['customer_email'] ?? $selectedCustomer['email'] ?? '') ?>">
                                         </div>
                                     </div>
@@ -163,13 +163,13 @@ if (!empty($price_list['customer_id'])) {
                                         <div>
                                             <label class="form-label">Phone</label>
                                             <input type="text" class="form-control" name="customer_phone"
-                                                id="customer_phone" placeholder="Enter Phone Number" maxlength="10" pattern="[0-9]{10}" inputmode="numeric"
+                                                id="customer_phone" placeholder="Enter phone number" maxlength="10" pattern="[0-9]{10}" inputmode="numeric"
                                                 value="<?= htmlspecialchars($price_list['customer_phone'] ?? $selectedCustomer['phone'] ?? '') ?>">
                                         </div>
                                         <div class="mt-3">
                                             <label class="form-label">Address</label>
                                             <input type="text" class="form-control" name="customer_address"
-                                                id="customer_address" placeholder="Enter Address"
+                                                id="customer_address" placeholder="Enter address"
                                                 value="<?= htmlspecialchars($price_list['customer_address'] ?? $selectedCustomer['address'] ?? '') ?>">
                                         </div>
                                     </div>
@@ -188,7 +188,7 @@ if (!empty($price_list['customer_id'])) {
                                             <div class="d-flex align-items-center gap-2 flex-grow-1 me-3">
                                                 <i class="fas fa-microchip text-primary" style="font-size: 16px;"></i>
                                                 <span class="fw-semibold" style="color: #344054; font-size: 14px;">Section Name:</span>
-                                                <input type="text" name="section_name[<?= $groupIndex ?>]" class="form-control" value="<?= htmlspecialchars($sectionName) ?>" placeholder="Enter Section Name (optional)" style="max-width: 300px;">
+                                                <input type="text" name="section_name[<?= $groupIndex ?>]" class="form-control" value="<?= htmlspecialchars($sectionName) ?>" placeholder="Enter section name" style="max-width: 300px;">
                                             </div>
                                             <button type="button" class="btn btn-outline-danger btn-sm remove-section-group">
                                                 <i class="fas fa-trash"></i>
@@ -245,7 +245,7 @@ if (!empty($price_list['customer_id'])) {
                                         <div class="d-flex align-items-center gap-2 flex-grow-1 me-3">
                                             <i class="fas fa-microchip text-primary" style="font-size: 16px;"></i>
                                             <span class="fw-semibold" style="color: #344054; font-size: 14px;">Section Name:</span>
-                                            <input type="text" name="section_name[0]" class="form-control" placeholder="Enter Section Name (optional)" style="max-width: 300px;">
+                                            <input type="text" name="section_name[0]" class="form-control" placeholder="Enter section name" style="max-width: 300px;">
                                         </div>
                                         <button type="button" class="btn btn-outline-danger btn-sm remove-section-group">
                                             <i class="fas fa-trash"></i>
@@ -266,10 +266,10 @@ if (!empty($price_list['customer_id'])) {
                                                         <span class="row-number fw-semibold" style="font-size: 13px; color: #667085;">1</span>
                                                     </div>
                                                     <div class="col-md-3">
-                                                        <input type="text" name="item_name[0][]" class="form-control" placeholder="Enter Service/Product Name" required>
+                                                        <input type="text" name="item_name[0][]" class="form-control" placeholder="Enter product or service name" required>
                                                     </div>
                                                     <div class="col-md-5">
-                                                        <input type="text" name="item_description[0][]" class="form-control" placeholder="Specifications...">
+                                                        <input type="text" name="item_description[0][]" class="form-control" placeholder="Enter details">
                                                     </div>
                                                     <div class="col-md-2">
                                                         <input type="number" name="item_price[0][]" class="form-control text-end" min="0" step="0.01" placeholder="0.00" required>
@@ -306,19 +306,19 @@ if (!empty($price_list['customer_id'])) {
                                     <div class="col-md-12">
                                         <div>
                                             <label class="form-label">Notes</label>
-                                            <textarea name="notes" class="form-control" rows="8" placeholder="Any additional notes..."><?= htmlspecialchars($price_list['notes']) ?></textarea>
+                                            <textarea name="notes" class="form-control" rows="8" placeholder="Enter additional notes"><?= htmlspecialchars($price_list['notes']) ?></textarea>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div>
                                             <label class="form-label">Payment Terms</label>
-                                            <textarea name="payment_terms" class="form-control" rows="6" placeholder="Enter payment terms..."><?= htmlspecialchars($price_list['payment_terms']) ?></textarea>
+                                            <textarea name="payment_terms" class="form-control" rows="6" placeholder="Enter payment terms"><?= htmlspecialchars($price_list['payment_terms']) ?></textarea>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div>
                                             <label class="form-label">Terms & Conditions</label>
-                                            <textarea name="terms_conditions" class="form-control" rows="6" placeholder="Enter terms & conditions..."><?= htmlspecialchars($price_list['terms_conditions']) ?></textarea>
+                                            <textarea name="terms_conditions" class="form-control" rows="6" placeholder="Enter terms and conditions"><?= htmlspecialchars($price_list['terms_conditions']) ?></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -498,7 +498,7 @@ if (!empty($price_list['customer_id'])) {
                         <div class="d-flex align-items-center gap-2 flex-grow-1 me-3">
                             <i class="fas fa-microchip text-primary" style="font-size: 16px;"></i>
                             <span class="fw-semibold" style="color: #344054; font-size: 14px;">Section Name:</span>
-                            <input type="text" name="section_name[${index}]" class="form-control" placeholder="Enter Section Name (optional)" style="max-width: 300px;">
+                            <input type="text" name="section_name[${index}]" class="form-control" placeholder="Enter section name" style="max-width: 300px;">
                         </div>
                         <button type="button" class="btn btn-outline-danger btn-sm remove-section-group">
                             <i class="fas fa-trash"></i>
@@ -519,10 +519,10 @@ if (!empty($price_list['customer_id'])) {
                                         <span class="row-number fw-semibold" style="font-size: 13px; color: #667085;">1</span>
                                     </div>
                                     <div class="col-md-3">
-                                        <input type="text" name="item_name[${index}][]" class="form-control" placeholder="Enter Service/Product Name" required>
+                                        <input type="text" name="item_name[${index}][]" class="form-control" placeholder="Enter product or service name" required>
                                     </div>
                                     <div class="col-md-5">
-                                        <input type="text" name="item_description[${index}][]" class="form-control" placeholder="Specifications...">
+                                        <input type="text" name="item_description[${index}][]" class="form-control" placeholder="Enter details">
                                     </div>
                                     <div class="col-md-2">
                                         <input type="number" name="item_price[${index}][]" class="form-control text-end" min="0" step="0.01" placeholder="0.00" required>
@@ -568,10 +568,10 @@ if (!empty($price_list['customer_id'])) {
                         <span class="row-number fw-semibold" style="font-size: 13px; color: #667085;">${itemCount}</span>
                     </div>
                     <div class="col-md-3">
-                        <input type="text" name="item_name[${index}][]" class="form-control" placeholder="Enter Service/Product Name" required>
+                        <input type="text" name="item_name[${index}][]" class="form-control" placeholder="Enter product or service name" required>
                     </div>
                     <div class="col-md-5">
-                        <input type="text" name="item_description[${index}][]" class="form-control" placeholder="Specifications...">
+                        <input type="text" name="item_description[${index}][]" class="form-control" placeholder="Enter details">
                     </div>
                     <div class="col-md-2">
                         <input type="number" name="item_price[${index}][]" class="form-control text-end" min="0" step="0.01" placeholder="0.00" required>

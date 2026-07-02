@@ -27,7 +27,7 @@
     font-size: 14px;
     color: #101828;
     padding: 8px 12px;
-    height: 40px;
+    height: 35px;
     transition: border-color 0.15s, box-shadow 0.15s;
 }
 
@@ -40,9 +40,13 @@
 
 .invoice-filter-bar .btn-filter {
     border-radius: 8px;
-    padding: 8px 18px;
+    padding: 0 18px;
     font-size: 14px;
     font-weight: 600;
+    height: 35px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     background: #3B82F6;
     border-color: #3B82F6;
     color: #fff;
@@ -59,9 +63,13 @@
 
 .invoice-filter-bar .btn-clear {
     border-radius: 8px;
-    padding: 8px 14px;
+    padding: 0 14px;
     font-size: 14px;
     font-weight: 500;
+    height: 35px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     color: #344054;
     border-color: #d0d5dd;
     background: #fff;
@@ -79,7 +87,7 @@
     border-color: #d0d5dd;
     padding: 8px 12px;
     font-size: 14px;
-    height: 40px;
+    height: 35px;
     cursor: pointer;
     background-color: #fff;
 }

@@ -188,9 +188,7 @@ if (isset($_SESSION['success_message'])) {
     <?php require_once BASE_PATH . 'includes/header.php'; ?>
     <title>Add New User</title>
     <link href="<?= BASE_URL ?>css/forms.css" rel="stylesheet" />
-    <!-- Select2 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+
 </head>
 
 <body class="sb-nav-fixed">
@@ -233,7 +231,7 @@ if (isset($_SESSION['success_message'])) {
                         <div class="mb-3">
                             <label for="name" class="form-label">Full Name</label>
                             <input type="text" class="form-control" id="name" name="name"
-                                placeholder="Full Name" required>
+                                placeholder="Enter full name" required>
                             <div class="error-feedback" id="name-error"></div>
                         </div>
 
@@ -241,7 +239,7 @@ if (isset($_SESSION['success_message'])) {
                         <div class="mb-3">
                             <label for="username" class="form-label">Username</label>
                             <input type="text" class="form-control" id="username" name="username"
-                                placeholder="Choose a username" required>
+                                placeholder="Enter username" required>
                             <div class="error-feedback" id="username-error"></div>
                         </div>
 
@@ -249,7 +247,7 @@ if (isset($_SESSION['success_message'])) {
                         <div class="mb-3">
                             <label for="email" class="form-label">Email Address</label>
                             <input type="email" class="form-control" id="email" name="email"
-                                placeholder="name@example.com" required>
+                                placeholder="Enter email address" required>
                             <div class="error-feedback" id="email-error"></div>
                         </div>
 
@@ -258,8 +256,8 @@ if (isset($_SESSION['success_message'])) {
                             <label for="password" class="form-label">Password</label>
                             <div class="input-group">
                                 <input type="password" class="form-control" id="password"
-                                    name="password" placeholder="Password" required>
-                                <button class="btn btn-outline-secondary toggle-password"
+                                    name="password" placeholder="Enter password" required>
+                                <button class="password-toggle toggle-password"
                                     type="button">
                                     <i class="fas fa-eye"></i>
                                 </button>
@@ -271,7 +269,7 @@ if (isset($_SESSION['success_message'])) {
                         <div class="mb-3">
                             <label for="mobile" class="form-label">Mobile Number</label>
                             <input type="tel" class="form-control" id="mobile" name="mobile"
-                                placeholder="Enter 10-digit mobile number" maxlength="10" pattern="[0-9]{10}" inputmode="numeric">
+                                placeholder="Enter mobile number" maxlength="10" pattern="[0-9]{10}" inputmode="numeric">
                             <div class="error-feedback" id="mobile-error"></div>
                         </div>
                     </div>
@@ -285,7 +283,7 @@ if (isset($_SESSION['success_message'])) {
                                         <div class="mb-3">
                                             <label for="nic" class="form-label">NIC Number</label>
                                             <input type="text" class="form-control" id="nic" name="nic"
-                                                placeholder="Enter NIC Number">
+                                                placeholder="Enter NIC number">
                                             <div class="error-feedback" id="nic-error"></div>
                                         </div>
 
@@ -293,7 +291,7 @@ if (isset($_SESSION['success_message'])) {
                                         <div class="mb-3">
                                             <label for="address" class="form-label">Address</label>
                                             <textarea class="form-control" id="address" name="address"
-                                                placeholder="Enter Full Address" rows="3"></textarea>
+                                                placeholder="Enter full address" rows="3"></textarea>
                                             <div class="error-feedback" id="address-error"></div>
                                         </div>
 
@@ -337,14 +335,10 @@ if (isset($_SESSION['success_message'])) {
     <script src="<?= BASE_URL ?>js/scripts.js"></script>
     <!-- Select2 JS -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="<?= BASE_URL ?>js/select2-init.js"></script>
     <script>
-    // Initialize Select2
     $(document).ready(function() {
-        $('#position_id').select2({
-            theme: 'bootstrap-5',
-            width: '100%',
-            minimumResultsForSearch: Infinity
-        });
+        $('#position_id').select2({ minimumResultsForSearch: Infinity });
     });
 
     /**
